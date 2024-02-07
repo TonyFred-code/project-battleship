@@ -14,6 +14,6 @@ export default class Ship {
   }
 
   isSunk() {
-    return this.#isSunk;
+    return this.hitsCount === this.length;
   }
 }
