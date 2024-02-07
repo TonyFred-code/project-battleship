@@ -2,7 +2,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: './src/main.js',
   devtool: 'inline-source-map',
   plugins: [
     new HtmlWebpackPlugin({
@@ -18,6 +18,16 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.(?:js|mjs|cjs)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            cacheDirectory: true,
+          },
+        },
+      },
+      {
         test: /\.css$/i,
         use: ['style-loader', 'css-loader'],
       },
@@ -28,16 +38,6 @@ module.exports = {
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,
         type: 'asset/resource',
-      },
-      {
-        test: /\.(?:js|mjs|cjs)$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            cacheDirectory: true,
-          },
-        },
       },
     ],
   },
