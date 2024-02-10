@@ -2,13 +2,13 @@ import Ship from './ship';
 import Node from './board-node';
 
 export default class GameBoard {
-  #COORDINATE_ERR_MSG = `Invalid Coordinate. 'x, y' coordinate must both be greater
-    zero and less than or equal to 10`;
+  // #COORDINATE_ERR_MSG = `Invalid Coordinate. 'x, y' coordinate must both be greater
+  //   zero and less than or equal to 10`;
 
-  #SHIP_COORDINATE_SIZE_LESS_ERR_MSG = 'Coordinate size too low to place ship';
+  // #SHIP_COORDINATE_SIZE_LESS_ERR_MSG = 'Coordinate size too low to place ship';
 
-  #SHIP_COORDINATE_SIZE_HIGH_ERR_MSG =
-    'Coordinate size too large to place ship';
+  // #SHIP_COORDINATE_SIZE_HIGH_ERR_MSG =
+  //   'Coordinate size too large to place ship';
 
   BOARD_SIZE = 10;
 
@@ -61,14 +61,7 @@ export default class GameBoard {
     }
 
     const node = this.board[y * this.BOARD_SIZE + x];
-    if (node.isOccupied) return false;
-
-    // eslint-disable-next-line consistent-return
-    node.neighbors.forEach((neighbor) => {
-      const [nx, ny] = neighbor;
-      const neighborNode = this.board[ny * this.BOARD_SIZE + nx];
-      if (neighborNode.isOccupied) return false;
-    });
+    if (node.isOccupied || node.isNeighboringOccupied) return false;
 
     return true;
   }
@@ -108,7 +101,12 @@ export default class GameBoard {
     for (const nodeLocation of toBeOccupied) {
       const [nx, ny] = nodeLocation;
       this.ships[ny * this.BOARD_SIZE + nx] = ship;
-      this.board[ny * this.BOARD_SIZE + nx].isOccupied = true;
+      const node = this.board[ny * this.BOARD_SIZE + nx];
+      node.isOccupied = true;
+      node.neighbors.forEach((nodeLoc) => {
+        const [nnx, nny] = nodeLoc;
+        this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = true;
+      });
     }
 
     return true;
