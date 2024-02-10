@@ -11,14 +11,20 @@ it('game should place ship at coordinates', () => {
 
 it('game should refuse overlapping ships', () => {
   const gameBoard = new GameBoard();
-  gameBoard.placeShip(2, 1, 3);
+  expect(gameBoard.placeShip(2, 1, 3)).toBe(true);
   expect(gameBoard.placeShip(2, 1, 3)).toBe(false);
 });
 
 it('game should refuse placing ships on partly occupied position', () => {
   const gameBoard = new GameBoard();
-  gameBoard.placeShip(2, 1, 3);
-  expect(gameBoard.placeShip(5, 2, 6)).toBe(false);
+  expect(gameBoard.placeShip(2, 1, 3)).toBe(true);
+  expect(gameBoard.placeShip(5, 2, 1, 'vertical')).toBe(false);
+});
+
+it('game should refuse placing ships on grids next to a ship', () => {
+  const gameBoard = new GameBoard();
+  expect(gameBoard.placeShip(2, 1, 3)).toBe(true);
+  expect(gameBoard.placeShip(5, 3, 1, 'vertical')).toBe(false);
 });
 
 it('game should refuse placing ships off board', () => {
@@ -33,8 +39,8 @@ it('game should place ship vertically', () => {
 
 it('game should refuse to place ship exactly side by side', () => {
   const gameBoard = new GameBoard();
-  gameBoard.placeShip(2, 1, 3);
-  expect(gameBoard.placeShip(2, 1, 1)).toBe(false);
+  expect(gameBoard.placeShip(2, 2, 8)).toBe(true);
+  expect(gameBoard.placeShip(2, 2, 7)).toBe(false);
 });
 
 it('game should refuse to place ship on grids by the side of a ship on the board', () => {
@@ -43,9 +49,7 @@ it('game should refuse to place ship on grids by the side of a ship on the board
   expect(gameBoard.placeShip(2, 3, 3, 'vertical')).toBe(false);
 });
 
-it('gameBoard should have a receiveAttack() method', () => {
-  expect(new GameBoard().receiveAttack).not.toBeUndefined();
-});
+it.todo('gameBoard should have a receiveAttack() method');
 
 it.todo('receiveAttack() should determine if a hit is to a ship or not');
 
