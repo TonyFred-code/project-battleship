@@ -111,4 +111,40 @@ export default class GameBoard {
 
     return true;
   }
+
+  receiveAttack(x, y) {
+    if (!this.#isValidCoordinate(x, y)) return false;
+
+    if (!this.#hasShipOnBoard()) return false;
+
+    if (this.isAllShipSunk) return false;
+
+    const node = this.board[y * this.BOARD_SIZE + x];
+
+    if (node.isHit) {
+      return false;
+    }
+
+    node.isHit = true;
+    if (node.isOccupied) {
+      this.ships[y * this.BOARD_SIZE + x].hit();
+    }
+
+    return true;
+  }
+
+  #hasShipOnBoard() {
+    return this.ships.length !== 0;
+  }
+
+  get isAllShipSunk() {
+    const notSunk = this.ships.filter((ship) => !ship.isSunk());
+    return notSunk.length === 0;
+  }
+
+  get missedShots() {
+    const shots = this.board.filter((node) => node.isHit);
+    const missedShots = shots.filter((shot) => !shot.isOccupied);
+    return missedShots;
+  }
 }
