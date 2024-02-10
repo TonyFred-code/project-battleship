@@ -4,5 +4,6 @@ export default class Node {
     this.neighbors = [];
     this.isHit = false;
     this.isOccupied = false;
+    this.isNeighboringOccupied = false;
   }
 }
