@@ -23,8 +23,8 @@ it('game should refuse placing ships on partly occupied position', () => {
 
 it('game should refuse placing ships on grids next to a ship', () => {
   const gameBoard = new GameBoard();
-  expect(gameBoard.placeShip(2, 1, 3)).toBe(true);
-  expect(gameBoard.placeShip(5, 3, 1, 'vertical')).toBe(false);
+  expect(gameBoard.placeShip(1, 7, 8)).toBe(true);
+  expect(gameBoard.placeShip(1, 8, 9, 'vertical')).toBe(false);
 });
 
 it('game should refuse placing ships off board', () => {
