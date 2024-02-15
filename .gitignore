@@ -1,5 +1,4 @@
 node_modules/
 
-#ignore test output
-
+# ignore output storing dir
 _home_output/

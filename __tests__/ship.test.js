@@ -41,3 +41,10 @@ it('ship isSunk() function checks if ship is sunk', () => {
   ship.hit();
   expect(ship.isSunk()).toBe(true);
 });
+
+it('denies hits after ship is sunk', () => {
+  const ship = new Ship(1);
+  expect(ship.hit()).toBe(true);
+  expect(ship.isSunk()).toBe(true);
+  expect(ship.hit()).toBe(false);
+});
