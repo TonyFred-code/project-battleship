@@ -10,14 +10,13 @@ it('is a ship extension', () => {
   expect(patrolBoat instanceof Ship).toBe(true);
 });
 
-it('has a fixed length of 3', () => {
+it('has a fixed length of 2', () => {
   const patrolBoat = new PatrolBoat(6);
-  expect(patrolBoat).toHaveLength(3);
+  expect(patrolBoat).toHaveLength(2);
 });
 
-it('is sunk in 3 hits', () => {
+it('is sunk in 2 hits', () => {
   const patrolBoat = new PatrolBoat();
-  patrolBoat.hit();
   patrolBoat.hit();
   patrolBoat.hit();
   expect(patrolBoat.isSunk()).toBe(true);
@@ -25,7 +24,6 @@ it('is sunk in 3 hits', () => {
 
 it('denys hits after being sunk', () => {
   const patrolBoat = new PatrolBoat();
-  expect(patrolBoat.hit()).toBe(true);
   expect(patrolBoat.hit()).toBe(true);
   expect(patrolBoat.hit()).toBe(true);
   expect(patrolBoat.hit()).toBe(false);
