@@ -1,1 +1,5 @@
 node_modules/
+
+#ignore test output
+
+_home_output/
