@@ -1,1 +1,4 @@
 node_modules/
+
+# ignore output storing dir
+_home_output/
