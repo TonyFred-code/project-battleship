@@ -85,9 +85,39 @@ it('board should have a placeCarrier method', () => {
   expect(board.placeCarrier).not.toBeUndefined();
 });
 
+it('board can position carrier horizontally', () => {
+  const board = new GameBoard();
+  expect(board.placeCarrier(0, 0)).toBe(true);
+});
+
+it('board can position carrier vertically', () => {
+  const board = new GameBoard();
+  expect(board.placeCarrier(0, 0, 'vertical')).toBe(true);
+});
+
+it('ignores invalid carrier orientation', () => {
+  const board = new GameBoard();
+  expect(board.placeCarrier(0, 0, 'diagonal')).toBe(false);
+});
+
 it('board should have a placeBattleShip method', () => {
   const board = new GameBoard();
   expect(board.placeBattleShip).not.toBeUndefined();
+});
+
+it('board can position battleship horizontally', () => {
+  const board = new GameBoard();
+  expect(board.placeBattleShip(0, 0)).toBe(true);
+});
+
+it('board can position battleship vertically', () => {
+  const board = new GameBoard();
+  expect(board.placeBattleShip(0, 0, 'vertical')).toBe(true);
+});
+
+it('ignores invalid battleship orientation', () => {
+  const board = new GameBoard();
+  expect(board.placeBattleShip(0, 0, 'diagonal')).toBe(false);
 });
 
 it('board should have a placeDestroyer method', () => {
@@ -95,14 +125,59 @@ it('board should have a placeDestroyer method', () => {
   expect(board.placeDestroyer).not.toBeUndefined();
 });
 
+it('board can position destroyer horizontally', () => {
+  const board = new GameBoard();
+  expect(board.placeDestroyer(0, 0)).toBe(true);
+});
+
+it('board can position destroyer vertically', () => {
+  const board = new GameBoard();
+  expect(board.placeDestroyer(0, 0, 'vertical')).toBe(true);
+});
+
+it('ignores invalid destroyer orientation', () => {
+  const board = new GameBoard();
+  expect(board.placeDestroyer(0, 0, 'diagonal')).toBe(false);
+});
+
 it('board should have a placePatrolBoat method', () => {
   const board = new GameBoard();
   expect(board.placePatrolBoat).not.toBeUndefined();
 });
 
+it('board can position patrol boat horizontally', () => {
+  const board = new GameBoard();
+  expect(board.placeDestroyer(0, 0)).toBe(true);
+});
+
+it('board can position patrol boat vertically', () => {
+  const board = new GameBoard();
+  expect(board.placeDestroyer(0, 0, 'vertical')).toBe(true);
+});
+
+it('ignores invalid patrol boat orientation', () => {
+  const board = new GameBoard();
+  expect(board.placeDestroyer(0, 0, 'diagonal')).toBe(false);
+});
+
 it('board should have a placeSubMarine method', () => {
   const board = new GameBoard();
   expect(board.placeSubMarine).not.toBeUndefined();
+});
+
+it('board can position submarine horizontally', () => {
+  const board = new GameBoard();
+  expect(board.placeSubMarine(0, 0)).toBe(true);
+});
+
+it('board can position submarine vertically', () => {
+  const board = new GameBoard();
+  expect(board.placeSubMarine(0, 0, 'vertical')).toBe(true);
+});
+
+it('ignores invalid submarine orientation', () => {
+  const board = new GameBoard();
+  expect(board.placeSubMarine(0, 0, 'diagonal')).toBe(false);
 });
 
 it('game should have a placeShip() method', () => {
