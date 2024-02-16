@@ -1,4 +1,9 @@
 import Ship from './ship';
+import Carrier from './carrier';
+import BattleShip from './battleship';
+import Destroyer from './destroyer';
+import SubMarine from './submarine';
+import PatrolBoat from './patrol-boat';
 import Node from './board-node';
 
 export default class GameBoard {
@@ -11,11 +16,31 @@ export default class GameBoard {
   //   'Coordinate size too large to place ship';
 
   BOARD_SIZE = 10;
+  // #SHIP_YARD_SIZE = 5;
 
   constructor() {
+    this.shipYard = [];
     this.ships = [];
     this.board = [];
     this.#buildBoard();
+    this.#initializeShips();
+  }
+
+  #initializeShips() {
+    const carrier = new Carrier();
+    this.shipYard.push(carrier);
+
+    const battleship = new BattleShip();
+    this.shipYard.push(battleship);
+
+    const destroyer = new Destroyer();
+    this.shipYard.push(destroyer);
+
+    const submarine = new SubMarine();
+    this.shipYard.push(submarine);
+
+    const patrolBoat = new PatrolBoat();
+    this.shipYard.push(patrolBoat);
   }
 
   #buildBoard() {
@@ -111,6 +136,16 @@ export default class GameBoard {
 
     return true;
   }
+
+  placeCarrier() {}
+
+  placeBattleShip() {}
+
+  placeDestroyer() {}
+
+  placeSubMarine() {}
+
+  placePatrolBoat() {}
 
   receiveAttack(x, y) {
     if (!this.#isValidCoordinate(x, y)) return false;
