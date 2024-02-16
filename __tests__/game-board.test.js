@@ -1,4 +1,109 @@
 import GameBoard from '../src/game-board';
+import Ship from '../src/ship';
+import Carrier from '../src/carrier';
+import BattleShip from '../src/battleship';
+import Destroyer from '../src/destroyer';
+import SubMarine from '../src/submarine';
+import PatrolBoat from '../src/patrol-boat';
+
+it('can create board', () => {
+  expect(GameBoard).not.toBeUndefined();
+});
+
+it('board should have a shipyard', () => {
+  const board = new GameBoard();
+  expect(board.shipYard).not.toBeUndefined();
+});
+
+it('board should have only 5 ship docks', () => {
+  const board = new GameBoard();
+  expect(board.shipYard).toHaveLength(5);
+});
+
+it('board should contain only 5 Ships', () => {
+  const board = new GameBoard();
+  const { shipYard } = board;
+
+  function checkShip(ship) {
+    return ship instanceof Ship;
+  }
+  expect(shipYard.every(checkShip)).toBe(true);
+});
+
+it('board should have a carrier in shipYard', () => {
+  const board = new GameBoard();
+  const { shipYard } = board;
+  function checkShip(ship) {
+    return ship instanceof Carrier;
+  }
+
+  expect(shipYard.some(checkShip)).toBe(true);
+});
+
+it('board should have a battleship in shipYard', () => {
+  const board = new GameBoard();
+  const { shipYard } = board;
+  function checkShip(ship) {
+    return ship instanceof BattleShip;
+  }
+
+  expect(shipYard.some(checkShip)).toBe(true);
+});
+
+it('board should have a destroyer in shipYard', () => {
+  const board = new GameBoard();
+  const { shipYard } = board;
+  function checkShip(ship) {
+    return ship instanceof Destroyer;
+  }
+
+  expect(shipYard.some(checkShip)).toBe(true);
+});
+
+it('board should have a submarine in shipYard', () => {
+  const board = new GameBoard();
+  const { shipYard } = board;
+  function checkShip(ship) {
+    return ship instanceof SubMarine;
+  }
+
+  expect(shipYard.some(checkShip)).toBe(true);
+});
+
+it('board should have a patrolBoat in shipYard', () => {
+  const board = new GameBoard();
+  const { shipYard } = board;
+  function checkShip(ship) {
+    return ship instanceof PatrolBoat;
+  }
+
+  expect(shipYard.some(checkShip)).toBe(true);
+});
+
+it('board should have a placeCarrier method', () => {
+  const board = new GameBoard();
+  expect(board.placeCarrier).not.toBeUndefined();
+});
+
+it('board should have a placeBattleShip method', () => {
+  const board = new GameBoard();
+  expect(board.placeBattleShip).not.toBeUndefined();
+});
+
+it('board should have a placeDestroyer method', () => {
+  const board = new GameBoard();
+  expect(board.placeDestroyer).not.toBeUndefined();
+});
+
+it('board should have a placePatrolBoat method', () => {
+  const board = new GameBoard();
+  expect(board.placePatrolBoat).not.toBeUndefined();
+});
+
+it('board should have a placeSubMarine method', () => {
+  const board = new GameBoard();
+  expect(board.placeSubMarine).not.toBeUndefined();
+});
 
 it('game should have a placeShip() method', () => {
   expect(new GameBoard().placeShip).not.toBeUndefined();
