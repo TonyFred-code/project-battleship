@@ -17,9 +17,17 @@ export default class GameBoard {
 
   BOARD_SIZE = 10;
   // #SHIP_YARD_SIZE = 5;
+  // #SHIP_YARD_PARTICULARS = {
+
+  // }
+
+  // #CARRIER_INFO = {
+  //   isOnBoard: false,
+  //   size:
+  // };
 
   constructor() {
-    this.shipYard = [];
+    this.shipYard = {};
     this.ships = [];
     this.board = [];
     this.#buildBoard();
@@ -28,19 +36,19 @@ export default class GameBoard {
 
   #initializeShips() {
     const carrier = new Carrier();
-    this.shipYard.push(carrier);
+    this.shipYard.carrier = carrier;
 
     const battleship = new BattleShip();
-    this.shipYard.push(battleship);
+    this.shipYard.battleship = battleship;
 
     const destroyer = new Destroyer();
-    this.shipYard.push(destroyer);
+    this.shipYard.destroyer = destroyer;
 
     const submarine = new SubMarine();
-    this.shipYard.push(submarine);
+    this.shipYard.submarine = submarine;
 
     const patrolBoat = new PatrolBoat();
-    this.shipYard.push(patrolBoat);
+    this.shipYard.patrolBoat = patrolBoat;
   }
 
   #buildBoard() {
@@ -137,15 +145,36 @@ export default class GameBoard {
     return true;
   }
 
-  placeCarrier() {}
+  static isValidOrientation(orientation) {
+    return orientation === 'horizontal' || orientation === 'vertical';
+  }
 
-  placeBattleShip() {}
+  placeCarrier(x, y, orientation = 'horizontal') {
+    if (!GameBoard.isValidOrientation(orientation)) return false;
 
-  placeDestroyer() {}
+    const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
+    return true;
+  }
 
-  placeSubMarine() {}
+  placeBattleShip(x, y, orientation = 'horizontal') {
+    if (!GameBoard.isValidOrientation(orientation)) return false;
+    return true;
+  }
 
-  placePatrolBoat() {}
+  placeDestroyer(x, y, orientation = 'horizontal') {
+    if (!GameBoard.isValidOrientation(orientation)) return false;
+    return true;
+  }
+
+  placeSubMarine(x, y, orientation = 'horizontal') {
+    if (!GameBoard.isValidOrientation(orientation)) return false;
+    return true;
+  }
+
+  placePatrolBoat(x, y, orientation = 'horizontal') {
+    if (!GameBoard.isValidOrientation(orientation)) return false;
+    return true;
+  }
 
   receiveAttack(x, y) {
     if (!this.#isValidCoordinate(x, y)) return false;
