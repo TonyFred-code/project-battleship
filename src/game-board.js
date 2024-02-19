@@ -7,24 +7,36 @@ import PatrolBoat from './patrol-boat';
 import Node from './board-node';
 
 export default class GameBoard {
-  // #COORDINATE_ERR_MSG = `Invalid Coordinate. 'x, y' coordinate must both be greater
-  //   zero and less than or equal to 10`;
-
-  // #SHIP_COORDINATE_SIZE_LESS_ERR_MSG = 'Coordinate size too low to place ship';
-
-  // #SHIP_COORDINATE_SIZE_HIGH_ERR_MSG =
-  //   'Coordinate size too large to place ship';
-
   BOARD_SIZE = 10;
-  // #SHIP_YARD_SIZE = 5;
-  // #SHIP_YARD_PARTICULARS = {
 
-  // }
+  #HORIZONTAL = 'horizontal';
 
-  // #CARRIER_INFO = {
-  //   isOnBoard: false,
-  //   size:
-  // };
+  #VERTICAL = 'vertical';
+
+  #CARRIER_INFO = {
+    isOnBoard: false,
+    occupying: [],
+  };
+
+  #BATTLESHIP_INFO = {
+    isOnBoard: false,
+    occupying: [],
+  };
+
+  #DESTROYER_INFO = {
+    isOnBoard: false,
+    occupying: [],
+  };
+
+  #SUBMARINE_INFO = {
+    isOnBoard: false,
+    occupying: [],
+  };
+
+  #PATROL_BOAT_INFO = {
+    isOnBoard: false,
+    occupying: [],
+  };
 
   constructor() {
     this.shipYard = {};
@@ -37,18 +49,23 @@ export default class GameBoard {
   #initializeShips() {
     const carrier = new Carrier();
     this.shipYard.carrier = carrier;
+    this.#CARRIER_INFO.size = carrier.length;
 
     const battleship = new BattleShip();
     this.shipYard.battleship = battleship;
+    this.#BATTLESHIP_INFO.size = battleship.length;
 
     const destroyer = new Destroyer();
     this.shipYard.destroyer = destroyer;
+    this.#DESTROYER_INFO.size = destroyer.length;
 
     const submarine = new SubMarine();
     this.shipYard.submarine = submarine;
+    this.#SUBMARINE_INFO.size = submarine.length;
 
     const patrolBoat = new PatrolBoat();
     this.shipYard.patrolBoat = patrolBoat;
+    this.#PATROL_BOAT_INFO.size = patrolBoat.length;
   }
 
   #buildBoard() {
@@ -101,14 +118,24 @@ export default class GameBoard {
 
   // eslint-disable-next-line class-methods-use-this
   #getToBeOccupied(size, x, y, orientation) {
+    if (!this.#isValidOrientation(orientation)) {
+      return [];
+    }
+
     const toBeOccupied = [[x, y]];
     if (orientation === 'vertical') {
-      for (let i = 0; i < size; i += 1) {
-        toBeOccupied.push([x, y + i + 1]);
+      for (let i = 0; i < size - 1; i += 1) {
+        const occupied = y + i + 1;
+        if (occupied < this.BOARD_SIZE) {
+          toBeOccupied.push([x, occupied]);
+        }
       }
-    } else {
-      for (let i = 0; i < size; i += 1) {
-        toBeOccupied.push([x + i + 1, y]);
+    } else if (orientation === 'horizontal') {
+      for (let i = 0; i < size - 1; i += 1) {
+        const occupied = x + i + 1;
+        if (occupied < this.BOARD_SIZE) {
+          toBeOccupied.push([occupied, y]);
+        }
       }
     }
 
@@ -145,34 +172,155 @@ export default class GameBoard {
     return true;
   }
 
-  static isValidOrientation(orientation) {
-    return orientation === 'horizontal' || orientation === 'vertical';
+  #isValidOrientation(orientation) {
+    return orientation === this.#HORIZONTAL || orientation === this.#VERTICAL;
+  }
+
+  #checkNodeLocation(nodeLoc) {
+    const [nx, ny] = nodeLoc;
+    return this.#isValidCoordinate(nx, ny) || this.#canPlaceShip(nx, ny);
+  }
+
+  #checkNodeLocations(nodeLocations) {
+    let allValid = true;
+
+    nodeLocations.forEach((nodeLocation) => {
+      const [nx, ny] = nodeLocation;
+      if (!this.#isValidCoordinate(nx, ny) || !this.#canPlaceShip(nx, ny)) {
+        allValid = false;
+      }
+    });
+
+    return allValid;
   }
 
   placeCarrier(x, y, orientation = 'horizontal') {
-    if (!GameBoard.isValidOrientation(orientation)) return false;
+    if (!this.#isValidOrientation(orientation)) return false;
+
+    const { size } = this.#CARRIER_INFO;
 
     const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
+
+    if (toBeOccupied.length < size) return false;
+
+    if (!this.#checkNodeLocations(toBeOccupied)) return false;
+
+    toBeOccupied.forEach((location) => {
+      const [nx, ny] = location;
+
+      this.#CARRIER_INFO.occupying.push([nx, ny]);
+      const node = this.board[ny * this.BOARD_SIZE + nx];
+      node.isOccupied = true;
+      node.neighbors.forEach((nodeLoc) => {
+        const [nnx, nny] = nodeLoc;
+        this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = true;
+      });
+    });
+
     return true;
   }
 
   placeBattleShip(x, y, orientation = 'horizontal') {
-    if (!GameBoard.isValidOrientation(orientation)) return false;
+    if (!this.#isValidOrientation(orientation)) return false;
+
+    const { size } = this.#BATTLESHIP_INFO;
+
+    const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
+
+    if (toBeOccupied.length < size) return false;
+
+    if (!this.#checkNodeLocations(toBeOccupied)) return false;
+
+    toBeOccupied.forEach((location) => {
+      const [nx, ny] = location;
+
+      this.#BATTLESHIP_INFO.occupying.push([nx, ny]);
+      const node = this.board[ny * this.BOARD_SIZE + nx];
+      node.isOccupied = true;
+      node.neighbors.forEach((nodeLoc) => {
+        const [nnx, nny] = nodeLoc;
+        this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = true;
+      });
+    });
+
     return true;
   }
 
   placeDestroyer(x, y, orientation = 'horizontal') {
-    if (!GameBoard.isValidOrientation(orientation)) return false;
+    if (!this.#isValidOrientation(orientation)) return false;
+
+    const { size } = this.#DESTROYER_INFO;
+
+    const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
+
+    if (toBeOccupied.length < size) return false;
+
+    if (!this.#checkNodeLocations(toBeOccupied)) return false;
+
+    toBeOccupied.forEach((location) => {
+      const [nx, ny] = location;
+
+      this.#DESTROYER_INFO.occupying.push([nx, ny]);
+      const node = this.board[ny * this.BOARD_SIZE + nx];
+      node.isOccupied = true;
+      node.neighbors.forEach((nodeLoc) => {
+        const [nnx, nny] = nodeLoc;
+        this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = true;
+      });
+    });
+
     return true;
   }
 
   placeSubMarine(x, y, orientation = 'horizontal') {
-    if (!GameBoard.isValidOrientation(orientation)) return false;
+    if (!this.#isValidOrientation(orientation)) return false;
+
+    const { size } = this.#DESTROYER_INFO;
+
+    const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
+
+    if (toBeOccupied.length < size) return false;
+
+    if (!this.#checkNodeLocations(toBeOccupied)) return false;
+
+    toBeOccupied.forEach((location) => {
+      const [nx, ny] = location;
+
+      this.#SUBMARINE_INFO.occupying.push([nx, ny]);
+      const node = this.board[ny * this.BOARD_SIZE + nx];
+      node.isOccupied = true;
+      node.neighbors.forEach((nodeLoc) => {
+        const [nnx, nny] = nodeLoc;
+        this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = true;
+      });
+    });
+
     return true;
   }
 
   placePatrolBoat(x, y, orientation = 'horizontal') {
-    if (!GameBoard.isValidOrientation(orientation)) return false;
+    if (!this.#isValidOrientation(orientation)) return false;
+
+    const { size } = this.#PATROL_BOAT_INFO;
+
+    const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
+
+    if (toBeOccupied.length < size) return false;
+
+    if (!this.#checkNodeLocations(toBeOccupied)) return false;
+
+    toBeOccupied.forEach((location) => {
+      const [nx, ny] = location;
+
+      this.#PATROL_BOAT_INFO.occupying.push([nx, ny]);
+      const node = this.board[ny * this.BOARD_SIZE + nx];
+      node.isOccupied = true;
+      node.neighbors.forEach((nodeLoc) => {
+        const [nnx, nny] = nodeLoc;
+        this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = true;
+      });
+    });
+
     return true;
   }
 
