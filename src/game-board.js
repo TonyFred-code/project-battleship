@@ -1,12 +1,12 @@
-import Ship from './ship';
-import Carrier from './carrier';
-import BattleShip from './battleship';
-import Destroyer from './destroyer';
-import SubMarine from './submarine';
-import PatrolBoat from './patrol-boat';
-import Node from './board-node';
+const Ship = require('./ship');
+const Carrier = require('./carrier');
+const BattleShip = require('./battleship');
+const Destroyer = require('./destroyer');
+const SubMarine = require('./submarine');
+const PatrolBoat = require('./patrol-boat');
+const Node = require('./board-node');
 
-export default class GameBoard {
+class GameBoard {
   BOARD_SIZE = 10;
 
   #HORIZONTAL = 'horizontal';
@@ -210,12 +210,14 @@ export default class GameBoard {
 
       this.#CARRIER_INFO.occupying.push([nx, ny]);
       const node = this.board[ny * this.BOARD_SIZE + nx];
-      node.isOccupied = true;
+      node.isOccupied = this.shipYard.carrier;
       node.neighbors.forEach((nodeLoc) => {
         const [nnx, nny] = nodeLoc;
         this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = true;
       });
     });
+
+    this.#CARRIER_INFO.isOnBoard = true;
 
     return true;
   }
@@ -236,13 +238,14 @@ export default class GameBoard {
 
       this.#BATTLESHIP_INFO.occupying.push([nx, ny]);
       const node = this.board[ny * this.BOARD_SIZE + nx];
-      node.isOccupied = true;
+      node.isOccupied = this.shipYard.battleship;
       node.neighbors.forEach((nodeLoc) => {
         const [nnx, nny] = nodeLoc;
         this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = true;
       });
     });
 
+    this.#BATTLESHIP_INFO.isOnBoard = true;
     return true;
   }
 
@@ -262,13 +265,14 @@ export default class GameBoard {
 
       this.#DESTROYER_INFO.occupying.push([nx, ny]);
       const node = this.board[ny * this.BOARD_SIZE + nx];
-      node.isOccupied = true;
+      node.isOccupied = this.shipYard.destroyer;
       node.neighbors.forEach((nodeLoc) => {
         const [nnx, nny] = nodeLoc;
         this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = true;
       });
     });
 
+    this.#DESTROYER_INFO.isOnBoard = true;
     return true;
   }
 
@@ -288,13 +292,14 @@ export default class GameBoard {
 
       this.#SUBMARINE_INFO.occupying.push([nx, ny]);
       const node = this.board[ny * this.BOARD_SIZE + nx];
-      node.isOccupied = true;
+      node.isOccupied = this.shipYard.submarine;
       node.neighbors.forEach((nodeLoc) => {
         const [nnx, nny] = nodeLoc;
         this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = true;
       });
     });
 
+    this.#SUBMARINE_INFO.isOnBoard = true;
     return true;
   }
 
@@ -314,20 +319,21 @@ export default class GameBoard {
 
       this.#PATROL_BOAT_INFO.occupying.push([nx, ny]);
       const node = this.board[ny * this.BOARD_SIZE + nx];
-      node.isOccupied = true;
+      node.isOccupied = this.shipYard.patrolBoat;
       node.neighbors.forEach((nodeLoc) => {
         const [nnx, nny] = nodeLoc;
         this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = true;
       });
     });
 
+    this.#PATROL_BOAT_INFO.isOnBoard = true;
     return true;
   }
 
   receiveAttack(x, y) {
     if (!this.#isValidCoordinate(x, y)) return false;
 
-    if (!this.#hasShipOnBoard()) return false;
+    if (!this.#allShipOnBoard()) return false;
 
     if (this.isAllShipSunk) return false;
 
@@ -339,10 +345,20 @@ export default class GameBoard {
 
     node.isHit = true;
     if (node.isOccupied) {
-      this.ships[y * this.BOARD_SIZE + x].hit();
+      node.isOccupied.hit();
     }
 
     return true;
+  }
+
+  #allShipOnBoard() {
+    return (
+      this.#CARRIER_INFO.isOnBoard &&
+      this.#BATTLESHIP_INFO.isOnBoard &&
+      this.#DESTROYER_INFO.isOnBoard &&
+      this.#SUBMARINE_INFO.isOnBoard &&
+      this.#PATROL_BOAT_INFO.isOnBoard
+    );
   }
 
   #hasShipOnBoard() {
@@ -350,8 +366,11 @@ export default class GameBoard {
   }
 
   get isAllShipSunk() {
-    const notSunk = this.ships.filter((ship) => !ship.isSunk());
-    return notSunk.length === 0;
+    const ships = Object.values(this.shipYard);
+
+    const sunkShips = ships.filter((ship) => ship.isSunk());
+
+    return sunkShips.length === ships.length;
   }
 
   get missedShots() {
@@ -360,3 +379,8 @@ export default class GameBoard {
     return missedShots;
   }
 }
+
+module.exports = GameBoard;
+
+const gameBoard = new GameBoard();
+gameBoard.receiveAttack(0, 9);
