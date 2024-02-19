@@ -1,5 +1,5 @@
-import Destroyer from '../src/destroyer';
-import Ship from '../src/ship';
+const Destroyer = require('../src/destroyer');
+const Ship = require('../src/ship');
 
 it('can create a destroyer class', () => {
   expect(new Destroyer()).not.toBeUndefined();

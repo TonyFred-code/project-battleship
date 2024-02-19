@@ -1,5 +1,5 @@
-import Carrier from '../src/carrier';
-import Ship from '../src/ship';
+const Carrier = require('../src/carrier');
+const Ship = require('../src/ship');
 
 it('can create a carrier class', () => {
   expect(new Carrier()).not.toBeUndefined();
