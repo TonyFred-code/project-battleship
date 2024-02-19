@@ -1,4 +1,4 @@
-import Ship from './ship';
+const Ship = require('./ship');
 
 const hello = () => console.log('hello');
 

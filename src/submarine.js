@@ -1,7 +1,9 @@
-import Ship from './ship';
+const Ship = require('./ship');
 
-export default class SubMarine extends Ship {
+class SubMarine extends Ship {
   constructor() {
     super(3);
   }
 }
+
+module.exports = SubMarine;

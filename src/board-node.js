@@ -1,4 +1,4 @@
-export default class Node {
+class Node {
   constructor(x, y) {
     this.address = [x, y];
     this.neighbors = [];
@@ -7,3 +7,5 @@ export default class Node {
     this.isNeighboringOccupied = false;
   }
 }
+
+module.exports = Node;
