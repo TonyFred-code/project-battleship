@@ -1,27 +1,27 @@
-import GameBoard from '../src/game-board';
-import Ship from '../src/ship';
-import Carrier from '../src/carrier';
-import BattleShip from '../src/battleship';
-import Destroyer from '../src/destroyer';
-import SubMarine from '../src/submarine';
-import PatrolBoat from '../src/patrol-boat';
+const GameBoard = require('../src/game-board');
+const Ship = require('../src/ship');
+const Carrier = require('../src/carrier');
+const BattleShip = require('../src/battleship');
+const Destroyer = require('../src/destroyer');
+const SubMarine = require('../src/submarine');
+const PatrolBoat = require('../src/patrol-boat');
 
-it('can create board', () => {
+test('can create board', () => {
   expect(GameBoard).not.toBeUndefined();
 });
 
-it('board should have a shipyard', () => {
+test('board should have a shipyard', () => {
   const board = new GameBoard();
   expect(board.shipYard).not.toBeUndefined();
 });
 
-it('board should have only 5 ship docks', () => {
+test('board should have only 5 ship docks', () => {
   const board = new GameBoard();
   const shipDock = Object.keys(board.shipYard);
   expect(shipDock).toHaveLength(5);
 });
 
-it('board should contain only 5 Ships', () => {
+test('board should contain only 5 Ships', () => {
   const board = new GameBoard();
   const { shipYard } = board;
   const ships = Object.values(shipYard);
@@ -32,7 +32,7 @@ it('board should contain only 5 Ships', () => {
   expect(ships.every(checkShip)).toBe(true);
 });
 
-it('board should have a carrier in shipYard', () => {
+test('board should have a carrier in shipYard', () => {
   const board = new GameBoard();
   const { shipYard } = board;
   const ships = Object.values(shipYard);
@@ -44,7 +44,7 @@ it('board should have a carrier in shipYard', () => {
   expect(ships.some(checkShip)).toBe(true);
 });
 
-it('board should have a battleship in shipYard', () => {
+test('board should have a battleship in shipYard', () => {
   const board = new GameBoard();
   const { shipYard } = board;
   const ships = Object.values(shipYard);
@@ -56,7 +56,7 @@ it('board should have a battleship in shipYard', () => {
   expect(ships.some(checkShip)).toBe(true);
 });
 
-it('board should have a destroyer in shipYard', () => {
+test('board should have a destroyer in shipYard', () => {
   const board = new GameBoard();
   const { shipYard } = board;
   const ships = Object.values(shipYard);
@@ -68,7 +68,7 @@ it('board should have a destroyer in shipYard', () => {
   expect(ships.some(checkShip)).toBe(true);
 });
 
-it('board should have a submarine in shipYard', () => {
+test('board should have a submarine in shipYard', () => {
   const board = new GameBoard();
   const { shipYard } = board;
   const ships = Object.values(shipYard);
@@ -80,7 +80,7 @@ it('board should have a submarine in shipYard', () => {
   expect(ships.some(checkShip)).toBe(true);
 });
 
-it('board should have a patrolBoat in shipYard', () => {
+test('board should have a patrolBoat in shipYard', () => {
   const board = new GameBoard();
   const { shipYard } = board;
   const ships = Object.values(shipYard);
@@ -92,155 +92,246 @@ it('board should have a patrolBoat in shipYard', () => {
   expect(ships.some(checkShip)).toBe(true);
 });
 
-it('board should have a placeCarrier method', () => {
+test('board should have a placeCarrier method', () => {
   const board = new GameBoard();
   expect(board.placeCarrier).not.toBeUndefined();
 });
 
-it('board can position carrier horizontally', () => {
+test('board can position carrier horizontally', () => {
   const board = new GameBoard();
   expect(board.placeCarrier(0, 0)).toBe(true);
 });
 
-it('board can position carrier vertically', () => {
+test('board can position carrier vertically', () => {
   const board = new GameBoard();
   expect(board.placeCarrier(0, 0, 'vertical')).toBe(true);
 });
 
-it('ignores invalid carrier orientation', () => {
+test('ignores invalid carrier orientation', () => {
   const board = new GameBoard();
   expect(board.placeCarrier(0, 0, 'diagonal')).toBe(false);
 });
 
-it('board should have a placeBattleShip method', () => {
+test('board should have a placeBattleShip method', () => {
   const board = new GameBoard();
   expect(board.placeBattleShip).not.toBeUndefined();
 });
 
-it('board can position battleship horizontally', () => {
+test('board can position battleship horizontally', () => {
   const board = new GameBoard();
   expect(board.placeBattleShip(0, 0)).toBe(true);
 });
 
-it('board can position battleship vertically', () => {
+test('board can position battleship vertically', () => {
   const board = new GameBoard();
   expect(board.placeBattleShip(0, 0, 'vertical')).toBe(true);
 });
 
-it('ignores invalid battleship orientation', () => {
+test('ignores invalid battleship orientation', () => {
   const board = new GameBoard();
   expect(board.placeBattleShip(0, 0, 'diagonal')).toBe(false);
 });
 
-it('board should have a placeDestroyer method', () => {
+test('board should have a placeDestroyer method', () => {
   const board = new GameBoard();
   expect(board.placeDestroyer).not.toBeUndefined();
 });
 
-it('board can position destroyer horizontally', () => {
+test('board can position destroyer horizontally', () => {
   const board = new GameBoard();
   expect(board.placeDestroyer(0, 0)).toBe(true);
 });
 
-it('board can position destroyer vertically', () => {
+test('board can position destroyer vertically', () => {
   const board = new GameBoard();
   expect(board.placeDestroyer(0, 0, 'vertical')).toBe(true);
 });
 
-it('ignores invalid destroyer orientation', () => {
+test('ignores invalid destroyer orientation', () => {
   const board = new GameBoard();
   expect(board.placeDestroyer(0, 0, 'diagonal')).toBe(false);
 });
 
-it('board should have a placePatrolBoat method', () => {
+test('board should have a placePatrolBoat method', () => {
   const board = new GameBoard();
   expect(board.placePatrolBoat).not.toBeUndefined();
 });
 
-it('board can position patrol boat horizontally', () => {
+test('board can position patrol boat horizontally', () => {
   const board = new GameBoard();
   expect(board.placeDestroyer(0, 0)).toBe(true);
 });
 
-it('board can position patrol boat vertically', () => {
+test('board can position patrol boat vertically', () => {
   const board = new GameBoard();
   expect(board.placeDestroyer(0, 0, 'vertical')).toBe(true);
 });
 
-it('ignores invalid patrol boat orientation', () => {
+test('ignores invalid patrol boat orientation', () => {
   const board = new GameBoard();
   expect(board.placeDestroyer(0, 0, 'diagonal')).toBe(false);
 });
 
-it('board should have a placeSubMarine method', () => {
+test('board should have a placeSubMarine method', () => {
   const board = new GameBoard();
   expect(board.placeSubMarine).not.toBeUndefined();
 });
 
-it('board can position submarine horizontally', () => {
+test('board can position submarine horizontally', () => {
   const board = new GameBoard();
   expect(board.placeSubMarine(0, 0)).toBe(true);
 });
 
-it('board can position submarine vertically', () => {
+test('board can position submarine vertically', () => {
   const board = new GameBoard();
   expect(board.placeSubMarine(0, 0, 'vertical')).toBe(true);
 });
 
-it('ignores invalid submarine orientation', () => {
+test('ignores invalid submarine orientation', () => {
   const board = new GameBoard();
   expect(board.placeSubMarine(0, 0, 'diagonal')).toBe(false);
 });
 
-// it('game should have a placeShip() method', () => {
+// test('game should have a placeShip() method', () => {
 //   expect(new GameBoard().placeShip).not.toBeUndefined();
 // });
 
-// it('game should place ship at coordinates', () => {
+// test('game should place ship at coordinates', () => {
 //   const gameBoard = new GameBoard();
 //   expect(gameBoard.placeShip(2, 1, 3)).toBe(true);
 // });
 
-it('game should refuse overlapping ships', () => {
+test('game should refuse overlapping ships', () => {
   const gameBoard = new GameBoard();
   expect(gameBoard.placeCarrier(0, 0)).toBe(true);
   expect(gameBoard.placeBattleShip(0, 0)).toBe(false);
 });
 
-it.todo('game should refuse placing ships on partly occupied position');
+test('game should refuse placing ships on partly occupied position', () => {
+  const gameBoard = new GameBoard();
+  expect(gameBoard.placeCarrier(0, 0, 'vertical')).toBe(true);
+  expect(gameBoard.placeCarrier(0, 3)).toBe(false);
+});
 
-it.todo('game should refuse placing ships on grids next to a ship');
+test('game should refuse placing ships on grids next to a ship', () => {
+  const gameBoard = new GameBoard();
+  expect(gameBoard.placeCarrier(0, 0, 'vertical')).toBe(true);
+  expect(gameBoard.placeBattleShip(1, 0)).toBe(false);
+});
 
-it.todo('game should refuse placing ships off board');
+test('game should refuse placing ships off board', () => {
+  const gameBoard = new GameBoard();
+  expect(gameBoard.placeCarrier(2, 12)).toBe(false);
+  expect(gameBoard.placeBattleShip(4, 12)).toBe(false);
+  expect(gameBoard.placeDestroyer(3, 12)).toBe(false);
+  expect(gameBoard.placeSubMarine(7, 12)).toBe(false);
+  expect(gameBoard.placePatrolBoat(0, 12)).toBe(false);
+});
 
-it.todo('game should place ship vertically');
+test('should refuse to place ship on grids siding a ship on the board', () => {
+  const gameBoard = new GameBoard();
+  expect(gameBoard.placeCarrier(5, 0)).toBe(true);
+  expect(gameBoard.placeSubMarine(5, 1)).toBe(false);
+});
 
-it.todo('game should place ship horizontally');
+test('gameBoard should have a receiveAttack() method', () => {
+  const gameBoard = new GameBoard();
+  expect(gameBoard.receiveAttack).not.toBeUndefined();
+});
 
-it.todo('should use "horizontal" or "vertical" orientation');
+test('receiveAttack should refuse hit if no ship is on the board', () => {
+  const gameBoard = new GameBoard();
+  expect(gameBoard.receiveAttack(0, 0)).toBe(false);
+});
 
-it.todo('game should refuse to place ship exactly side by side');
+test('receiveAttack should refuse hit if all ships are not on the board', () => {
+  const gameBoard = new GameBoard();
+  expect(gameBoard.receiveAttack(0, 0)).toBe(false);
+  expect(gameBoard.placeCarrier(5, 0)).toBe(true);
+  expect(gameBoard.receiveAttack(5, 0)).toBe(false);
+  expect(gameBoard.placeBattleShip(0, 4, 'vertical')).toBe(true);
+  expect(gameBoard.receiveAttack(0, 4)).toBe(false);
+  expect(gameBoard.placeDestroyer(3, 3)).toBe(true);
+  expect(gameBoard.receiveAttack(3, 3)).toBe(false);
+  expect(gameBoard.placeSubMarine(6, 6, 'vertical')).toBe(true);
+  expect(gameBoard.receiveAttack(6, 6)).toBe(false);
+  expect(gameBoard.placePatrolBoat(1, 9)).toBe(true);
+  expect(gameBoard.receiveAttack(1, 9)).toBe(true);
+});
 
-it.todo('should refuse to place ship on grids siding a ship on the board');
+it('gameBoard receiveAttack should not hit off the board', () => {
+  const gameBoard = new GameBoard();
+  expect(gameBoard.placeCarrier(5, 0)).toBe(true);
+  expect(gameBoard.placeBattleShip(0, 4, 'vertical')).toBe(true);
+  expect(gameBoard.placeDestroyer(3, 3)).toBe(true);
+  expect(gameBoard.placeSubMarine(6, 6, 'vertical')).toBe(true);
+  expect(gameBoard.placePatrolBoat(1, 9)).toBe(true);
+  expect(gameBoard.receiveAttack(10, 11)).toBe(false);
+});
 
-it.todo('gameBoard should have a receiveAttack() method');
+it('gameBoard receiveAttack should hit a ship on the board', () => {
+  const gameBoard = new GameBoard();
+  expect(gameBoard.placeCarrier(5, 0)).toBe(true);
+  expect(gameBoard.placeBattleShip(0, 4, 'vertical')).toBe(true);
+  expect(gameBoard.placeDestroyer(3, 3)).toBe(true);
+  expect(gameBoard.placeSubMarine(6, 6, 'vertical')).toBe(true);
+  expect(gameBoard.placePatrolBoat(1, 9)).toBe(true);
+  expect(gameBoard.receiveAttack(1, 9)).toBe(true);
+});
 
-it.todo('receiveAttack should refuse hit if no ship is on the board');
+it('gameBoard receiveAttack should hit a unoccupied node on the board', () => {
+  const gameBoard = new GameBoard();
+  expect(gameBoard.placeCarrier(5, 0)).toBe(true);
+  expect(gameBoard.placeBattleShip(0, 4, 'vertical')).toBe(true);
+  expect(gameBoard.placeDestroyer(3, 3)).toBe(true);
+  expect(gameBoard.placeSubMarine(6, 6, 'vertical')).toBe(true);
+  expect(gameBoard.placePatrolBoat(1, 9)).toBe(true);
+  expect(gameBoard.receiveAttack(9, 2)).toBe(true);
+});
 
-it.todo('receiveAttack should refuse hit if all ships are not on the board');
+it('gameBoard receiveAttack should not hit same spot twice', () => {
+  const gameBoard = new GameBoard();
+  expect(gameBoard.placeCarrier(5, 0)).toBe(true);
+  expect(gameBoard.placeBattleShip(0, 4, 'vertical')).toBe(true);
+  expect(gameBoard.placeDestroyer(3, 3)).toBe(true);
+  expect(gameBoard.placeSubMarine(6, 6, 'vertical')).toBe(true);
+  expect(gameBoard.placePatrolBoat(1, 9)).toBe(true);
+  expect(gameBoard.receiveAttack(1, 9)).toBe(true);
+  expect(gameBoard.receiveAttack(1, 9)).toBe(false);
+});
 
-it.todo('gameBoard receiveAttack should not hit off the board');
+it('gameBoard receiveAttack should deny hit when all ship is sunk', () => {
+  const gameBoard = new GameBoard();
+  expect(gameBoard.placeCarrier(5, 0)).toBe(true);
+  expect(gameBoard.placeBattleShip(0, 4, 'vertical')).toBe(true);
+  expect(gameBoard.placeDestroyer(3, 3)).toBe(true);
+  expect(gameBoard.placeSubMarine(6, 6, 'vertical')).toBe(true);
+  expect(gameBoard.placePatrolBoat(1, 9)).toBe(true);
 
-it.todo('gameBoard receiveAttack should hit a ship on the board');
+  expect(gameBoard.receiveAttack(5, 0)).toBe(true);
+  expect(gameBoard.receiveAttack(6, 0)).toBe(true);
+  expect(gameBoard.receiveAttack(7, 0)).toBe(true);
+  expect(gameBoard.receiveAttack(8, 0)).toBe(true);
+  expect(gameBoard.receiveAttack(9, 0)).toBe(true);
 
-it.todo('gameBoard receiveAttack should hit a unoccupied node on the board');
+  expect(gameBoard.receiveAttack(0, 4)).toBe(true);
+  expect(gameBoard.receiveAttack(0, 5)).toBe(true);
+  expect(gameBoard.receiveAttack(0, 6)).toBe(true);
+  expect(gameBoard.receiveAttack(0, 7)).toBe(true);
 
-it.todo('gameBoard receiveAttack should not hit same spot twice');
+  expect(gameBoard.receiveAttack(3, 3)).toBe(true);
+  expect(gameBoard.receiveAttack(4, 3)).toBe(true);
+  expect(gameBoard.receiveAttack(5, 3)).toBe(true);
 
-it.todo('gameBoard receiveAttack should deny hit when all ship is sunk');
+  expect(gameBoard.receiveAttack(6, 6)).toBe(true);
+  expect(gameBoard.receiveAttack(6, 7)).toBe(true);
+  expect(gameBoard.receiveAttack(6, 8)).toBe(true);
 
-it.todo('gameBoard should report when all ships are sunk');
+  expect(gameBoard.receiveAttack(1, 9)).toBe(true);
+  expect(gameBoard.receiveAttack(2, 9)).toBe(true);
 
+  expect(gameBoard.receiveAttack(0, 0)).toBe(false);
+});
 /*
 
 1. Gameboards should be able to place ships at specific coordinates by calling the ship factory
