@@ -1,4 +1,4 @@
-class Ship {
+export default class Ship {
   #isSunk = false;
 
   static isValidLength(length) {
@@ -26,5 +26,3 @@ class Ship {
     return this.hitsCount === this.length;
   }
 }
-
-module.exports = Ship;

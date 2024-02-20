@@ -1,9 +1,7 @@
-const Ship = require('./ship');
+import Ship from './ship.js';
 
-class BattleShip extends Ship {
+export default class BattleShip extends Ship {
   constructor() {
     super(4);
   }
 }
-
-module.exports = BattleShip;

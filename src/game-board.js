@@ -1,12 +1,12 @@
-const Ship = require('./ship');
-const Carrier = require('./carrier');
-const BattleShip = require('./battleship');
-const Destroyer = require('./destroyer');
-const SubMarine = require('./submarine');
-const PatrolBoat = require('./patrol-boat');
-const Node = require('./board-node');
+import Ship from './ship.js';
+import Carrier from './carrier';
+import BattleShip from './battleship';
+import Destroyer from './destroyer';
+import SubMarine from './submarine';
+import PatrolBoat from './patrol-boat';
+import Node from './board-node';
 
-class GameBoard {
+export default class GameBoard {
   BOARD_SIZE = 10;
 
   #HORIZONTAL = 'horizontal';
@@ -399,8 +399,3 @@ class GameBoard {
     return missedShots;
   }
 }
-
-module.exports = GameBoard;
-
-const gameBoard = new GameBoard();
-gameBoard.receiveAttack(0, 9);
