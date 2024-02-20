@@ -1,10 +1,10 @@
-const GameBoard = require('../src/game-board');
-const Ship = require('../src/ship');
-const Carrier = require('../src/carrier');
-const BattleShip = require('../src/battleship');
-const Destroyer = require('../src/destroyer');
-const SubMarine = require('../src/submarine');
-const PatrolBoat = require('../src/patrol-boat');
+import GameBoard from '../src/game-board';
+import Ship from '../src/ship.js';
+import Carrier from '../src/carrier.js';
+import BattleShip from '../src/battleship.js';
+import Destroyer from '../src/destroyer.js';
+import SubMarine from '../src/submarine.js';
+import PatrolBoat from '../src/patrol-boat.js';
 
 test('can create board', () => {
   expect(GameBoard).not.toBeUndefined();
