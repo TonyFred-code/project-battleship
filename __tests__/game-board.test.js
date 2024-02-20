@@ -192,15 +192,6 @@ test('ignores invalid submarine orientation', () => {
   expect(board.placeSubMarine(0, 0, 'diagonal')).toBe(false);
 });
 
-// test('game should have a placeShip() method', () => {
-//   expect(new GameBoard().placeShip).not.toBeUndefined();
-// });
-
-// test('game should place ship at coordinates', () => {
-//   const gameBoard = new GameBoard();
-//   expect(gameBoard.placeShip(2, 1, 3)).toBe(true);
-// });
-
 test('game should refuse overlapping ships', () => {
   const gameBoard = new GameBoard();
   expect(gameBoard.placeCarrier(0, 0)).toBe(true);
@@ -259,7 +250,7 @@ test('receiveAttack should refuse hit if all ships are not on the board', () => 
   expect(gameBoard.receiveAttack(1, 9)).toBe(true);
 });
 
-it('gameBoard receiveAttack should not hit off the board', () => {
+test('gameBoard receiveAttack should not hit off the board', () => {
   const gameBoard = new GameBoard();
   expect(gameBoard.placeCarrier(5, 0)).toBe(true);
   expect(gameBoard.placeBattleShip(0, 4, 'vertical')).toBe(true);
@@ -269,7 +260,7 @@ it('gameBoard receiveAttack should not hit off the board', () => {
   expect(gameBoard.receiveAttack(10, 11)).toBe(false);
 });
 
-it('gameBoard receiveAttack should hit a ship on the board', () => {
+test('gameBoard receiveAttack should hit a ship on the board', () => {
   const gameBoard = new GameBoard();
   expect(gameBoard.placeCarrier(5, 0)).toBe(true);
   expect(gameBoard.placeBattleShip(0, 4, 'vertical')).toBe(true);
@@ -279,7 +270,7 @@ it('gameBoard receiveAttack should hit a ship on the board', () => {
   expect(gameBoard.receiveAttack(1, 9)).toBe(true);
 });
 
-it('gameBoard receiveAttack should hit a unoccupied node on the board', () => {
+test('gameBoard receiveAttack should hit a unoccupied node on the board', () => {
   const gameBoard = new GameBoard();
   expect(gameBoard.placeCarrier(5, 0)).toBe(true);
   expect(gameBoard.placeBattleShip(0, 4, 'vertical')).toBe(true);
@@ -289,7 +280,7 @@ it('gameBoard receiveAttack should hit a unoccupied node on the board', () => {
   expect(gameBoard.receiveAttack(9, 2)).toBe(true);
 });
 
-it('gameBoard receiveAttack should not hit same spot twice', () => {
+test('gameBoard receiveAttack should not hit same spot twice', () => {
   const gameBoard = new GameBoard();
   expect(gameBoard.placeCarrier(5, 0)).toBe(true);
   expect(gameBoard.placeBattleShip(0, 4, 'vertical')).toBe(true);
@@ -320,7 +311,7 @@ test('can report when carrier is sunk', () => {
   expect(gameBoard.carrierSunk).toBe(true);
 });
 
-it('can report when battleship is sunk', () => {
+test('can report when battleship is sunk', () => {
   const gameBoard = new GameBoard();
   expect(gameBoard.placeCarrier(5, 0)).toBe(true);
   expect(gameBoard.placeBattleShip(0, 4, 'vertical')).toBe(true);
@@ -340,7 +331,7 @@ it('can report when battleship is sunk', () => {
   expect(gameBoard.battleShipSunk).toBe(true);
 });
 
-it('can report when destroyer is sunk', () => {
+test('can report when destroyer is sunk', () => {
   const gameBoard = new GameBoard();
   expect(gameBoard.placeCarrier(5, 0)).toBe(true);
   expect(gameBoard.placeBattleShip(0, 4, 'vertical')).toBe(true);
@@ -357,7 +348,7 @@ it('can report when destroyer is sunk', () => {
   expect(gameBoard.destroyerSunk).toBe(true);
 });
 
-it('can report when submarine is sunk', () => {
+test('can report when submarine is sunk', () => {
   const gameBoard = new GameBoard();
   expect(gameBoard.placeCarrier(5, 0)).toBe(true);
   expect(gameBoard.placeBattleShip(0, 4, 'vertical')).toBe(true);
@@ -374,7 +365,7 @@ it('can report when submarine is sunk', () => {
   expect(gameBoard.submarineSunk).toBe(true);
 });
 
-it('can report when patrol boat is sunk', () => {
+test('can report when patrol boat is sunk', () => {
   const gameBoard = new GameBoard();
   expect(gameBoard.placeCarrier(5, 0)).toBe(true);
   expect(gameBoard.placeBattleShip(0, 4, 'vertical')).toBe(true);
@@ -388,7 +379,7 @@ it('can report when patrol boat is sunk', () => {
   expect(gameBoard.patrolBoatSunk).toBe(true);
 });
 
-it('deny hit when all ship is sunk - knows when all ship sunk', () => {
+test('deny hit when all ship is sunk - knows when all ship sunk', () => {
   const gameBoard = new GameBoard();
   expect(gameBoard.placeCarrier(5, 0)).toBe(true);
   expect(gameBoard.placeBattleShip(0, 4, 'vertical')).toBe(true);
@@ -420,16 +411,3 @@ it('deny hit when all ship is sunk - knows when all ship sunk', () => {
 
   expect(gameBoard.receiveAttack(0, 0)).toBe(false);
 });
-/*
-
-1. Gameboards should be able to place ships at specific coordinates by calling the ship factory
-   function.
-
-2. Gameboards should have a receiveAttack function that takes a pair of coordinates, determines
-   whether or not the attack hit a ship and then sends the ‘hit’ function to the correct ship, or
-   records the coordinates of the missed shot.
-
-3. Gameboards should keep track of missed attacks so they can display them properly.
-
-4. Gameboards should be able to report whether or not all of their ships have been sunk.
-*/

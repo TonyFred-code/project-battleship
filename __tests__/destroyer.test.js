@@ -1,21 +1,21 @@
 import Destroyer from '../src/destroyer.js';
 import Ship from '../src/ship.js';
 
-it('can create a destroyer class', () => {
+test('can create a destroyer class', () => {
   expect(new Destroyer()).not.toBeUndefined();
 });
 
-it('is a ship extension', () => {
+test('is a ship extension', () => {
   const destroyer = new Destroyer();
   expect(destroyer instanceof Ship).toBe(true);
 });
 
-it('has a fixed length of 3', () => {
+test('has a fixed length of 3', () => {
   const destroyer = new Destroyer(6);
   expect(destroyer).toHaveLength(3);
 });
 
-it('is sunk in 3 hits', () => {
+test('is sunk in 3 hits', () => {
   const destroyer = new Destroyer();
   destroyer.hit();
   destroyer.hit();
@@ -23,7 +23,7 @@ it('is sunk in 3 hits', () => {
   expect(destroyer.isSunk()).toBe(true);
 });
 
-it('denys hits after being sunk', () => {
+test('denys hits after being sunk', () => {
   const destroyer = new Destroyer();
   expect(destroyer.hit()).toBe(true);
   expect(destroyer.hit()).toBe(true);
