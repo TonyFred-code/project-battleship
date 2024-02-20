@@ -1,5 +1,5 @@
-const SubMarine = require('../src/submarine');
-const Ship = require('../src/ship');
+import SubMarine from '../src/submarine.js';
+import Ship from '../src/ship.js';
 
 it('can create a submarine class', () => {
   expect(new SubMarine()).not.toBeUndefined();

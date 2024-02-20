@@ -1,4 +1,4 @@
-const Ship = require('../src/ship');
+import Ship from '../src/ship.js';
 
 it('create new ship', () => {
   expect(new Ship(2)).not.toBeUndefined();

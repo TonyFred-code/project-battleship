@@ -1,5 +1,5 @@
-const PatrolBoat = require('../src/patrol-boat');
-const Ship = require('../src/ship');
+import PatrolBoat from '../src/patrol-boat.js';
+import Ship from '../src/ship.js';
 
 it('can create a patrolBoat class', () => {
   expect(new PatrolBoat()).not.toBeUndefined();

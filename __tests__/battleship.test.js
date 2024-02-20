@@ -1,5 +1,5 @@
-const BattleShip = require('../src/battleship');
-const Ship = require('../src/ship');
+import BattleShip from '../src/battleship.js';
+import Ship from '../src/ship.js';
 
 it('can create a battleship class', () => {
   expect(new BattleShip()).not.toBeUndefined();
