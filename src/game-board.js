@@ -373,6 +373,26 @@ class GameBoard {
     return sunkShips.length === ships.length;
   }
 
+  get carrierSunk() {
+    return this.shipYard.carrier.isSunk();
+  }
+
+  get battleShipSunk() {
+    return this.shipYard.battleship.isSunk();
+  }
+
+  get destroyerSunk() {
+    return this.shipYard.destroyer.isSunk();
+  }
+
+  get submarineSunk() {
+    return this.shipYard.submarine.isSunk();
+  }
+
+  get patrolBoatSunk() {
+    return this.shipYard.patrolBoat.isSunk();
+  }
+
   get missedShots() {
     const shots = this.board.filter((node) => node.isHit);
     const missedShots = shots.filter((shot) => !shot.isOccupied);
