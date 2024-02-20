@@ -116,7 +116,6 @@ export default class GameBoard {
     return true;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   #getToBeOccupied(size, x, y, orientation) {
     if (!this.#isValidOrientation(orientation)) {
       return [];
@@ -142,43 +141,8 @@ export default class GameBoard {
     return toBeOccupied;
   }
 
-  placeShip(size, x, y, orientation = 'horizontal') {
-    if (!this.#isValidCoordinate(x, y)) {
-      return false;
-    }
-
-    const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
-    // eslint-disable-next-line no-restricted-syntax
-    for (const nodeLocation of toBeOccupied) {
-      const [nx, ny] = nodeLocation;
-      if (!this.#isValidCoordinate(nx, ny) || !this.#canPlaceShip(nx, ny)) {
-        return false;
-      }
-    }
-
-    const ship = new Ship(size);
-    // eslint-disable-next-line no-restricted-syntax
-    for (const nodeLocation of toBeOccupied) {
-      const [nx, ny] = nodeLocation;
-      this.ships[ny * this.BOARD_SIZE + nx] = ship;
-      const node = this.board[ny * this.BOARD_SIZE + nx];
-      node.isOccupied = true;
-      node.neighbors.forEach((nodeLoc) => {
-        const [nnx, nny] = nodeLoc;
-        this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = true;
-      });
-    }
-
-    return true;
-  }
-
   #isValidOrientation(orientation) {
     return orientation === this.#HORIZONTAL || orientation === this.#VERTICAL;
-  }
-
-  #checkNodeLocation(nodeLoc) {
-    const [nx, ny] = nodeLoc;
-    return this.#isValidCoordinate(nx, ny) || this.#canPlaceShip(nx, ny);
   }
 
   #checkNodeLocations(nodeLocations) {
@@ -359,10 +323,6 @@ export default class GameBoard {
       this.#SUBMARINE_INFO.isOnBoard &&
       this.#PATROL_BOAT_INFO.isOnBoard
     );
-  }
-
-  #hasShipOnBoard() {
-    return this.ships.length !== 0;
   }
 
   get isAllShipSunk() {
