@@ -300,7 +300,95 @@ it('gameBoard receiveAttack should not hit same spot twice', () => {
   expect(gameBoard.receiveAttack(1, 9)).toBe(false);
 });
 
-it('gameBoard receiveAttack should deny hit when all ship is sunk', () => {
+test('can report when carrier is sunk', () => {
+  const gameBoard = new GameBoard();
+  expect(gameBoard.placeCarrier(5, 0)).toBe(true);
+  expect(gameBoard.placeBattleShip(0, 4, 'vertical')).toBe(true);
+  expect(gameBoard.placeDestroyer(3, 3)).toBe(true);
+  expect(gameBoard.placeSubMarine(6, 6, 'vertical')).toBe(true);
+  expect(gameBoard.placePatrolBoat(1, 9)).toBe(true);
+
+  expect(gameBoard.receiveAttack(5, 0)).toBe(true);
+  expect(gameBoard.carrierSunk).toBe(false);
+  expect(gameBoard.receiveAttack(6, 0)).toBe(true);
+  expect(gameBoard.carrierSunk).toBe(false);
+  expect(gameBoard.receiveAttack(7, 0)).toBe(true);
+  expect(gameBoard.carrierSunk).toBe(false);
+  expect(gameBoard.receiveAttack(8, 0)).toBe(true);
+  expect(gameBoard.carrierSunk).toBe(false);
+  expect(gameBoard.receiveAttack(9, 0)).toBe(true);
+  expect(gameBoard.carrierSunk).toBe(true);
+});
+
+it('can report when battleship is sunk', () => {
+  const gameBoard = new GameBoard();
+  expect(gameBoard.placeCarrier(5, 0)).toBe(true);
+  expect(gameBoard.placeBattleShip(0, 4, 'vertical')).toBe(true);
+  expect(gameBoard.placeDestroyer(3, 3)).toBe(true);
+  expect(gameBoard.placeSubMarine(6, 6, 'vertical')).toBe(true);
+  expect(gameBoard.placePatrolBoat(1, 9)).toBe(true);
+
+  expect(gameBoard.receiveAttack(0, 4)).toBe(true);
+  expect(gameBoard.battleShipSunk).toBe(false);
+  expect(gameBoard.receiveAttack(0, 5)).toBe(true);
+  expect(gameBoard.battleShipSunk).toBe(false);
+
+  expect(gameBoard.receiveAttack(0, 6)).toBe(true);
+  expect(gameBoard.battleShipSunk).toBe(false);
+
+  expect(gameBoard.receiveAttack(0, 7)).toBe(true);
+  expect(gameBoard.battleShipSunk).toBe(true);
+});
+
+it('can report when destroyer is sunk', () => {
+  const gameBoard = new GameBoard();
+  expect(gameBoard.placeCarrier(5, 0)).toBe(true);
+  expect(gameBoard.placeBattleShip(0, 4, 'vertical')).toBe(true);
+  expect(gameBoard.placeDestroyer(3, 3)).toBe(true);
+  expect(gameBoard.placeSubMarine(6, 6, 'vertical')).toBe(true);
+  expect(gameBoard.placePatrolBoat(1, 9)).toBe(true);
+
+  expect(gameBoard.receiveAttack(3, 3)).toBe(true);
+  expect(gameBoard.destroyerSunk).toBe(false);
+  expect(gameBoard.receiveAttack(4, 3)).toBe(true);
+  expect(gameBoard.destroyerSunk).toBe(false);
+
+  expect(gameBoard.receiveAttack(5, 3)).toBe(true);
+  expect(gameBoard.destroyerSunk).toBe(true);
+});
+
+it('can report when submarine is sunk', () => {
+  const gameBoard = new GameBoard();
+  expect(gameBoard.placeCarrier(5, 0)).toBe(true);
+  expect(gameBoard.placeBattleShip(0, 4, 'vertical')).toBe(true);
+  expect(gameBoard.placeDestroyer(3, 3)).toBe(true);
+  expect(gameBoard.placeSubMarine(6, 6, 'vertical')).toBe(true);
+  expect(gameBoard.placePatrolBoat(1, 9)).toBe(true);
+
+  expect(gameBoard.receiveAttack(6, 6)).toBe(true);
+  expect(gameBoard.submarineSunk).toBe(false);
+  expect(gameBoard.receiveAttack(6, 7)).toBe(true);
+  expect(gameBoard.submarineSunk).toBe(false);
+
+  expect(gameBoard.receiveAttack(6, 8)).toBe(true);
+  expect(gameBoard.submarineSunk).toBe(true);
+});
+
+it('can report when patrol boat is sunk', () => {
+  const gameBoard = new GameBoard();
+  expect(gameBoard.placeCarrier(5, 0)).toBe(true);
+  expect(gameBoard.placeBattleShip(0, 4, 'vertical')).toBe(true);
+  expect(gameBoard.placeDestroyer(3, 3)).toBe(true);
+  expect(gameBoard.placeSubMarine(6, 6, 'vertical')).toBe(true);
+  expect(gameBoard.placePatrolBoat(1, 9)).toBe(true);
+
+  expect(gameBoard.receiveAttack(1, 9)).toBe(true);
+  expect(gameBoard.patrolBoatSunk).toBe(false);
+  expect(gameBoard.receiveAttack(2, 9)).toBe(true);
+  expect(gameBoard.patrolBoatSunk).toBe(true);
+});
+
+it('deny hit when all ship is sunk - knows when all ship sunk', () => {
   const gameBoard = new GameBoard();
   expect(gameBoard.placeCarrier(5, 0)).toBe(true);
   expect(gameBoard.placeBattleShip(0, 4, 'vertical')).toBe(true);
