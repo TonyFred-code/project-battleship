@@ -1,10 +1,10 @@
 import Ship from './ship.js';
-import Carrier from './carrier';
-import BattleShip from './battleship';
-import Destroyer from './destroyer';
-import SubMarine from './submarine';
-import PatrolBoat from './patrol-boat';
-import Node from './board-node';
+import Carrier from './carrier.js';
+import BattleShip from './battleship.js';
+import Destroyer from './destroyer.js';
+import SubMarine from './submarine.js';
+import PatrolBoat from './patrol-boat.js';
+import Node from './board-node.js';
 
 export default class GameBoard {
   BOARD_SIZE = 10;
