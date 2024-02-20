@@ -1,4 +1,4 @@
-import Ship from './ship';
+import Ship from './ship.js';
 
 export default class PatrolBoat extends Ship {
   constructor() {

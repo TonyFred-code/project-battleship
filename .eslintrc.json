@@ -18,6 +18,10 @@
         "singleQuote": true
       }
     ],
+    "eslint-plugin-import/extensions": {
+      "js": "always",
+      "mjs": "always"
+    },
     "jest/no-disabled-tests": "warn",
     "jest/no-focused-tests": "error",
     "jest/no-identical-title": "error",
