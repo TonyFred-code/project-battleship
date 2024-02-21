@@ -5,10 +5,45 @@ import BattleShip from '../src/battleship.js';
 import Destroyer from '../src/destroyer.js';
 import SubMarine from '../src/submarine.js';
 import PatrolBoat from '../src/patrol-boat.js';
+import Node from '../src/board-node.js';
 
 test('can create board', () => {
   expect(GameBoard).not.toBeUndefined();
 });
+
+test('can return valid moves', () => {
+  const gameBoard = new GameBoard();
+  const validMoves = gameBoard.validMoves;
+
+  expect(validMoves).toHaveLength(100);
+});
+
+test('valid moves are all node type', () => {
+  const gameBoard = new GameBoard();
+  const validMoves = gameBoard.validMoves;
+
+  let status = false;
+  function runCheck() {
+    return validMoves.every((node) => node instanceof Node);
+  }
+
+  status = runCheck();
+  expect(status).toBeTruthy();
+})
+
+test('ensures all valid moves can be hit', () => {
+  const gameBoard = new GameBoard();
+  const validMoves = gameBoard.validMoves;
+
+  let status = false;
+  function runCheck() {
+    return validMoves.every((node) => !node.isHit);
+  }
+
+  status = runCheck();
+
+  expect(status).toBeTruthy();
+})
 
 test('board should have a shipyard', () => {
   const board = new GameBoard();
