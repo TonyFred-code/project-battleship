@@ -1,4 +1,3 @@
-import Ship from './ship.js';
 import Carrier from './carrier.js';
 import BattleShip from './battleship.js';
 import Destroyer from './destroyer.js';
@@ -357,5 +356,11 @@ export default class GameBoard {
     const shots = this.board.filter((node) => node.isHit);
     const missedShots = shots.filter((shot) => !shot.isOccupied);
     return missedShots;
+  }
+
+  get validMoves() {
+    const available = this.board.filter((node) => !node.isHit);
+
+    return available;
   }
 }
