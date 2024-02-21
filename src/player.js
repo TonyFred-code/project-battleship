@@ -1,23 +1,22 @@
-import GameBoard from "./game-board";
+import GameBoard from './game-board.js';
 
 export default class Player {
-
   #PLAYER_BOARD = new GameBoard();
 
   constructor(name) {
-    if (!this.#isValidString(name)) {
+    if (typeof name !== 'string' && name.trim() !== '') {
       throw new Error('Invalid name parameter');
     }
 
     this.name = name;
   }
 
-  #isValidString(string) {
-    return typeof string === 'string' && string.trim() !== '';
-  }
-
   getBoard() {
     return this.#PLAYER_BOARD;
+  }
+
+  get validMoves() {
+    return this.#PLAYER_BOARD.validMoves;
   }
 
   placeCarrier(x, y, orientation = 'horizontal') {
@@ -33,7 +32,7 @@ export default class Player {
   }
 
   placeSubMarine(x, y, orientation = 'horizontal') {
-    return this.#PLAYER_BOARD.placeSubMarine(x, y, orientation)
+    return this.#PLAYER_BOARD.placeSubMarine(x, y, orientation);
   }
 
   placePatrolBoat(x, y, orientation = 'horizontal') {
