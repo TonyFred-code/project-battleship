@@ -43,4 +43,8 @@ export default class Player {
     const status = this.#PLAYER_BOARD.receiveAttack(x, y);
     return status;
   }
+
+  allShipSunk() {
+    return this.#PLAYER_BOARD.isAllShipSunk;
+  }
 }
