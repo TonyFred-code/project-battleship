@@ -1,13 +1,49 @@
-import GameBoard from '../src/game-board';
+import GameBoard from '../src/game-board.js';
 import Ship from '../src/ship.js';
 import Carrier from '../src/carrier.js';
 import BattleShip from '../src/battleship.js';
 import Destroyer from '../src/destroyer.js';
 import SubMarine from '../src/submarine.js';
 import PatrolBoat from '../src/patrol-boat.js';
+import Node from '../src/board-node.js';
 
 test('can create board', () => {
   expect(GameBoard).not.toBeUndefined();
+});
+
+test('can return valid moves', () => {
+  const gameBoard = new GameBoard();
+  const { validMoves } = gameBoard;
+
+  expect(Array.isArray(validMoves)).toBeTruthy();
+  expect(validMoves).toHaveLength(100);
+});
+
+test('valid moves are all node type', () => {
+  const gameBoard = new GameBoard();
+  const { validMoves } = gameBoard;
+
+  let status = false;
+  function runCheck() {
+    return validMoves.every((node) => node instanceof Node);
+  }
+
+  status = runCheck();
+  expect(status).toBeTruthy();
+});
+
+test('ensures all valid moves can be hit', () => {
+  const gameBoard = new GameBoard();
+  const { validMoves } = gameBoard;
+
+  let status = false;
+  function runCheck() {
+    return validMoves.every((node) => !node.isHit);
+  }
+
+  status = runCheck();
+
+  expect(status).toBeTruthy();
 });
 
 test('board should have a shipyard', () => {
@@ -379,7 +415,7 @@ test('can report when patrol boat is sunk', () => {
   expect(gameBoard.patrolBoatSunk).toBe(true);
 });
 
-test('deny hit when all ship is sunk - knows when all ship sunk', () => {
+test('knows when all ship sunk', () => {
   const gameBoard = new GameBoard();
   expect(gameBoard.placeCarrier(5, 0)).toBe(true);
   expect(gameBoard.placeBattleShip(0, 4, 'vertical')).toBe(true);
@@ -409,5 +445,5 @@ test('deny hit when all ship is sunk - knows when all ship sunk', () => {
   expect(gameBoard.receiveAttack(1, 9)).toBe(true);
   expect(gameBoard.receiveAttack(2, 9)).toBe(true);
 
-  expect(gameBoard.receiveAttack(0, 0)).toBe(false);
+  expect(gameBoard.isAllShipSunk).toBeTruthy();
 });

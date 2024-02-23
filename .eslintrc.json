@@ -12,16 +12,17 @@
   },
   "rules": {
     "no-console": "off",
+    "import/extensions": [
+      "error",
+      "always",
+      { "js": "always", "mjs": "always" }
+    ],
     "prettier/prettier": [
       "error",
       {
         "singleQuote": true
       }
     ],
-    "eslint-plugin-import/extensions": {
-      "js": "always",
-      "mjs": "always"
-    },
     "jest/no-disabled-tests": "warn",
     "jest/no-focused-tests": "error",
     "jest/no-identical-title": "error",
