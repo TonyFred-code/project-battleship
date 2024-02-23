@@ -298,8 +298,6 @@ export default class GameBoard {
 
     if (!this.#allShipOnBoard()) return false;
 
-    if (this.isAllShipSunk) return false;
-
     const node = this.board[y * this.BOARD_SIZE + x];
 
     if (node.isHit) {
