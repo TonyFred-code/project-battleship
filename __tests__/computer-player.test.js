@@ -2,7 +2,7 @@ import ComputerPlayer from '../src/computer-player.js';
 import Player from '../src/player.js';
 
 test('can create computer player', () => {
-  expect(ComputerPlayer).not.toBeUndefined();
+  expect(ComputerPlayer).toBeDefined();
 });
 
 test('computer has a default name', () => {
@@ -13,9 +13,8 @@ test('computer has a default name', () => {
 
 test('computer player is extension of Player', () => {
   const computerPlayer = new ComputerPlayer();
-  const state = computerPlayer instanceof Player;
 
-  expect(state).toBe(true);
+  expect(computerPlayer).toBeInstanceOf(Player);
 });
 
 test('computer has a getAttack method', () => {
@@ -38,28 +37,33 @@ test('getAttack gives two element arr as return value', () => {
   expect(typeof y).toBe('number');
 });
 
-test('computer does not hit same place twice', () => {
+test('does not hit same place twice', () => {
   const computerPlayer = new ComputerPlayer();
-  const opponent = new Player('something');
+  const player = new Player('some');
+
+  expect(player.placeCarrier(5, 0)).toBe(true);
+  expect(player.placeBattleShip(0, 4, 'vertical')).toBe(true);
+  expect(player.placeDestroyer(3, 3)).toBe(true);
+  expect(player.placeSubMarine(6, 6, 'vertical')).toBe(true);
+  expect(player.placePatrolBoat(1, 9)).toBe(true);
 
   function transform(x, y) {
     return y * 10 + x;
   }
-  const attacks = [];
+
+  const attacks = new Set();
 
   function populate() {
-    for (let i = 0; i < 10; i += 1) {
-      for (let j = 0; j < 10; j += 1) {
-        const movesAvail = opponent.validMoves;
-        const move = computerPlayer.getAttack(movesAvail);
-        const [x, y] = move;
-        opponent.receiveAttack(x, y);
-        attacks.push(transform(x, y));
-      }
+    for (let i = 0; i < 100; i += 1) {
+      const { validMoves } = player;
+      const move = computerPlayer.getAttack(validMoves);
+      const [x, y] = move;
+      player.receiveAttack(x, y);
+      attacks.add(transform(x, y));
     }
   }
 
   populate();
 
-  expect(attacks).toHaveLength(100);
+  expect(attacks.size).toBe(100);
 });
