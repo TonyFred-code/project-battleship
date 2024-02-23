@@ -1,5 +1,5 @@
-import Player from '../src/player';
-import GameBoard from '../src/game-board';
+import Player from '../src/player.js';
+import GameBoard from '../src/game-board.js';
 
 test('Player class exists', () => {
   expect(Player).not.toBeUndefined();
