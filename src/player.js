@@ -4,7 +4,7 @@ export default class Player {
   #PLAYER_BOARD = new GameBoard();
 
   constructor(name) {
-    if (typeof name !== 'string' && name.trim() !== '') {
+    if (typeof name !== 'string' || name.trim() === '') {
       throw new Error('Invalid name parameter');
     }
 
