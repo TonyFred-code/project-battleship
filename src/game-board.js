@@ -185,6 +185,23 @@ export default class GameBoard {
     return true;
   }
 
+  removeCarrier() {
+    // const { occupying }  = this.#CARRIER_INFO;
+    const { occupying } = this.#CARRIER_INFO;
+
+    occupying.forEach((location) => {
+      const [nx, ny] = location;
+
+      const node = this.board[ny * this.BOARD_SIZE + nx];
+      node.isOccupied = false;
+      node.neighbors.forEach((nodeLoc) => {
+        const [nnx, nny] = nodeLoc;
+        this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = false;
+      });
+    });
+    this.#CARRIER_INFO.occupying = [];
+  }
+
   placeBattleShip(x, y, orientation = 'horizontal') {
     if (!this.#isValidOrientation(orientation)) return false;
 
@@ -210,6 +227,22 @@ export default class GameBoard {
 
     this.#BATTLESHIP_INFO.isOnBoard = true;
     return true;
+  }
+
+  removeBattleShip() {
+    const { occupying } = this.#BATTLESHIP_INFO;
+
+    occupying.forEach((location) => {
+      const [nx, ny] = location;
+
+      const node = this.board[ny * this.BOARD_SIZE + nx];
+      node.isOccupied = false;
+      node.neighbors.forEach((nodeLoc) => {
+        const [nnx, nny] = nodeLoc;
+        this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = false;
+      });
+    });
+    this.#BATTLESHIP_INFO.occupying = [];
   }
 
   placeDestroyer(x, y, orientation = 'horizontal') {
@@ -239,6 +272,22 @@ export default class GameBoard {
     return true;
   }
 
+  removeDestroyer() {
+    const { occupying } = this.#DESTROYER_INFO;
+
+    occupying.forEach((location) => {
+      const [nx, ny] = location;
+
+      const node = this.board[ny * this.BOARD_SIZE + nx];
+      node.isOccupied = false;
+      node.neighbors.forEach((nodeLoc) => {
+        const [nnx, nny] = nodeLoc;
+        this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = false;
+      });
+    });
+    this.#DESTROYER_INFO.occupying = [];
+  }
+
   placeSubMarine(x, y, orientation = 'horizontal') {
     if (!this.#isValidOrientation(orientation)) return false;
 
@@ -264,6 +313,22 @@ export default class GameBoard {
 
     this.#SUBMARINE_INFO.isOnBoard = true;
     return true;
+  }
+
+  removeSubMarine() {
+    const { occupying } = this.#SUBMARINE_INFO;
+
+    occupying.forEach((location) => {
+      const [nx, ny] = location;
+
+      const node = this.board[ny * this.BOARD_SIZE + nx];
+      node.isOccupied = false;
+      node.neighbors.forEach((nodeLoc) => {
+        const [nnx, nny] = nodeLoc;
+        this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = false;
+      });
+    });
+    this.#SUBMARINE_INFO.occupying = [];
   }
 
   placePatrolBoat(x, y, orientation = 'horizontal') {
@@ -292,6 +357,34 @@ export default class GameBoard {
     this.#PATROL_BOAT_INFO.isOnBoard = true;
     return true;
   }
+
+  removePatrolBoat() {
+    const { occupying } = this.#PATROL_BOAT_INFO;
+
+    occupying.forEach((location) => {
+      const [nx, ny] = location;
+
+      const node = this.board[ny * this.BOARD_SIZE + nx];
+      node.isOccupied = false;
+      node.neighbors.forEach((nodeLoc) => {
+        const [nnx, nny] = nodeLoc;
+        this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = false;
+      });
+    });
+    this.#PATROL_BOAT_INFO.occupying = [];
+  }
+
+  removeAllShips() {
+    this.removeCarrier();
+    this.removeBattleShip();
+    this.removeDestroyer();
+    this.removeSubMarine();
+    this.removePatrolBoat();
+  }
+
+  // get carrierPlacing() {
+  //   return [];
+  // }
 
   receiveAttack(x, y) {
     if (!this.#isValidCoordinate(x, y)) return false;
