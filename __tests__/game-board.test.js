@@ -447,3 +447,92 @@ test('knows when all ship sunk', () => {
 
   expect(gameBoard.isAllShipSunk).toBeTruthy();
 });
+
+describe('ship removal', () => {
+  describe('carrier removal', () => {
+    const gameBoard = new GameBoard();
+
+    test('has its removal method', () => {
+      expect(gameBoard.removeCarrier).toBeDefined();
+    });
+
+    test('can remove carrier from board', () => {
+      expect(gameBoard.placeCarrier(0, 0)).toBe(true);
+      gameBoard.removeCarrier();
+      expect(gameBoard.placeBattleShip(0, 0)).toBe(true);
+    });
+  });
+
+  describe('battleShip removal', () => {
+    const gameBoard = new GameBoard();
+
+    test('has its removal method', () => {
+      expect(gameBoard.removeBattleShip).toBeDefined();
+    });
+
+    test('can remove battleShip from board', () => {
+      expect(gameBoard.placeBattleShip(0, 0)).toBe(true);
+      gameBoard.removeBattleShip();
+      expect(gameBoard.placeCarrier(0, 0)).toBe(true);
+    });
+  });
+
+  describe('destroyer removal', () => {
+    const gameBoard = new GameBoard();
+
+    test('has its removal method', () => {
+      expect(gameBoard.removeDestroyer).toBeDefined();
+    });
+
+    test('can remove destroyer from board', () => {
+      expect(gameBoard.placeDestroyer(0, 0)).toBe(true);
+      gameBoard.removeDestroyer();
+      expect(gameBoard.placeCarrier(0, 0)).toBe(true);
+    });
+  });
+
+  describe('submarine removal', () => {
+    const gameBoard = new GameBoard();
+
+    test('has its removal method', () => {
+      expect(gameBoard.removeSubMarine).toBeDefined();
+    });
+
+    test('can remove submarine from board', () => {
+      expect(gameBoard.placeSubMarine(0, 0)).toBe(true);
+      gameBoard.removeSubMarine();
+      expect(gameBoard.placeCarrier(0, 0)).toBe(true);
+    });
+  });
+
+  describe('patrol boat removal', () => {
+    const gameBoard = new GameBoard();
+
+    test('has its removal method', () => {
+      expect(gameBoard.removePatrolBoat).toBeDefined();
+    });
+
+    test('can remove patrol boat from board', () => {
+      expect(gameBoard.placePatrolBoat(0, 0)).toBe(true);
+      gameBoard.removePatrolBoat();
+      expect(gameBoard.placeBattleShip(0, 0)).toBe(true);
+    });
+  });
+});
+
+describe('auto ship placement', () => {
+  test('should have method to get carrier ship placement', () => {
+    const gameBoard = new GameBoard();
+    expect(gameBoard.carrierPlacing).toBeDefined();
+  });
+
+  test('method should return array of possible carrier ship placement', () => {
+    const gameBoard = new GameBoard();
+    const placements = gameBoard.carrierPlacing;
+
+    expect(placements).toBeInstanceOf(Array);
+
+    // todo: complete possiblePlacements;
+    // const possiblePlacements = []
+  });
+});
