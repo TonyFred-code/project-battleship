@@ -1,3 +1,4 @@
+/* eslint-disable jest/no-disabled-tests */
 import GameBoard from '../src/game-board.js';
 import Ship from '../src/ship.js';
 import Carrier from '../src/carrier.js';
@@ -521,18 +522,89 @@ describe('ship removal', () => {
 });
 
 describe('auto ship placement', () => {
-  test('should have method to get carrier ship placement', () => {
-    const gameBoard = new GameBoard();
-    expect(gameBoard.carrierPlacing).toBeDefined();
-  });
+  const gameBoard = new GameBoard();
+  describe('carrier auto placement', () => {
+    test('carrierPlacement exists', () => {
+      expect(gameBoard.carrierPlacement).toBeDefined();
+    });
 
-  test('method should return array of possible carrier ship placement', () => {
-    const gameBoard = new GameBoard();
-    const placements = gameBoard.carrierPlacing;
+    test('should return array of possible head pos - horizontal', () => {
+      const HorizontalPlacements = [
+        '0-0',
+        '1-0',
+        '2-0',
+        '3-0',
+        '4-0',
+        '5-0',
+        '0-1',
+        '1-1',
+        '2-1',
+        '3-1',
+        '4-1',
+        '5-1',
+        '0-2',
+        '1-2',
+        '2-2',
+        '3-2',
+        '4-2',
+        '5-2',
+        '0-3',
+        '1-3',
+        '2-3',
+        '3-3',
+        '4-3',
+        '5-3',
+        '0-4',
+        '1-4',
+        '2-4',
+        '3-4',
+        '4-4',
+        '5-4',
+        '0-5',
+        '1-5',
+        '2-5',
+        '3-5',
+        '4-5',
+        '5-5',
+        '0-6',
+        '1-6',
+        '2-6',
+        '3-6',
+        '4-6',
+        '5-6',
+        '0-7',
+        '1-7',
+        '2-7',
+        '3-7',
+        '4-7',
+        '5-7',
+        '0-8',
+        '1-8',
+        '2-8',
+        '3-8',
+        '4-8',
+        '5-8',
+        '0-9',
+        '1-9',
+        '2-9',
+        '3-9',
+        '4-9',
+        '5-9',
+      ];
 
-    expect(placements).toBeInstanceOf(Array);
+      const carrierPlacements = gameBoard.carrierPlacement('horizontal');
 
-    // todo: complete possiblePlacements;
-    // const possiblePlacements = []
+      const formatted = carrierPlacements.map(
+        (headLoc) => `${headLoc[0]}-${headLoc[1]}`,
+      );
+
+      function checkFormatted() {
+        return formatted.every((element) =>
+          HorizontalPlacements.includes(element),
+        );
+      }
+
+      expect(checkFormatted()).toBe(true);
+    });
   });
 });
