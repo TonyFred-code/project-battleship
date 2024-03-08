@@ -202,6 +202,30 @@ export default class GameBoard {
     this.#CARRIER_INFO.occupying = [];
   }
 
+  carrierPlacement(orientation = 'horizontal') {
+    // if (!this.#isValidOrientation(orientation)) return [];
+
+    const availableNodes = this.board.filter(
+      (node) => !node.isHit && !node.isOccupied,
+    );
+
+    const { size } = this.#CARRIER_INFO;
+
+    const canPlace = [];
+
+    availableNodes.forEach((node) => {
+      const [x, y] = node.address;
+
+      const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
+
+      if (toBeOccupied.length === size) {
+        canPlace.push([x, y]);
+      }
+    });
+
+    return canPlace;
+  }
+
   placeBattleShip(x, y, orientation = 'horizontal') {
     if (!this.#isValidOrientation(orientation)) return false;
 
