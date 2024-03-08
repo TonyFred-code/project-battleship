@@ -38,12 +38,59 @@ describe('players', () => {
     expect(gameController.createHumanPlayer('Player 2')).toBeTruthy();
   });
 
-  test.todo('should get player one details');
+  test('can get players details', () => {
+    const gameController = new GameController();
+
+    expect(gameController.getPlayerDetails).toBeDefined();
+  });
+
+  test('returns empty array no player', () => {
+    const gameController = new GameController();
+
+    expect(gameController.getPlayerDetails()).toHaveLength(0);
+  });
+
+  test('returns one element array if only one player created', () => {
+    const gameController = new GameController();
+    gameController.createHumanPlayer('Player 1');
+
+    expect(gameController.getPlayerDetails()).toHaveLength(1);
+  });
+
+  test('gets correct player details', () => {
+    const gameController = new GameController();
+    gameController.createHumanPlayer('Player 1');
+    gameController.createBotPlayer();
+    const playerDetails = gameController.getPlayerDetails();
+    expect(playerDetails).toHaveLength(2);
+    const [player1, player2] = playerDetails;
+    expect(player1.name).toBe('Player 1');
+    expect(player2.name).toBe('jarvis');
+  });
+
   test('only creates two players', () => {
     const gameController = new GameController();
     expect(gameController.createHumanPlayer('Player 1')).toBeTruthy();
     expect(gameController.createBotPlayer()).toBeTruthy();
     expect(gameController.createHumanPlayer('Player 3')).not.toBeTruthy();
+  });
+
+  test('players can place ships', () => {
+    const gameController = new GameController();
+    expect(gameController.placePlayerOneCarrier).toBeDefined();
+    expect(gameController.placePlayerTwoCarrier).toBeDefined();
+
+    expect(gameController.placePlayerOneBattleShip).toBeDefined();
+    expect(gameController.placePlayerTwoBattleShip).toBeDefined();
+
+    expect(gameController.placePlayerOneDestroyer).toBeDefined();
+    expect(gameController.placePlayerTwoDestroyer).toBeDefined();
+
+    expect(gameController.placePlayerOneSubMarine).toBeDefined();
+    expect(gameController.placePlayerTwoSubMarine).toBeDefined();
+
+    expect(gameController.placePlayerOnePatrolBoat).toBeDefined();
+    expect(gameController.placePlayerTwoPatrolBoat).toBeDefined();
   });
 });
 
