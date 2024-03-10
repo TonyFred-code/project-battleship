@@ -66,4 +66,15 @@ test('does not hit same place twice', () => {
   populate();
 
   expect(attacks.size).toBe(100);
+
+  function runCheck() {
+    const arr = [];
+    for (let i = 0; i < 100; i += 1) {
+      arr.push(i);
+    }
+
+    return arr.every((element) => attacks.has(element));
+  }
+
+  expect(runCheck()).toBe(true);
 });
