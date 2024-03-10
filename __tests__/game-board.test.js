@@ -606,5 +606,930 @@ describe('auto ship placement', () => {
 
       expect(checkFormatted()).toBe(true);
     });
+
+    test('should return array of possible head pos - vertical', () => {
+      const VerticalPlacements = [
+        '0-0',
+        '1-0',
+        '2-0',
+        '3-0',
+        '4-0',
+        '5-0',
+        '6-0',
+        '7-0',
+        '8-0',
+        '9-0',
+        '0-1',
+        '1-1',
+        '2-1',
+        '3-1',
+        '4-1',
+        '5-1',
+        '6-1',
+        '7-1',
+        '8-1',
+        '9-1',
+        '0-2',
+        '1-2',
+        '2-2',
+        '3-2',
+        '4-2',
+        '5-2',
+        '6-2',
+        '7-2',
+        '8-2',
+        '9-2',
+        '0-3',
+        '1-3',
+        '2-3',
+        '3-3',
+        '4-3',
+        '5-3',
+        '6-3',
+        '7-3',
+        '8-3',
+        '9-3',
+        '0-4',
+        '1-4',
+        '2-4',
+        '3-4',
+        '4-4',
+        '5-4',
+        '6-4',
+        '7-4',
+        '8-4',
+        '9-4',
+        '0-5',
+        '1-5',
+        '2-5',
+        '3-5',
+        '4-5',
+        '5-5',
+        '6-5',
+        '7-5',
+        '8-5',
+        '9-5',
+      ];
+
+      const carrierPlacements = gameBoard.carrierPlacement('vertical');
+
+      const formatted = carrierPlacements.map(
+        (headLoc) => `${headLoc[0]}-${headLoc[1]}`,
+      );
+
+      function checkFormatted() {
+        return formatted.every((element) =>
+          VerticalPlacements.includes(element),
+        );
+      }
+
+      expect(checkFormatted()).toBe(true);
+    });
+
+    test('ignores invalid orientation', () => {
+      const carrierPlacements = gameBoard.carrierPlacement('invalid');
+
+      expect(carrierPlacements).toHaveLength(0);
+    });
+  });
+
+  describe('battleship auto placement', () => {
+    test('battleShipPlacement exists', () => {
+      expect(gameBoard.battleShipPlacement).toBeDefined();
+    });
+
+    test('should return array of possible head pos - horizontal', () => {
+      const HorizontalPlacements = [
+        '0-0',
+        '1-0',
+        '2-0',
+        '3-0',
+        '4-0',
+        '5-0',
+        '6-0',
+        '0-1',
+        '1-1',
+        '2-1',
+        '3-1',
+        '4-1',
+        '5-1',
+        '6-1',
+        '0-2',
+        '1-2',
+        '2-2',
+        '3-2',
+        '4-2',
+        '5-2',
+        '6-2',
+        '0-3',
+        '1-3',
+        '2-3',
+        '3-3',
+        '4-3',
+        '5-3',
+        '6-3',
+        '0-4',
+        '1-4',
+        '2-4',
+        '3-4',
+        '4-4',
+        '5-4',
+        '6-4',
+        '0-5',
+        '1-5',
+        '2-5',
+        '3-5',
+        '4-5',
+        '5-5',
+        '6-5',
+        '0-6',
+        '1-6',
+        '2-6',
+        '3-6',
+        '4-6',
+        '5-6',
+        '6-6',
+        '0-7',
+        '1-7',
+        '2-7',
+        '3-7',
+        '4-7',
+        '5-7',
+        '6-7',
+        '0-8',
+        '1-8',
+        '2-8',
+        '3-8',
+        '4-8',
+        '5-8',
+        '6-8',
+        '0-9',
+        '1-9',
+        '2-9',
+        '3-9',
+        '4-9',
+        '5-9',
+        '6-9',
+      ];
+
+      const battleShipPlacements = gameBoard.battleShipPlacement('horizontal');
+
+      const formatted = battleShipPlacements.map(
+        (headLoc) => `${headLoc[0]}-${headLoc[1]}`,
+      );
+
+      function checkFormatted() {
+        return formatted.every((element) =>
+          HorizontalPlacements.includes(element),
+        );
+      }
+
+      expect(checkFormatted()).toBe(true);
+    });
+
+    test('should return array of possible head pos - vertical', () => {
+      const VerticalPlacements = [
+        '0-0',
+        '1-0',
+        '2-0',
+        '3-0',
+        '4-0',
+        '5-0',
+        '6-0',
+        '7-0',
+        '8-0',
+        '9-0',
+        '0-1',
+        '1-1',
+        '2-1',
+        '3-1',
+        '4-1',
+        '5-1',
+        '6-1',
+        '7-1',
+        '8-1',
+        '9-1',
+        '0-2',
+        '1-2',
+        '2-2',
+        '3-2',
+        '4-2',
+        '5-2',
+        '6-2',
+        '7-2',
+        '8-2',
+        '9-2',
+        '0-3',
+        '1-3',
+        '2-3',
+        '3-3',
+        '4-3',
+        '5-3',
+        '6-3',
+        '7-3',
+        '8-3',
+        '9-3',
+        '0-4',
+        '1-4',
+        '2-4',
+        '3-4',
+        '4-4',
+        '5-4',
+        '6-4',
+        '7-4',
+        '8-4',
+        '9-4',
+        '0-5',
+        '1-5',
+        '2-5',
+        '3-5',
+        '4-5',
+        '5-5',
+        '6-5',
+        '7-5',
+        '8-5',
+        '9-5',
+        '0-6',
+        '1-6',
+        '2-6',
+        '3-6',
+        '4-6',
+        '5-6',
+        '6-6',
+        '7-6',
+        '8-6',
+        '9-6',
+      ];
+
+      const battleShipPlacements = gameBoard.battleShipPlacement('vertical');
+
+      const formatted = battleShipPlacements.map(
+        (headLoc) => `${headLoc[0]}-${headLoc[1]}`,
+      );
+
+      function checkFormatted() {
+        return formatted.every((element) =>
+          VerticalPlacements.includes(element),
+        );
+      }
+
+      expect(checkFormatted()).toBe(true);
+    });
+
+    test('ignores invalid orientation', () => {
+      const battleShipPlacements = gameBoard.battleShipPlacement('invalid');
+
+      expect(battleShipPlacements).toHaveLength(0);
+    });
+  });
+
+  describe('destroyer auto placement', () => {
+    test('destroyerPlacement exists', () => {
+      expect(gameBoard.destroyerPlacement).toBeDefined();
+    });
+
+    test('should return array of possible head pos - horizontal', () => {
+      const HorizontalPlacements = [
+        '0-0',
+        '1-0',
+        '2-0',
+        '3-0',
+        '4-0',
+        '5-0',
+        '6-0',
+        '7-0',
+        '0-1',
+        '1-1',
+        '2-1',
+        '3-1',
+        '4-1',
+        '5-1',
+        '6-1',
+        '7-1',
+        '0-2',
+        '1-2',
+        '2-2',
+        '3-2',
+        '4-2',
+        '5-2',
+        '6-2',
+        '7-2',
+        '0-3',
+        '1-3',
+        '2-3',
+        '3-3',
+        '4-3',
+        '5-3',
+        '6-3',
+        '7-3',
+        '0-4',
+        '1-4',
+        '2-4',
+        '3-4',
+        '4-4',
+        '5-4',
+        '6-4',
+        '7-4',
+        '0-5',
+        '1-5',
+        '2-5',
+        '3-5',
+        '4-5',
+        '5-5',
+        '6-5',
+        '7-5',
+        '0-6',
+        '1-6',
+        '2-6',
+        '3-6',
+        '4-6',
+        '5-6',
+        '6-6',
+        '7-6',
+        '0-7',
+        '1-7',
+        '2-7',
+        '3-7',
+        '4-7',
+        '5-7',
+        '6-7',
+        '7-7',
+        '0-8',
+        '1-8',
+        '2-8',
+        '3-8',
+        '4-8',
+        '5-8',
+        '6-8',
+        '7-8',
+        '0-9',
+        '1-9',
+        '2-9',
+        '3-9',
+        '4-9',
+        '5-9',
+        '6-9',
+        '7-9',
+      ];
+
+      const destroyerPlacements = gameBoard.destroyerPlacement('horizontal');
+
+      const formatted = destroyerPlacements.map(
+        (headLoc) => `${headLoc[0]}-${headLoc[1]}`,
+      );
+
+      function checkFormatted() {
+        return formatted.every((element) =>
+          HorizontalPlacements.includes(element),
+        );
+      }
+
+      expect(checkFormatted()).toBe(true);
+    });
+
+    test('should return array of possible head pos - vertical', () => {
+      const VerticalPlacements = [
+        '0-0',
+        '1-0',
+        '2-0',
+        '3-0',
+        '4-0',
+        '5-0',
+        '6-0',
+        '7-0',
+        '8-0',
+        '9-0',
+        '0-1',
+        '1-1',
+        '2-1',
+        '3-1',
+        '4-1',
+        '5-1',
+        '6-1',
+        '7-1',
+        '8-1',
+        '9-1',
+        '0-2',
+        '1-2',
+        '2-2',
+        '3-2',
+        '4-2',
+        '5-2',
+        '6-2',
+        '7-2',
+        '8-2',
+        '9-2',
+        '0-3',
+        '1-3',
+        '2-3',
+        '3-3',
+        '4-3',
+        '5-3',
+        '6-3',
+        '7-3',
+        '8-3',
+        '9-3',
+        '0-4',
+        '1-4',
+        '2-4',
+        '3-4',
+        '4-4',
+        '5-4',
+        '6-4',
+        '7-4',
+        '8-4',
+        '9-4',
+        '0-5',
+        '1-5',
+        '2-5',
+        '3-5',
+        '4-5',
+        '5-5',
+        '6-5',
+        '7-5',
+        '8-5',
+        '9-5',
+        '0-6',
+        '1-6',
+        '2-6',
+        '3-6',
+        '4-6',
+        '5-6',
+        '6-6',
+        '7-6',
+        '8-6',
+        '9-6',
+        '0-7',
+        '1-7',
+        '2-7',
+        '3-7',
+        '4-7',
+        '5-7',
+        '6-7',
+        '7-7',
+        '8-7',
+        '9-7',
+      ];
+
+      const destroyerPlacements = gameBoard.destroyerPlacement('vertical');
+
+      const formatted = destroyerPlacements.map(
+        (headLoc) => `${headLoc[0]}-${headLoc[1]}`,
+      );
+
+      function checkFormatted() {
+        return formatted.every((element) =>
+          VerticalPlacements.includes(element),
+        );
+      }
+
+      expect(checkFormatted()).toBe(true);
+    });
+
+    test('ignores invalid orientation', () => {
+      const destroyerPlacements = gameBoard.destroyerPlacement('invalid');
+
+      expect(destroyerPlacements).toHaveLength(0);
+    });
+  });
+
+  describe('submarine auto placement', () => {
+    test('subMarinePlacement exists', () => {
+      expect(gameBoard.subMarinePlacement).toBeDefined();
+    });
+
+    test('should return array of possible head pos - horizontal', () => {
+      const HorizontalPlacements = [
+        '0-0',
+        '1-0',
+        '2-0',
+        '3-0',
+        '4-0',
+        '5-0',
+        '6-0',
+        '7-0',
+        '0-1',
+        '1-1',
+        '2-1',
+        '3-1',
+        '4-1',
+        '5-1',
+        '6-1',
+        '7-1',
+        '0-2',
+        '1-2',
+        '2-2',
+        '3-2',
+        '4-2',
+        '5-2',
+        '6-2',
+        '7-2',
+        '0-3',
+        '1-3',
+        '2-3',
+        '3-3',
+        '4-3',
+        '5-3',
+        '6-3',
+        '7-3',
+        '0-4',
+        '1-4',
+        '2-4',
+        '3-4',
+        '4-4',
+        '5-4',
+        '6-4',
+        '7-4',
+        '0-5',
+        '1-5',
+        '2-5',
+        '3-5',
+        '4-5',
+        '5-5',
+        '6-5',
+        '7-5',
+        '0-6',
+        '1-6',
+        '2-6',
+        '3-6',
+        '4-6',
+        '5-6',
+        '6-6',
+        '7-6',
+        '0-7',
+        '1-7',
+        '2-7',
+        '3-7',
+        '4-7',
+        '5-7',
+        '6-7',
+        '7-7',
+        '0-8',
+        '1-8',
+        '2-8',
+        '3-8',
+        '4-8',
+        '5-8',
+        '6-8',
+        '7-8',
+        '0-9',
+        '1-9',
+        '2-9',
+        '3-9',
+        '4-9',
+        '5-9',
+        '6-9',
+        '7-9',
+      ];
+
+      const subMarinePlacements = gameBoard.subMarinePlacement('horizontal');
+
+      const formatted = subMarinePlacements.map(
+        (headLoc) => `${headLoc[0]}-${headLoc[1]}`,
+      );
+
+      function checkFormatted() {
+        return formatted.every((element) =>
+          HorizontalPlacements.includes(element),
+        );
+      }
+
+      expect(checkFormatted()).toBe(true);
+    });
+
+    test('should return array of possible head pos - vertical', () => {
+      const VerticalPlacements = [
+        '0-0',
+        '1-0',
+        '2-0',
+        '3-0',
+        '4-0',
+        '5-0',
+        '6-0',
+        '7-0',
+        '8-0',
+        '9-0',
+        '0-1',
+        '1-1',
+        '2-1',
+        '3-1',
+        '4-1',
+        '5-1',
+        '6-1',
+        '7-1',
+        '8-1',
+        '9-1',
+        '0-2',
+        '1-2',
+        '2-2',
+        '3-2',
+        '4-2',
+        '5-2',
+        '6-2',
+        '7-2',
+        '8-2',
+        '9-2',
+        '0-3',
+        '1-3',
+        '2-3',
+        '3-3',
+        '4-3',
+        '5-3',
+        '6-3',
+        '7-3',
+        '8-3',
+        '9-3',
+        '0-4',
+        '1-4',
+        '2-4',
+        '3-4',
+        '4-4',
+        '5-4',
+        '6-4',
+        '7-4',
+        '8-4',
+        '9-4',
+        '0-5',
+        '1-5',
+        '2-5',
+        '3-5',
+        '4-5',
+        '5-5',
+        '6-5',
+        '7-5',
+        '8-5',
+        '9-5',
+        '0-6',
+        '1-6',
+        '2-6',
+        '3-6',
+        '4-6',
+        '5-6',
+        '6-6',
+        '7-6',
+        '8-6',
+        '9-6',
+        '0-7',
+        '1-7',
+        '2-7',
+        '3-7',
+        '4-7',
+        '5-7',
+        '6-7',
+        '7-7',
+        '8-7',
+        '9-7',
+      ];
+
+      const subMarinePlacements = gameBoard.subMarinePlacement('vertical');
+
+      const formatted = subMarinePlacements.map(
+        (headLoc) => `${headLoc[0]}-${headLoc[1]}`,
+      );
+
+      function checkFormatted() {
+        return formatted.every((element) =>
+          VerticalPlacements.includes(element),
+        );
+      }
+
+      expect(checkFormatted()).toBe(true);
+    });
+
+    test('ignores invalid orientation', () => {
+      const subMarinePlacements = gameBoard.subMarinePlacement('invalid');
+
+      expect(subMarinePlacements).toHaveLength(0);
+    });
+  });
+
+  describe('patrol boat auto placement', () => {
+    test('patrolBoatPlacement exists', () => {
+      expect(gameBoard.patrolBoatPlacement).toBeDefined();
+    });
+
+    test('should return array of possible head pos - horizontal', () => {
+      const HorizontalPlacements = [
+        '0-0',
+        '1-0',
+        '2-0',
+        '3-0',
+        '4-0',
+        '5-0',
+        '6-0',
+        '7-0',
+        '8-0',
+        '0-1',
+        '1-1',
+        '2-1',
+        '3-1',
+        '4-1',
+        '5-1',
+        '6-1',
+        '7-1',
+        '8-1',
+        '0-2',
+        '1-2',
+        '2-2',
+        '3-2',
+        '4-2',
+        '5-2',
+        '6-2',
+        '7-2',
+        '8-2',
+        '0-3',
+        '1-3',
+        '2-3',
+        '3-3',
+        '4-3',
+        '5-3',
+        '6-3',
+        '7-3',
+        '8-3',
+        '0-4',
+        '1-4',
+        '2-4',
+        '3-4',
+        '4-4',
+        '5-4',
+        '6-4',
+        '7-4',
+        '8-4',
+        '0-5',
+        '1-5',
+        '2-5',
+        '3-5',
+        '4-5',
+        '5-5',
+        '6-5',
+        '7-5',
+        '8-5',
+        '0-6',
+        '1-6',
+        '2-6',
+        '3-6',
+        '4-6',
+        '5-6',
+        '6-6',
+        '7-6',
+        '8-6',
+        '0-7',
+        '1-7',
+        '2-7',
+        '3-7',
+        '4-7',
+        '5-7',
+        '6-7',
+        '7-7',
+        '8-7',
+        '0-8',
+        '1-8',
+        '2-8',
+        '3-8',
+        '4-8',
+        '5-8',
+        '6-8',
+        '7-8',
+        '8-8',
+        '0-9',
+        '1-9',
+        '2-9',
+        '3-9',
+        '4-9',
+        '5-9',
+        '6-9',
+        '7-9',
+        '8-9',
+      ];
+
+      const patrolBoatPlacements = gameBoard.patrolBoatPlacement('horizontal');
+
+      const formatted = patrolBoatPlacements.map(
+        (headLoc) => `${headLoc[0]}-${headLoc[1]}`,
+      );
+
+      function checkFormatted() {
+        return formatted.every((element) =>
+          HorizontalPlacements.includes(element),
+        );
+      }
+
+      expect(checkFormatted()).toBe(true);
+    });
+
+    test('should return array of possible head pos - vertical', () => {
+      const VerticalPlacements = [
+        '0-0',
+        '1-0',
+        '2-0',
+        '3-0',
+        '4-0',
+        '5-0',
+        '6-0',
+        '7-0',
+        '8-0',
+        '9-0',
+        '0-1',
+        '1-1',
+        '2-1',
+        '3-1',
+        '4-1',
+        '5-1',
+        '6-1',
+        '7-1',
+        '8-1',
+        '9-1',
+        '0-2',
+        '1-2',
+        '2-2',
+        '3-2',
+        '4-2',
+        '5-2',
+        '6-2',
+        '7-2',
+        '8-2',
+        '9-2',
+        '0-3',
+        '1-3',
+        '2-3',
+        '3-3',
+        '4-3',
+        '5-3',
+        '6-3',
+        '7-3',
+        '8-3',
+        '9-3',
+        '0-4',
+        '1-4',
+        '2-4',
+        '3-4',
+        '4-4',
+        '5-4',
+        '6-4',
+        '7-4',
+        '8-4',
+        '9-4',
+        '0-5',
+        '1-5',
+        '2-5',
+        '3-5',
+        '4-5',
+        '5-5',
+        '6-5',
+        '7-5',
+        '8-5',
+        '9-5',
+        '0-6',
+        '1-6',
+        '2-6',
+        '3-6',
+        '4-6',
+        '5-6',
+        '6-6',
+        '7-6',
+        '8-6',
+        '9-6',
+        '0-7',
+        '1-7',
+        '2-7',
+        '3-7',
+        '4-7',
+        '5-7',
+        '6-7',
+        '7-7',
+        '8-7',
+        '9-7',
+        '0-8',
+        '1-8',
+        '2-8',
+        '3-8',
+        '4-8',
+        '5-8',
+        '6-8',
+        '7-8',
+        '8-8',
+        '9-8',
+      ];
+
+      const patrolBoatPlacements = gameBoard.patrolBoatPlacement('vertical');
+
+      const formatted = patrolBoatPlacements.map(
+        (headLoc) => `${headLoc[0]}-${headLoc[1]}`,
+      );
+
+      function checkFormatted() {
+        return formatted.every((element) =>
+          VerticalPlacements.includes(element),
+        );
+      }
+
+      expect(checkFormatted()).toBe(true);
+    });
+
+    test('ignores invalid orientation', () => {
+      const patrolBoatPlacements = gameBoard.patrolBoatPlacement('invalid');
+
+      expect(patrolBoatPlacements).toHaveLength(0);
+    });
   });
 });
