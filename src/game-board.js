@@ -186,7 +186,6 @@ export default class GameBoard {
   }
 
   removeCarrier() {
-    // const { occupying }  = this.#CARRIER_INFO;
     const { occupying } = this.#CARRIER_INFO;
 
     occupying.forEach((location) => {
@@ -203,7 +202,7 @@ export default class GameBoard {
   }
 
   carrierPlacement(orientation = 'horizontal') {
-    // if (!this.#isValidOrientation(orientation)) return [];
+    if (!this.#isValidOrientation(orientation)) return [];
 
     const availableNodes = this.board.filter(
       (node) => !node.isHit && !node.isOccupied,
@@ -269,6 +268,30 @@ export default class GameBoard {
     this.#BATTLESHIP_INFO.occupying = [];
   }
 
+  battleShipPlacement(orientation = 'horizontal') {
+    if (!this.#isValidOrientation(orientation)) return [];
+
+    const availableNodes = this.board.filter(
+      (node) => !node.isHit && !node.isOccupied,
+    );
+
+    const { size } = this.#BATTLESHIP_INFO;
+
+    const canPlace = [];
+
+    availableNodes.forEach((node) => {
+      const [x, y] = node.address;
+
+      const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
+
+      if (toBeOccupied.length === size) {
+        canPlace.push([x, y]);
+      }
+    });
+
+    return canPlace;
+  }
+
   placeDestroyer(x, y, orientation = 'horizontal') {
     if (!this.#isValidOrientation(orientation)) return false;
 
@@ -310,6 +333,30 @@ export default class GameBoard {
       });
     });
     this.#DESTROYER_INFO.occupying = [];
+  }
+
+  destroyerPlacement(orientation = 'horizontal') {
+    if (!this.#isValidOrientation(orientation)) return [];
+
+    const availableNodes = this.board.filter(
+      (node) => !node.isHit && !node.isOccupied,
+    );
+
+    const { size } = this.#DESTROYER_INFO;
+
+    const canPlace = [];
+
+    availableNodes.forEach((node) => {
+      const [x, y] = node.address;
+
+      const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
+
+      if (toBeOccupied.length === size) {
+        canPlace.push([x, y]);
+      }
+    });
+
+    return canPlace;
   }
 
   placeSubMarine(x, y, orientation = 'horizontal') {
@@ -355,6 +402,30 @@ export default class GameBoard {
     this.#SUBMARINE_INFO.occupying = [];
   }
 
+  subMarinePlacement(orientation = 'horizontal') {
+    if (!this.#isValidOrientation(orientation)) return [];
+
+    const availableNodes = this.board.filter(
+      (node) => !node.isHit && !node.isOccupied,
+    );
+
+    const { size } = this.#SUBMARINE_INFO;
+
+    const canPlace = [];
+
+    availableNodes.forEach((node) => {
+      const [x, y] = node.address;
+
+      const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
+
+      if (toBeOccupied.length === size) {
+        canPlace.push([x, y]);
+      }
+    });
+
+    return canPlace;
+  }
+
   placePatrolBoat(x, y, orientation = 'horizontal') {
     if (!this.#isValidOrientation(orientation)) return false;
 
@@ -398,6 +469,30 @@ export default class GameBoard {
     this.#PATROL_BOAT_INFO.occupying = [];
   }
 
+  patrolBoatPlacement(orientation = 'horizontal') {
+    if (!this.#isValidOrientation(orientation)) return [];
+
+    const availableNodes = this.board.filter(
+      (node) => !node.isHit && !node.isOccupied,
+    );
+
+    const { size } = this.#PATROL_BOAT_INFO;
+
+    const canPlace = [];
+
+    availableNodes.forEach((node) => {
+      const [x, y] = node.address;
+
+      const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
+
+      if (toBeOccupied.length === size) {
+        canPlace.push([x, y]);
+      }
+    });
+
+    return canPlace;
+  }
+
   removeAllShips() {
     this.removeCarrier();
     this.removeBattleShip();
@@ -405,10 +500,6 @@ export default class GameBoard {
     this.removeSubMarine();
     this.removePatrolBoat();
   }
-
-  // get carrierPlacing() {
-  //   return [];
-  // }
 
   receiveAttack(x, y) {
     if (!this.#isValidCoordinate(x, y)) return false;
