@@ -636,22 +636,23 @@ export default class GameBoard {
   }
 
   receiveAttack(x, y) {
-    if (!this.#isValidCoordinate(x, y)) return false;
+    if (!this.#isValidCoordinate(x, y)) return -1;
 
-    if (!this.#allShipOnBoard()) return false;
+    if (!this.#allShipOnBoard()) return -1;
 
     const node = this.board[y * this.BOARD_SIZE + x];
 
     if (node.isHit) {
-      return false;
+      return -1;
     }
 
     node.isHit = true;
     if (node.isOccupied) {
       node.isOccupied.hit();
+      return 1;
     }
 
-    return true;
+    return 0;
   }
 
   #allShipOnBoard() {
