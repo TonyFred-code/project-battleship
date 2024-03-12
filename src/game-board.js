@@ -318,6 +318,32 @@ export default class GameBoard {
     return canPlace;
   }
 
+  battleShipAutoPlace(orientation) {
+    if (!this.#isValidOrientation(orientation)) return {};
+
+    const available = this.battleShipPlacement(orientation);
+
+    function getRndElement(array) {
+      const rnd = Math.floor(Math.random() * array.length);
+
+      return array[rnd];
+    }
+
+    const placeHead = getRndElement(available);
+
+    const [x, y] = placeHead;
+
+    const { size } = this.#BATTLESHIP_INFO;
+
+    const occupyingNodeLoc = this.#getToBeOccupied(size, x, y, orientation);
+
+    return {
+      orientation,
+      placeHead,
+      occupyingNodeLoc,
+    };
+  }
+
   placeDestroyer(x, y, orientation = 'horizontal') {
     if (!this.#isValidOrientation(orientation)) return false;
 
