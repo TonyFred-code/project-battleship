@@ -411,6 +411,32 @@ export default class GameBoard {
     return canPlace;
   }
 
+  destroyerAutoPlace(orientation) {
+    if (!this.#isValidOrientation(orientation)) return {};
+
+    const available = this.destroyerPlacement(orientation);
+
+    function getRndElement(array) {
+      const rnd = Math.floor(Math.random() * array.length);
+
+      return array[rnd];
+    }
+
+    const placeHead = getRndElement(available);
+
+    const [x, y] = placeHead;
+
+    const { size } = this.#DESTROYER_INFO;
+
+    const occupyingNodeLoc = this.#getToBeOccupied(size, x, y, orientation);
+
+    return {
+      orientation,
+      placeHead,
+      occupyingNodeLoc,
+    };
+  }
+
   placeSubMarine(x, y, orientation = 'horizontal') {
     if (!this.#isValidOrientation(orientation)) return false;
 
