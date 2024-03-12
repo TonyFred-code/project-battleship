@@ -225,6 +225,32 @@ export default class GameBoard {
     return canPlace;
   }
 
+  carrierAutoPlace(orientation) {
+    if (!this.#isValidOrientation(orientation)) return {};
+
+    const available = this.carrierPlacement(orientation);
+
+    function getRndElement(array) {
+      const rnd = Math.floor(Math.random() * array.length);
+
+      return array[rnd];
+    }
+
+    const placeHead = getRndElement(available);
+
+    const [x, y] = placeHead;
+
+    const { size } = this.#CARRIER_INFO;
+
+    const occupyingNodeLoc = this.#getToBeOccupied(size, x, y, orientation);
+
+    return {
+      orientation,
+      placeHead,
+      occupyingNodeLoc,
+    };
+  }
+
   placeBattleShip(x, y, orientation = 'horizontal') {
     if (!this.#isValidOrientation(orientation)) return false;
 
@@ -501,6 +527,10 @@ export default class GameBoard {
     this.removePatrolBoat();
   }
 
+  allShipsPlacement() {
+    return Array(5);
+  }
+
   receiveAttack(x, y) {
     if (!this.#isValidCoordinate(x, y)) return false;
 
@@ -570,3 +600,6 @@ export default class GameBoard {
     return available;
   }
 }
+
+// const gameBoard = new GameBoard();
+// gameBoard.carrierAutoPlace();
