@@ -504,6 +504,32 @@ export default class GameBoard {
     return canPlace;
   }
 
+  subMarineAutoPlace(orientation) {
+    if (!this.#isValidOrientation(orientation)) return {};
+
+    const available = this.subMarinePlacement(orientation);
+
+    function getRndElement(array) {
+      const rnd = Math.floor(Math.random() * array.length);
+
+      return array[rnd];
+    }
+
+    const placeHead = getRndElement(available);
+
+    const [x, y] = placeHead;
+
+    const { size } = this.#SUBMARINE_INFO;
+
+    const occupyingNodeLoc = this.#getToBeOccupied(size, x, y, orientation);
+
+    return {
+      orientation,
+      placeHead,
+      occupyingNodeLoc,
+    };
+  }
+
   placePatrolBoat(x, y, orientation = 'horizontal') {
     if (!this.#isValidOrientation(orientation)) return false;
 
@@ -569,6 +595,32 @@ export default class GameBoard {
     });
 
     return canPlace;
+  }
+
+  patrolBoatAutoPlace(orientation) {
+    if (!this.#isValidOrientation(orientation)) return {};
+
+    const available = this.patrolBoatPlacement(orientation);
+
+    function getRndElement(array) {
+      const rnd = Math.floor(Math.random() * array.length);
+
+      return array[rnd];
+    }
+
+    const placeHead = getRndElement(available);
+
+    const [x, y] = placeHead;
+
+    const { size } = this.#PATROL_BOAT_INFO;
+
+    const occupyingNodeLoc = this.#getToBeOccupied(size, x, y, orientation);
+
+    return {
+      orientation,
+      placeHead,
+      occupyingNodeLoc,
+    };
   }
 
   removeAllShips() {
