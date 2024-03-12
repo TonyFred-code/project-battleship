@@ -691,6 +691,109 @@ describe('auto ship placement', () => {
 
       expect(carrierPlacements).toHaveLength(0);
     });
+
+    test('carrierAutoPlace exists', () => {
+      expect(gameBoard.carrierAutoPlace).toBeDefined();
+    });
+
+    test('carrierAutoPlace returns obj following a pattern', () => {
+      const placeAttribute = gameBoard.carrierAutoPlace('horizontal');
+
+      expect(placeAttribute).toHaveProperty('orientation');
+
+      const { orientation } = placeAttribute;
+
+      expect(orientation === 'horizontal').toBe(true);
+
+      expect(placeAttribute).toHaveProperty('placeHead');
+
+      const HorizontalPlacements = [
+        '0-0',
+        '1-0',
+        '2-0',
+        '3-0',
+        '4-0',
+        '5-0',
+        '0-1',
+        '1-1',
+        '2-1',
+        '3-1',
+        '4-1',
+        '5-1',
+        '0-2',
+        '1-2',
+        '2-2',
+        '3-2',
+        '4-2',
+        '5-2',
+        '0-3',
+        '1-3',
+        '2-3',
+        '3-3',
+        '4-3',
+        '5-3',
+        '0-4',
+        '1-4',
+        '2-4',
+        '3-4',
+        '4-4',
+        '5-4',
+        '0-5',
+        '1-5',
+        '2-5',
+        '3-5',
+        '4-5',
+        '5-5',
+        '0-6',
+        '1-6',
+        '2-6',
+        '3-6',
+        '4-6',
+        '5-6',
+        '0-7',
+        '1-7',
+        '2-7',
+        '3-7',
+        '4-7',
+        '5-7',
+        '0-8',
+        '1-8',
+        '2-8',
+        '3-8',
+        '4-8',
+        '5-8',
+        '0-9',
+        '1-9',
+        '2-9',
+        '3-9',
+        '4-9',
+        '5-9',
+      ];
+
+      const { placeHead } = placeAttribute;
+
+      const formattedPlaceHead = `${placeHead[0]}-${placeHead[1]}`;
+
+      expect(HorizontalPlacements.includes(formattedPlaceHead)).toBe(true);
+
+      expect(placeAttribute).toHaveProperty('occupyingNodeLoc');
+    });
+
+    test('carrierAutoPlace can place vertically', () => {
+      const placeAttribute = gameBoard.carrierAutoPlace('vertical');
+
+      const { orientation } = placeAttribute;
+
+      expect(orientation === 'vertical').toBe(true);
+    });
+
+    test('carrierAutoPlace refuse invalid orientation', () => {
+      const placeAttribute = gameBoard.carrierAutoPlace('something');
+
+      const keys = Object.keys(placeAttribute);
+
+      expect(keys).toHaveLength(0);
+    });
   });
 
   describe('battleship auto placement', () => {
@@ -1530,6 +1633,20 @@ describe('auto ship placement', () => {
       const patrolBoatPlacements = gameBoard.patrolBoatPlacement('invalid');
 
       expect(patrolBoatPlacements).toHaveLength(0);
+    });
+  });
+
+  describe('all ships', () => {
+    test('all shipPlacement exists', () => {
+      expect(gameBoard.allShipsPlacement).toBeDefined();
+    });
+
+    test('returns an array with specific structure', () => {
+      const allShipsPlacements = gameBoard.allShipsPlacement();
+
+      expect(allShipsPlacements).toHaveLength(5);
+
+      // expect(allShipsPlacements)
     });
   });
 });
