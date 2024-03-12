@@ -269,22 +269,22 @@ test('gameBoard should have a receiveAttack() method', () => {
 
 test('receiveAttack should refuse hit if no ship is on the board', () => {
   const gameBoard = new GameBoard();
-  expect(gameBoard.receiveAttack(0, 0)).toBe(false);
+  expect(gameBoard.receiveAttack(0, 0)).toBe(-1);
 });
 
 test('receiveAttack should refuse hit if all ships are not on the board', () => {
   const gameBoard = new GameBoard();
-  expect(gameBoard.receiveAttack(0, 0)).toBe(false);
+  expect(gameBoard.receiveAttack(0, 0)).toBe(-1);
   expect(gameBoard.placeCarrier(5, 0)).toBe(true);
-  expect(gameBoard.receiveAttack(5, 0)).toBe(false);
+  expect(gameBoard.receiveAttack(5, 0)).toBe(-1);
   expect(gameBoard.placeBattleShip(0, 4, 'vertical')).toBe(true);
-  expect(gameBoard.receiveAttack(0, 4)).toBe(false);
+  expect(gameBoard.receiveAttack(0, 4)).toBe(-1);
   expect(gameBoard.placeDestroyer(3, 3)).toBe(true);
-  expect(gameBoard.receiveAttack(3, 3)).toBe(false);
+  expect(gameBoard.receiveAttack(3, 3)).toBe(-1);
   expect(gameBoard.placeSubMarine(6, 6, 'vertical')).toBe(true);
-  expect(gameBoard.receiveAttack(6, 6)).toBe(false);
+  expect(gameBoard.receiveAttack(6, 6)).toBe(-1);
   expect(gameBoard.placePatrolBoat(1, 9)).toBe(true);
-  expect(gameBoard.receiveAttack(1, 9)).toBe(true);
+  expect(gameBoard.receiveAttack(1, 9)).toBe(1);
 });
 
 test('gameBoard receiveAttack should not hit off the board', () => {
@@ -294,7 +294,7 @@ test('gameBoard receiveAttack should not hit off the board', () => {
   expect(gameBoard.placeDestroyer(3, 3)).toBe(true);
   expect(gameBoard.placeSubMarine(6, 6, 'vertical')).toBe(true);
   expect(gameBoard.placePatrolBoat(1, 9)).toBe(true);
-  expect(gameBoard.receiveAttack(10, 11)).toBe(false);
+  expect(gameBoard.receiveAttack(10, 11)).toBe(-1);
 });
 
 test('gameBoard receiveAttack should hit a ship on the board', () => {
@@ -304,7 +304,7 @@ test('gameBoard receiveAttack should hit a ship on the board', () => {
   expect(gameBoard.placeDestroyer(3, 3)).toBe(true);
   expect(gameBoard.placeSubMarine(6, 6, 'vertical')).toBe(true);
   expect(gameBoard.placePatrolBoat(1, 9)).toBe(true);
-  expect(gameBoard.receiveAttack(1, 9)).toBe(true);
+  expect(gameBoard.receiveAttack(1, 9)).toBe(1);
 });
 
 test('gameBoard receiveAttack should hit a unoccupied node on the board', () => {
@@ -314,7 +314,7 @@ test('gameBoard receiveAttack should hit a unoccupied node on the board', () => 
   expect(gameBoard.placeDestroyer(3, 3)).toBe(true);
   expect(gameBoard.placeSubMarine(6, 6, 'vertical')).toBe(true);
   expect(gameBoard.placePatrolBoat(1, 9)).toBe(true);
-  expect(gameBoard.receiveAttack(9, 2)).toBe(true);
+  expect(gameBoard.receiveAttack(9, 2)).toBe(0);
 });
 
 test('gameBoard receiveAttack should not hit same spot twice', () => {
@@ -324,8 +324,8 @@ test('gameBoard receiveAttack should not hit same spot twice', () => {
   expect(gameBoard.placeDestroyer(3, 3)).toBe(true);
   expect(gameBoard.placeSubMarine(6, 6, 'vertical')).toBe(true);
   expect(gameBoard.placePatrolBoat(1, 9)).toBe(true);
-  expect(gameBoard.receiveAttack(1, 9)).toBe(true);
-  expect(gameBoard.receiveAttack(1, 9)).toBe(false);
+  expect(gameBoard.receiveAttack(1, 9)).toBe(1);
+  expect(gameBoard.receiveAttack(1, 9)).toBe(-1);
 });
 
 test('can report when carrier is sunk', () => {
@@ -336,15 +336,15 @@ test('can report when carrier is sunk', () => {
   expect(gameBoard.placeSubMarine(6, 6, 'vertical')).toBe(true);
   expect(gameBoard.placePatrolBoat(1, 9)).toBe(true);
 
-  expect(gameBoard.receiveAttack(5, 0)).toBe(true);
+  expect(gameBoard.receiveAttack(5, 0)).toBe(1);
   expect(gameBoard.carrierSunk).toBe(false);
-  expect(gameBoard.receiveAttack(6, 0)).toBe(true);
+  expect(gameBoard.receiveAttack(6, 0)).toBe(1);
   expect(gameBoard.carrierSunk).toBe(false);
-  expect(gameBoard.receiveAttack(7, 0)).toBe(true);
+  expect(gameBoard.receiveAttack(7, 0)).toBe(1);
   expect(gameBoard.carrierSunk).toBe(false);
-  expect(gameBoard.receiveAttack(8, 0)).toBe(true);
+  expect(gameBoard.receiveAttack(8, 0)).toBe(1);
   expect(gameBoard.carrierSunk).toBe(false);
-  expect(gameBoard.receiveAttack(9, 0)).toBe(true);
+  expect(gameBoard.receiveAttack(9, 0)).toBe(1);
   expect(gameBoard.carrierSunk).toBe(true);
 });
 
@@ -356,15 +356,15 @@ test('can report when battleship is sunk', () => {
   expect(gameBoard.placeSubMarine(6, 6, 'vertical')).toBe(true);
   expect(gameBoard.placePatrolBoat(1, 9)).toBe(true);
 
-  expect(gameBoard.receiveAttack(0, 4)).toBe(true);
+  expect(gameBoard.receiveAttack(0, 4)).toBe(1);
   expect(gameBoard.battleShipSunk).toBe(false);
-  expect(gameBoard.receiveAttack(0, 5)).toBe(true);
-  expect(gameBoard.battleShipSunk).toBe(false);
-
-  expect(gameBoard.receiveAttack(0, 6)).toBe(true);
+  expect(gameBoard.receiveAttack(0, 5)).toBe(1);
   expect(gameBoard.battleShipSunk).toBe(false);
 
-  expect(gameBoard.receiveAttack(0, 7)).toBe(true);
+  expect(gameBoard.receiveAttack(0, 6)).toBe(1);
+  expect(gameBoard.battleShipSunk).toBe(false);
+
+  expect(gameBoard.receiveAttack(0, 7)).toBe(1);
   expect(gameBoard.battleShipSunk).toBe(true);
 });
 
@@ -376,12 +376,12 @@ test('can report when destroyer is sunk', () => {
   expect(gameBoard.placeSubMarine(6, 6, 'vertical')).toBe(true);
   expect(gameBoard.placePatrolBoat(1, 9)).toBe(true);
 
-  expect(gameBoard.receiveAttack(3, 3)).toBe(true);
+  expect(gameBoard.receiveAttack(3, 3)).toBe(1);
   expect(gameBoard.destroyerSunk).toBe(false);
-  expect(gameBoard.receiveAttack(4, 3)).toBe(true);
+  expect(gameBoard.receiveAttack(4, 3)).toBe(1);
   expect(gameBoard.destroyerSunk).toBe(false);
 
-  expect(gameBoard.receiveAttack(5, 3)).toBe(true);
+  expect(gameBoard.receiveAttack(5, 3)).toBe(1);
   expect(gameBoard.destroyerSunk).toBe(true);
 });
 
@@ -393,12 +393,12 @@ test('can report when submarine is sunk', () => {
   expect(gameBoard.placeSubMarine(6, 6, 'vertical')).toBe(true);
   expect(gameBoard.placePatrolBoat(1, 9)).toBe(true);
 
-  expect(gameBoard.receiveAttack(6, 6)).toBe(true);
+  expect(gameBoard.receiveAttack(6, 6)).toBe(1);
   expect(gameBoard.submarineSunk).toBe(false);
-  expect(gameBoard.receiveAttack(6, 7)).toBe(true);
+  expect(gameBoard.receiveAttack(6, 7)).toBe(1);
   expect(gameBoard.submarineSunk).toBe(false);
+  expect(gameBoard.receiveAttack(6, 8)).toBe(1);
 
-  expect(gameBoard.receiveAttack(6, 8)).toBe(true);
   expect(gameBoard.submarineSunk).toBe(true);
 });
 
@@ -410,9 +410,9 @@ test('can report when patrol boat is sunk', () => {
   expect(gameBoard.placeSubMarine(6, 6, 'vertical')).toBe(true);
   expect(gameBoard.placePatrolBoat(1, 9)).toBe(true);
 
-  expect(gameBoard.receiveAttack(1, 9)).toBe(true);
+  expect(gameBoard.receiveAttack(1, 9)).toBe(1);
   expect(gameBoard.patrolBoatSunk).toBe(false);
-  expect(gameBoard.receiveAttack(2, 9)).toBe(true);
+  expect(gameBoard.receiveAttack(2, 9)).toBe(1);
   expect(gameBoard.patrolBoatSunk).toBe(true);
 });
 
@@ -424,27 +424,27 @@ test('knows when all ship sunk', () => {
   expect(gameBoard.placeSubMarine(6, 6, 'vertical')).toBe(true);
   expect(gameBoard.placePatrolBoat(1, 9)).toBe(true);
 
-  expect(gameBoard.receiveAttack(5, 0)).toBe(true);
-  expect(gameBoard.receiveAttack(6, 0)).toBe(true);
-  expect(gameBoard.receiveAttack(7, 0)).toBe(true);
-  expect(gameBoard.receiveAttack(8, 0)).toBe(true);
-  expect(gameBoard.receiveAttack(9, 0)).toBe(true);
+  expect(gameBoard.receiveAttack(5, 0)).toBe(1);
+  expect(gameBoard.receiveAttack(6, 0)).toBe(1);
+  expect(gameBoard.receiveAttack(7, 0)).toBe(1);
+  expect(gameBoard.receiveAttack(8, 0)).toBe(1);
+  expect(gameBoard.receiveAttack(9, 0)).toBe(1);
 
-  expect(gameBoard.receiveAttack(0, 4)).toBe(true);
-  expect(gameBoard.receiveAttack(0, 5)).toBe(true);
-  expect(gameBoard.receiveAttack(0, 6)).toBe(true);
-  expect(gameBoard.receiveAttack(0, 7)).toBe(true);
+  expect(gameBoard.receiveAttack(0, 4)).toBe(1);
+  expect(gameBoard.receiveAttack(0, 5)).toBe(1);
+  expect(gameBoard.receiveAttack(0, 6)).toBe(1);
+  expect(gameBoard.receiveAttack(0, 7)).toBe(1);
 
-  expect(gameBoard.receiveAttack(3, 3)).toBe(true);
-  expect(gameBoard.receiveAttack(4, 3)).toBe(true);
-  expect(gameBoard.receiveAttack(5, 3)).toBe(true);
+  expect(gameBoard.receiveAttack(3, 3)).toBe(1);
+  expect(gameBoard.receiveAttack(4, 3)).toBe(1);
+  expect(gameBoard.receiveAttack(5, 3)).toBe(1);
 
-  expect(gameBoard.receiveAttack(6, 6)).toBe(true);
-  expect(gameBoard.receiveAttack(6, 7)).toBe(true);
-  expect(gameBoard.receiveAttack(6, 8)).toBe(true);
+  expect(gameBoard.receiveAttack(6, 6)).toBe(1);
+  expect(gameBoard.receiveAttack(6, 7)).toBe(1);
+  expect(gameBoard.receiveAttack(6, 8)).toBe(1);
 
-  expect(gameBoard.receiveAttack(1, 9)).toBe(true);
-  expect(gameBoard.receiveAttack(2, 9)).toBe(true);
+  expect(gameBoard.receiveAttack(1, 9)).toBe(1);
+  expect(gameBoard.receiveAttack(2, 9)).toBe(1);
 
   expect(gameBoard.isAllShipSunk).toBeTruthy();
 });
@@ -2127,17 +2127,36 @@ describe('auto ship placement', () => {
     });
   });
 
-  describe('all ships', () => {
-    test('all shipPlacement exists', () => {
-      expect(gameBoard.allShipsPlacement).toBeDefined();
-    });
+  describe('ship auto placement places ships on the board', () => {
+    test('ships get hit and can be sunk using auto placement', () => {
+      function rndOrientation() {
+        const rnd = Math.floor(Math.random() * 10);
 
-    test('returns an array with specific structure', () => {
-      const allShipsPlacements = gameBoard.allShipsPlacement();
+        if (rnd % 2 === 0) return 'vertical';
 
-      expect(allShipsPlacements).toHaveLength(5);
+        return 'horizontal';
+      }
+      const carrierPlaceInfo = gameBoard.carrierAutoPlace(rndOrientation());
 
-      // expect(allShipsPlacements)
+      const battleShipPlaceInfo =
+        gameBoard.battleShipAutoPlace(rndOrientation());
+
+      const destroyerPlaceInfo = gameBoard.destroyerAutoPlace(rndOrientation());
+
+      const subMarinePlaceInfo = gameBoard.subMarineAutoPlace(rndOrientation());
+
+      const patrolBoatPlaceInfo =
+        gameBoard.patrolBoatAutoPlace(rndOrientation());
+
+      const carrierOccupying = carrierPlaceInfo.occupyingNodeLoc;
+
+      carrierOccupying.forEach((nodeLoc) => {
+        const [x, y] = nodeLoc;
+
+        gameBoard.receiveAttack(x, y);
+      });
+
+      expect(gameBoard.carrierSunk).toBe(true);
     });
   });
 });
