@@ -672,13 +672,15 @@ export default class GameBoard {
 
       return 'horizontal';
     }
+    const placementInfo = [];
 
-    this.carrierAutoPlace(rndOrientation());
-    this.battleShipAutoPlace(rndOrientation());
-    this.destroyerAutoPlace(rndOrientation());
-    this.subMarineAutoPlace(rndOrientation());
-    this.patrolBoatAutoPlace(rndOrientation());
-    // return Array(5);
+    placementInfo.push(this.carrierAutoPlace(rndOrientation()));
+    placementInfo.push(this.battleShipAutoPlace(rndOrientation()));
+    placementInfo.push(this.destroyerAutoPlace(rndOrientation()));
+    placementInfo.push(this.subMarineAutoPlace(rndOrientation()));
+    placementInfo.push(this.patrolBoatAutoPlace(rndOrientation()));
+
+    return placementInfo;
   }
 
   receiveAttack(x, y) {
