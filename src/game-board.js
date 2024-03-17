@@ -109,8 +109,11 @@ export default class GameBoard {
       return false;
     }
 
+    // const toBeOccupied = this.#getToBeOccupied(x, y, orientation);
+
     const node = this.board[y * this.BOARD_SIZE + x];
-    if (node.isOccupied || node.isNeighboringOccupied) return false;
+    if (node.isHit || node.isOccupied || node.isNeighboringOccupied)
+      return false;
 
     return true;
   }
@@ -145,16 +148,21 @@ export default class GameBoard {
   }
 
   #checkNodeLocations(nodeLocations) {
-    let allValid = true;
+    // let allValid = true;
 
-    nodeLocations.forEach((nodeLocation) => {
-      const [nx, ny] = nodeLocation;
-      if (!this.#isValidCoordinate(nx, ny) || !this.#canPlaceShip(nx, ny)) {
-        allValid = false;
-      }
+    // nodeLocations.forEach((nodeLocation) => {
+    //   const [nx, ny] = nodeLocation;
+    //   if (!this.#canPlaceShip(nx, ny)) {
+    //     allValid = false;
+    //   }
+    // });
+
+    return nodeLocations.every((nodeLoc) => {
+      const [nx, ny] = nodeLoc;
+      return this.#canPlaceShip(nx, ny);
     });
 
-    return allValid;
+    // return allValid;
   }
 
   placeCarrier(x, y, orientation = 'horizontal') {
@@ -205,7 +213,7 @@ export default class GameBoard {
     if (!this.#isValidOrientation(orientation)) return [];
 
     const availableNodes = this.board.filter(
-      (node) => !node.isHit && !node.isOccupied,
+      (node) => !node.isHit && !node.isOccupied && !node.isNeighboringOccupied,
     );
 
     const { size } = this.#CARRIER_INFO;
@@ -217,7 +225,10 @@ export default class GameBoard {
 
       const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
 
-      if (toBeOccupied.length === size) {
+      if (
+        toBeOccupied.length === size &&
+        this.#checkNodeLocations(toBeOccupied)
+      ) {
         canPlace.push([x, y]);
       }
     });
@@ -243,6 +254,8 @@ export default class GameBoard {
     const { size } = this.#CARRIER_INFO;
 
     const occupyingNodeLoc = this.#getToBeOccupied(size, x, y, orientation);
+
+    this.placeCarrier(x, y, orientation);
 
     return {
       orientation,
@@ -298,7 +311,7 @@ export default class GameBoard {
     if (!this.#isValidOrientation(orientation)) return [];
 
     const availableNodes = this.board.filter(
-      (node) => !node.isHit && !node.isOccupied,
+      (node) => !node.isHit && !node.isOccupied && !node.isNeighboringOccupied,
     );
 
     const { size } = this.#BATTLESHIP_INFO;
@@ -310,7 +323,10 @@ export default class GameBoard {
 
       const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
 
-      if (toBeOccupied.length === size) {
+      if (
+        toBeOccupied.length === size &&
+        this.#checkNodeLocations(toBeOccupied)
+      ) {
         canPlace.push([x, y]);
       }
     });
@@ -336,6 +352,8 @@ export default class GameBoard {
     const { size } = this.#BATTLESHIP_INFO;
 
     const occupyingNodeLoc = this.#getToBeOccupied(size, x, y, orientation);
+
+    this.placeBattleShip(x, y, orientation);
 
     return {
       orientation,
@@ -391,7 +409,7 @@ export default class GameBoard {
     if (!this.#isValidOrientation(orientation)) return [];
 
     const availableNodes = this.board.filter(
-      (node) => !node.isHit && !node.isOccupied,
+      (node) => !node.isHit && !node.isOccupied && !node.isNeighboringOccupied,
     );
 
     const { size } = this.#DESTROYER_INFO;
@@ -403,7 +421,10 @@ export default class GameBoard {
 
       const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
 
-      if (toBeOccupied.length === size) {
+      if (
+        toBeOccupied.length === size &&
+        this.#checkNodeLocations(toBeOccupied)
+      ) {
         canPlace.push([x, y]);
       }
     });
@@ -429,6 +450,8 @@ export default class GameBoard {
     const { size } = this.#DESTROYER_INFO;
 
     const occupyingNodeLoc = this.#getToBeOccupied(size, x, y, orientation);
+
+    this.placeDestroyer(x, y, orientation);
 
     return {
       orientation,
@@ -484,7 +507,7 @@ export default class GameBoard {
     if (!this.#isValidOrientation(orientation)) return [];
 
     const availableNodes = this.board.filter(
-      (node) => !node.isHit && !node.isOccupied,
+      (node) => !node.isHit && !node.isOccupied && !node.isNeighboringOccupied,
     );
 
     const { size } = this.#SUBMARINE_INFO;
@@ -496,7 +519,10 @@ export default class GameBoard {
 
       const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
 
-      if (toBeOccupied.length === size) {
+      if (
+        toBeOccupied.length === size &&
+        this.#checkNodeLocations(toBeOccupied)
+      ) {
         canPlace.push([x, y]);
       }
     });
@@ -522,6 +548,8 @@ export default class GameBoard {
     const { size } = this.#SUBMARINE_INFO;
 
     const occupyingNodeLoc = this.#getToBeOccupied(size, x, y, orientation);
+
+    this.placeSubMarine(x, y, orientation);
 
     return {
       orientation,
@@ -577,7 +605,7 @@ export default class GameBoard {
     if (!this.#isValidOrientation(orientation)) return [];
 
     const availableNodes = this.board.filter(
-      (node) => !node.isHit && !node.isOccupied,
+      (node) => !node.isHit && !node.isOccupied && !node.isNeighboringOccupied,
     );
 
     const { size } = this.#PATROL_BOAT_INFO;
@@ -589,7 +617,10 @@ export default class GameBoard {
 
       const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
 
-      if (toBeOccupied.length === size) {
+      if (
+        toBeOccupied.length === size &&
+        this.#checkNodeLocations(toBeOccupied)
+      ) {
         canPlace.push([x, y]);
       }
     });
@@ -616,6 +647,8 @@ export default class GameBoard {
 
     const occupyingNodeLoc = this.#getToBeOccupied(size, x, y, orientation);
 
+    this.placePatrolBoat(x, y, orientation);
+
     return {
       orientation,
       placeHead,
@@ -632,7 +665,20 @@ export default class GameBoard {
   }
 
   allShipsPlacement() {
-    return Array(5);
+    function rndOrientation() {
+      const rnd = Math.floor(Math.random() * 10);
+
+      if (rnd % 2 === 0) return 'vertical';
+
+      return 'horizontal';
+    }
+
+    this.carrierAutoPlace(rndOrientation());
+    this.battleShipAutoPlace(rndOrientation());
+    this.destroyerAutoPlace(rndOrientation());
+    this.subMarineAutoPlace(rndOrientation());
+    this.patrolBoatAutoPlace(rndOrientation());
+    // return Array(5);
   }
 
   receiveAttack(x, y) {
@@ -707,4 +753,30 @@ export default class GameBoard {
 }
 
 // const gameBoard = new GameBoard();
-// gameBoard.carrierAutoPlace();
+
+// function rndOrientation() {
+//   const rnd = Math.floor(Math.random() * 10);
+
+//   if (rnd % 2 === 0) return 'vertical';
+
+//   return 'horizontal';
+// }
+// const carrierPlaceInfo = gameBoard.carrierAutoPlace(rndOrientation());
+
+// const battleShipPlaceInfo = gameBoard.battleShipAutoPlace(rndOrientation());
+
+// const destroyerPlaceInfo = gameBoard.destroyerAutoPlace(rndOrientation());
+
+// const subMarinePlaceInfo = gameBoard.subMarineAutoPlace(rndOrientation());
+
+// const patrolBoatPlaceInfo = gameBoard.patrolBoatAutoPlace(rndOrientation());
+
+// const carrierOccupying = carrierPlaceInfo.occupyingNodeLoc;
+
+// const carrierHits = new Set();
+
+// carrierOccupying.forEach((nodeLoc) => {
+//   const [x, y] = nodeLoc;
+
+//   carrierHits.add(gameBoard.receiveAttack(x, y));
+// });
