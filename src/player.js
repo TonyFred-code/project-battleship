@@ -47,4 +47,8 @@ export default class Player {
   allShipSunk() {
     return this.#PLAYER_BOARD.isAllShipSunk;
   }
+
+  autoPlaceShips() {
+    return this.#PLAYER_BOARD.allShipsPlacement();
+  }
 }
