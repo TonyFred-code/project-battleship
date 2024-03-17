@@ -522,8 +522,9 @@ describe('ship removal', () => {
 });
 
 describe('auto ship placement', () => {
-  const gameBoard = new GameBoard();
   describe('carrier auto placement', () => {
+    const gameBoard = new GameBoard();
+
     test('carrierPlacement exists', () => {
       expect(gameBoard.carrierPlacement).toBeDefined();
     });
@@ -777,6 +778,8 @@ describe('auto ship placement', () => {
       expect(HorizontalPlacements.includes(formattedPlaceHead)).toBe(true);
 
       expect(placeAttribute).toHaveProperty('occupyingNodeLoc');
+
+      gameBoard.removeCarrier();
     });
 
     test('carrierAutoPlace can place vertically', () => {
@@ -785,6 +788,7 @@ describe('auto ship placement', () => {
       const { orientation } = placeAttribute;
 
       expect(orientation === 'vertical').toBe(true);
+      gameBoard.removeCarrier();
     });
 
     test('carrierAutoPlace refuse invalid orientation', () => {
@@ -793,10 +797,13 @@ describe('auto ship placement', () => {
       const keys = Object.keys(placeAttribute);
 
       expect(keys).toHaveLength(0);
+      gameBoard.removeCarrier();
     });
   });
 
   describe('battleship auto placement', () => {
+    const gameBoard = new GameBoard();
+
     test('battleShipPlacement exists', () => {
       expect(gameBoard.battleShipPlacement).toBeDefined();
     });
@@ -1080,6 +1087,8 @@ describe('auto ship placement', () => {
       expect(HorizontalPlacements.includes(formattedPlaceHead)).toBe(true);
 
       expect(placeAttribute).toHaveProperty('occupyingNodeLoc');
+
+      gameBoard.removeBattleShip();
     });
 
     test('battleShipAutoPlace can place vertically', () => {
@@ -1088,6 +1097,8 @@ describe('auto ship placement', () => {
       const { orientation } = placeAttribute;
 
       expect(orientation === 'vertical').toBe(true);
+
+      gameBoard.removeBattleShip();
     });
 
     test('battleShipAutoPlace refuse invalid orientation', () => {
@@ -1096,10 +1107,13 @@ describe('auto ship placement', () => {
       const keys = Object.keys(placeAttribute);
 
       expect(keys).toHaveLength(0);
+
+      gameBoard.removeBattleShip();
     });
   });
 
   describe('destroyer auto placement', () => {
+    const gameBoard = new GameBoard();
     test('destroyerPlacement exists', () => {
       expect(gameBoard.destroyerPlacement).toBeDefined();
     });
@@ -1413,6 +1427,8 @@ describe('auto ship placement', () => {
       expect(HorizontalPlacements.includes(formattedPlaceHead)).toBe(true);
 
       expect(placeAttribute).toHaveProperty('occupyingNodeLoc');
+
+      gameBoard.removeDestroyer();
     });
 
     test('destroyerAutoPlace can place vertically', () => {
@@ -1421,6 +1437,7 @@ describe('auto ship placement', () => {
       const { orientation } = placeAttribute;
 
       expect(orientation === 'vertical').toBe(true);
+      gameBoard.removeDestroyer();
     });
 
     test('destroyerAutoPlace refuse invalid orientation', () => {
@@ -1429,10 +1446,13 @@ describe('auto ship placement', () => {
       const keys = Object.keys(placeAttribute);
 
       expect(keys).toHaveLength(0);
+      gameBoard.removeDestroyer();
     });
   });
 
   describe('submarine auto placement', () => {
+    const gameBoard = new GameBoard();
+
     test('subMarinePlacement exists', () => {
       expect(gameBoard.subMarinePlacement).toBeDefined();
     });
@@ -1746,6 +1766,8 @@ describe('auto ship placement', () => {
       expect(HorizontalPlacements.includes(formattedPlaceHead)).toBe(true);
 
       expect(placeAttribute).toHaveProperty('occupyingNodeLoc');
+
+      gameBoard.removeSubMarine();
     });
 
     test('subMarineAutoPlace can place vertically', () => {
@@ -1754,6 +1776,8 @@ describe('auto ship placement', () => {
       const { orientation } = placeAttribute;
 
       expect(orientation === 'vertical').toBe(true);
+
+      gameBoard.removeSubMarine();
     });
 
     test('subMarineAutoPlace refuse invalid orientation', () => {
@@ -1762,10 +1786,14 @@ describe('auto ship placement', () => {
       const keys = Object.keys(placeAttribute);
 
       expect(keys).toHaveLength(0);
+
+      gameBoard.removeSubMarine();
     });
   });
 
   describe('patrol boat auto placement', () => {
+    const gameBoard = new GameBoard();
+
     test('patrolBoatPlacement exists', () => {
       expect(gameBoard.patrolBoatPlacement).toBeDefined();
     });
@@ -2108,6 +2136,8 @@ describe('auto ship placement', () => {
       expect(HorizontalPlacements.includes(formattedPlaceHead)).toBe(true);
 
       expect(placeAttribute).toHaveProperty('occupyingNodeLoc');
+
+      gameBoard.removePatrolBoat();
     });
 
     test('patrolBoatAutoPlace can place vertically', () => {
@@ -2116,6 +2146,8 @@ describe('auto ship placement', () => {
       const { orientation } = placeAttribute;
 
       expect(orientation === 'vertical').toBe(true);
+
+      gameBoard.removePatrolBoat();
     });
 
     test('patrolBoatAutoPlace refuse invalid orientation', () => {
@@ -2124,39 +2156,224 @@ describe('auto ship placement', () => {
       const keys = Object.keys(placeAttribute);
 
       expect(keys).toHaveLength(0);
+
+      gameBoard.removePatrolBoat();
     });
   });
 
   describe('ship auto placement places ships on the board', () => {
-    test('ships get hit and can be sunk using auto placement', () => {
-      function rndOrientation() {
-        const rnd = Math.floor(Math.random() * 10);
+    describe('carrier auto placement', () => {
+      const gameBoard = new GameBoard();
 
-        if (rnd % 2 === 0) return 'vertical';
+      test('ships get hit and can be sunk using auto placement', () => {
+        function rndOrientation() {
+          const rnd = Math.floor(Math.random() * 10);
 
-        return 'horizontal';
-      }
-      const carrierPlaceInfo = gameBoard.carrierAutoPlace(rndOrientation());
+          if (rnd % 2 === 0) return 'vertical';
 
-      const battleShipPlaceInfo =
+          return 'horizontal';
+        }
+
+        const carrierPlaceInfo = gameBoard.carrierAutoPlace(rndOrientation());
+
         gameBoard.battleShipAutoPlace(rndOrientation());
 
-      const destroyerPlaceInfo = gameBoard.destroyerAutoPlace(rndOrientation());
+        gameBoard.destroyerAutoPlace(rndOrientation());
 
-      const subMarinePlaceInfo = gameBoard.subMarineAutoPlace(rndOrientation());
+        gameBoard.subMarineAutoPlace(rndOrientation());
 
-      const patrolBoatPlaceInfo =
         gameBoard.patrolBoatAutoPlace(rndOrientation());
 
-      const carrierOccupying = carrierPlaceInfo.occupyingNodeLoc;
+        const carrierOccupying = carrierPlaceInfo.occupyingNodeLoc;
 
-      carrierOccupying.forEach((nodeLoc) => {
-        const [x, y] = nodeLoc;
+        const carrierHits = new Set();
 
-        gameBoard.receiveAttack(x, y);
+        carrierOccupying.forEach((nodeLoc) => {
+          const [x, y] = nodeLoc;
+
+          carrierHits.add(gameBoard.receiveAttack(x, y));
+        });
+
+        expect(carrierHits.size).toBe(1);
+
+        expect(carrierHits.has(1)).toBe(true);
+        expect(carrierHits.has(0)).toBe(false);
+        expect(carrierHits.has(-1)).toBe(false);
+
+        expect(gameBoard.carrierSunk).toBe(true);
       });
+    });
 
-      expect(gameBoard.carrierSunk).toBe(true);
+    describe('battleship auto placement', () => {
+      const gameBoard = new GameBoard();
+
+      test('ships get hit and can be sunk using auto placement', () => {
+        function rndOrientation() {
+          const rnd = Math.floor(Math.random() * 10);
+
+          if (rnd % 2 === 0) return 'vertical';
+
+          return 'horizontal';
+        }
+
+        gameBoard.carrierAutoPlace(rndOrientation());
+
+        const battleShipPlaceInfo =
+          gameBoard.battleShipAutoPlace(rndOrientation());
+
+        gameBoard.destroyerAutoPlace(rndOrientation());
+
+        gameBoard.subMarineAutoPlace(rndOrientation());
+
+        gameBoard.patrolBoatAutoPlace(rndOrientation());
+
+        const battleShipOccupying = battleShipPlaceInfo.occupyingNodeLoc;
+
+        const battleShipHits = new Set();
+
+        battleShipOccupying.forEach((nodeLoc) => {
+          const [x, y] = nodeLoc;
+
+          battleShipHits.add(gameBoard.receiveAttack(x, y));
+        });
+
+        expect(battleShipHits.size).toBe(1);
+
+        expect(battleShipHits.has(1)).toBe(true);
+        expect(battleShipHits.has(0)).toBe(false);
+        expect(battleShipHits.has(-1)).toBe(false);
+
+        expect(gameBoard.battleShipSunk).toBe(true);
+      });
+    });
+
+    describe('destroyer auto placement', () => {
+      const gameBoard = new GameBoard();
+
+      test('ships get hit and can be sunk using auto placement', () => {
+        function rndOrientation() {
+          const rnd = Math.floor(Math.random() * 10);
+
+          if (rnd % 2 === 0) return 'vertical';
+
+          return 'horizontal';
+        }
+
+        gameBoard.carrierAutoPlace(rndOrientation());
+
+        gameBoard.battleShipAutoPlace(rndOrientation());
+
+        const destroyerPlaceInfo =
+          gameBoard.destroyerAutoPlace(rndOrientation());
+
+        gameBoard.subMarineAutoPlace(rndOrientation());
+
+        gameBoard.patrolBoatAutoPlace(rndOrientation());
+
+        const destroyerOccupying = destroyerPlaceInfo.occupyingNodeLoc;
+
+        const destroyerHits = new Set();
+
+        destroyerOccupying.forEach((nodeLoc) => {
+          const [x, y] = nodeLoc;
+
+          destroyerHits.add(gameBoard.receiveAttack(x, y));
+        });
+
+        expect(destroyerHits.size).toBe(1);
+
+        expect(destroyerHits.has(1)).toBe(true);
+        expect(destroyerHits.has(0)).toBe(false);
+        expect(destroyerHits.has(-1)).toBe(false);
+
+        expect(gameBoard.destroyerSunk).toBe(true);
+      });
+    });
+
+    describe('sub marine auto placement', () => {
+      const gameBoard = new GameBoard();
+
+      test('ships get hit and can be sunk using auto placement', () => {
+        function rndOrientation() {
+          const rnd = Math.floor(Math.random() * 10);
+
+          if (rnd % 2 === 0) return 'vertical';
+
+          return 'horizontal';
+        }
+
+        gameBoard.carrierAutoPlace(rndOrientation());
+
+        gameBoard.battleShipAutoPlace(rndOrientation());
+
+        gameBoard.destroyerAutoPlace(rndOrientation());
+
+        const subMarinePlaceInfo =
+          gameBoard.subMarineAutoPlace(rndOrientation());
+
+        gameBoard.patrolBoatAutoPlace(rndOrientation());
+
+        const subMarineOccupying = subMarinePlaceInfo.occupyingNodeLoc;
+
+        const subMarineHits = new Set();
+
+        subMarineOccupying.forEach((nodeLoc) => {
+          const [x, y] = nodeLoc;
+
+          subMarineHits.add(gameBoard.receiveAttack(x, y));
+        });
+
+        expect(subMarineHits.size).toBe(1);
+
+        expect(subMarineHits.has(1)).toBe(true);
+        expect(subMarineHits.has(0)).toBe(false);
+        expect(subMarineHits.has(-1)).toBe(false);
+
+        expect(gameBoard.submarineSunk).toBe(true);
+      });
+    });
+
+    describe('patrol boat auto placement', () => {
+      const gameBoard = new GameBoard();
+
+      test('ships get hit and can be sunk using auto placement', () => {
+        function rndOrientation() {
+          const rnd = Math.floor(Math.random() * 10);
+
+          if (rnd % 2 === 0) return 'vertical';
+
+          return 'horizontal';
+        }
+
+        gameBoard.carrierAutoPlace(rndOrientation());
+
+        gameBoard.battleShipAutoPlace(rndOrientation());
+
+        gameBoard.destroyerAutoPlace(rndOrientation());
+
+        gameBoard.subMarineAutoPlace(rndOrientation());
+
+        const patrolBoatPlaceInfo =
+          gameBoard.patrolBoatAutoPlace(rndOrientation());
+
+        const patrolBoatOccupying = patrolBoatPlaceInfo.occupyingNodeLoc;
+
+        const patrolBoatHits = new Set();
+
+        patrolBoatOccupying.forEach((nodeLoc) => {
+          const [x, y] = nodeLoc;
+
+          patrolBoatHits.add(gameBoard.receiveAttack(x, y));
+        });
+
+        expect(patrolBoatHits.size).toBe(1);
+
+        expect(patrolBoatHits.has(1)).toBe(true);
+        expect(patrolBoatHits.has(0)).toBe(false);
+        expect(patrolBoatHits.has(-1)).toBe(false);
+
+        expect(gameBoard.patrolBoatSunk).toBe(true);
+      });
     });
   });
 });
