@@ -15,21 +15,9 @@ describe('players', () => {
     expect(gameController.createHumanPlayer()).not.toBeTruthy();
   });
 
-  test('can create two human player', () => {
-    const gameController = new GameController();
-    expect(gameController.createHumanPlayer('Player 1')).toBeTruthy();
-    expect(gameController.createHumanPlayer('Player 2')).toBeTruthy();
-  });
-
   test('can create bot player', () => {
     const gameController = new GameController();
     expect(gameController.createBotPlayer).toBeDefined();
-  });
-
-  test('can create two bot players', () => {
-    const gameController = new GameController();
-    expect(gameController.createBotPlayer()).toBeTruthy();
-    expect(gameController.createBotPlayer()).toBeTruthy();
   });
 
   test('can create one bot one human player', () => {
@@ -75,26 +63,89 @@ describe('players', () => {
     expect(gameController.createHumanPlayer('Player 3')).not.toBeTruthy();
   });
 
-  test('players can place ships', () => {
-    const gameController = new GameController();
-    expect(gameController.placePlayerOneCarrier).toBeDefined();
-    expect(gameController.placePlayerTwoCarrier).toBeDefined();
+  describe('has method for ship placements', () => {
+    describe('ship placement methods for human-bot is defined', () => {
+      test('players can place ships', () => {
+        const gameController = new GameController();
+        expect(gameController.placeHumanPlayerCarrier).toBeDefined();
 
-    expect(gameController.placePlayerOneBattleShip).toBeDefined();
-    expect(gameController.placePlayerTwoBattleShip).toBeDefined();
+        expect(gameController.placeHumanPlayerBattleShip).toBeDefined();
 
-    expect(gameController.placePlayerOneDestroyer).toBeDefined();
-    expect(gameController.placePlayerTwoDestroyer).toBeDefined();
+        expect(gameController.placeHumanPlayerDestroyer).toBeDefined();
 
-    expect(gameController.placePlayerOneSubMarine).toBeDefined();
-    expect(gameController.placePlayerTwoSubMarine).toBeDefined();
+        expect(gameController.placeHumanPlayerSubMarine).toBeDefined();
 
-    expect(gameController.placePlayerOnePatrolBoat).toBeDefined();
-    expect(gameController.placePlayerTwoPatrolBoat).toBeDefined();
+        expect(gameController.placeHumanPlayerPatrolBoat).toBeDefined();
+
+        expect(gameController.placeBotShips).toBeDefined();
+
+        expect(gameController.autoPlaceHumanPlayerShips).toBeDefined();
+      });
+    });
   });
 });
 
-test.todo('controller create a new game');
+describe('game round creation', () => {
+  test('creation method exists', () => {
+    const gameController = new GameController();
+    expect(gameController.startRound).toBeDefined();
+  });
+
+  test('method for checking gameState exists', () => {
+    const gameController = new GameController();
+    expect(gameController.gameState).toBeDefined();
+  });
+
+  test('should return round state when creating new round state', () => {
+    const gameController = new GameController();
+
+    gameController.createHumanPlayer('Player 1');
+    gameController.createBotPlayer();
+
+    gameController.startRound();
+
+    const roundState = gameController.gameState;
+
+    expect(roundState).toHaveProperty('humanPlayerName', 'Player 1');
+    expect(roundState).toHaveProperty('botPlayerName', 'jarvis');
+
+    expect(roundState).toHaveProperty('roundStart', true);
+
+    expect(roundState).toHaveProperty('roundEnd', false);
+  });
+
+  test('round state reflects proper game state', () => {
+    const gameController = new GameController();
+
+    const initialRoundState = gameController.gameState;
+
+    expect(initialRoundState).toHaveProperty('roundStart', false);
+
+    gameController.createHumanPlayer('Player 1');
+    gameController.createBotPlayer();
+
+    gameController.startRound();
+
+    const roundState = gameController.gameState;
+
+    expect(roundState).toHaveProperty('humanPlayerName', 'Player 1');
+    expect(roundState).toHaveProperty('botPlayerName', 'jarvis');
+
+    expect(roundState).toHaveProperty('roundStart', true);
+
+    expect(roundState).toHaveProperty('roundEnd', false);
+  });
+
+  test('refuse start if players not created', () => {
+    const gameController = new GameController();
+
+    gameController.startRound();
+
+    const { gameState } = gameController;
+
+    expect(gameState).toHaveProperty('roundStart', false);
+  });
+});
 
 test.todo('allows players to play in turns');
 
