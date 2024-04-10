@@ -2428,5 +2428,35 @@ describe('querying ship placement', () => {
 
       expect(correct).toBeTruthy();
     });
+
+    test('battleship placement returned is correct', () => {
+      expect(shipPlacements).toHaveProperty('battleShipPlacement');
+
+      const { battleShipPlacement } = shipPlacements;
+
+      expect(battleShipPlacement).toHaveProperty('shipHead', [0, 4]);
+
+      expect(battleShipPlacement).toHaveProperty('orientation', 'vertical');
+
+      expect(battleShipPlacement).toHaveProperty('occupyingLoc');
+
+      const { occupyingLoc } = battleShipPlacement;
+
+      const toBeOccupied = ['0, 4', '0, 5', '0, 6', '0, 7'];
+
+      expect(occupyingLoc).toHaveLength(4);
+
+      let correct = false;
+
+      occupyingLoc.forEach((element) => {
+        const [x, y] = element;
+
+        const transform = `${x}, ${y}`;
+
+        correct = toBeOccupied.includes(transform);
+      });
+
+      expect(correct).toBeTruthy();
+    });
   });
 });
