@@ -2458,5 +2458,95 @@ describe('querying ship placement', () => {
 
       expect(correct).toBeTruthy();
     });
+
+    test('destroyer placement returned is correct', () => {
+      expect(shipPlacements).toHaveProperty('destroyerPlacement');
+
+      const { destroyerPlacement } = shipPlacements;
+
+      expect(destroyerPlacement).toHaveProperty('shipHead', [3, 3]);
+
+      expect(destroyerPlacement).toHaveProperty('orientation', 'horizontal');
+
+      expect(destroyerPlacement).toHaveProperty('occupyingLoc');
+
+      const { occupyingLoc } = destroyerPlacement;
+
+      const toBeOccupied = ['3, 3', '4, 3', '5, 3'];
+
+      expect(occupyingLoc).toHaveLength(3);
+
+      let correct = false;
+
+      occupyingLoc.forEach((element) => {
+        const [x, y] = element;
+
+        const transform = `${x}, ${y}`;
+
+        correct = toBeOccupied.includes(transform);
+      });
+
+      expect(correct).toBeTruthy();
+    });
+
+    test('submarine placement returned is correct', () => {
+      expect(shipPlacements).toHaveProperty('subMarinePlacement');
+
+      const { subMarinePlacement } = shipPlacements;
+
+      expect(subMarinePlacement).toHaveProperty('shipHead', [6, 6]);
+
+      expect(subMarinePlacement).toHaveProperty('orientation', 'vertical');
+
+      expect(subMarinePlacement).toHaveProperty('occupyingLoc');
+
+      const { occupyingLoc } = subMarinePlacement;
+
+      const toBeOccupied = ['6, 6', '6, 7', '6, 8'];
+
+      expect(occupyingLoc).toHaveLength(3);
+
+      let correct = false;
+
+      occupyingLoc.forEach((element) => {
+        const [x, y] = element;
+
+        const transform = `${x}, ${y}`;
+
+        correct = toBeOccupied.includes(transform);
+      });
+
+      expect(correct).toBeTruthy();
+    });
+
+    test('patrol boat placement returned is correct', () => {
+      expect(shipPlacements).toHaveProperty('patrolBoatPlacement');
+
+      const { patrolBoatPlacement } = shipPlacements;
+
+      expect(patrolBoatPlacement).toHaveProperty('shipHead', [1, 9]);
+
+      expect(patrolBoatPlacement).toHaveProperty('orientation', 'horizontal');
+
+      expect(patrolBoatPlacement).toHaveProperty('occupyingLoc');
+
+      const { occupyingLoc } = patrolBoatPlacement;
+
+      const toBeOccupied = ['1, 9', '2, 9'];
+
+      expect(occupyingLoc).toHaveLength(2);
+
+      let correct = false;
+
+      occupyingLoc.forEach((element) => {
+        const [x, y] = element;
+
+        const transform = `${x}, ${y}`;
+
+        correct = toBeOccupied.includes(transform);
+      });
+
+      expect(correct).toBeTruthy();
+    });
   });
 });
