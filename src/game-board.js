@@ -309,6 +309,8 @@ export default class GameBoard {
     });
 
     this.#BATTLESHIP_INFO.isOnBoard = true;
+    this.#BATTLESHIP_INFO.shipHead.push(x, y);
+    this.#BATTLESHIP_INFO.orientation = orientation;
     return true;
   }
 
@@ -326,6 +328,9 @@ export default class GameBoard {
       });
     });
     this.#BATTLESHIP_INFO.occupying = [];
+    this.#BATTLESHIP_INFO.isOnBoard = false;
+    this.#BATTLESHIP_INFO.orientation = '';
+    this.#BATTLESHIP_INFO.shipHead = [];
   }
 
   battleShipPlacement(orientation = 'horizontal') {
@@ -407,6 +412,8 @@ export default class GameBoard {
     });
 
     this.#DESTROYER_INFO.isOnBoard = true;
+    this.#DESTROYER_INFO.shipHead.push(x, y);
+    this.#DESTROYER_INFO.orientation = orientation;
     return true;
   }
 
@@ -424,6 +431,9 @@ export default class GameBoard {
       });
     });
     this.#DESTROYER_INFO.occupying = [];
+    this.#DESTROYER_INFO.isOnBoard = false;
+    this.#DESTROYER_INFO.orientation = '';
+    this.#DESTROYER_INFO.shipHead = [];
   }
 
   destroyerPlacement(orientation = 'horizontal') {
@@ -505,6 +515,8 @@ export default class GameBoard {
     });
 
     this.#SUBMARINE_INFO.isOnBoard = true;
+    this.#SUBMARINE_INFO.shipHead.push(x, y);
+    this.#SUBMARINE_INFO.orientation = orientation;
     return true;
   }
 
@@ -521,7 +533,11 @@ export default class GameBoard {
         this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = false;
       });
     });
+
     this.#SUBMARINE_INFO.occupying = [];
+    this.#SUBMARINE_INFO.isOnBoard = false;
+    this.#SUBMARINE_INFO.orientation = '';
+    this.#SUBMARINE_INFO.shipHead = [];
   }
 
   subMarinePlacement(orientation = 'horizontal') {
@@ -603,6 +619,8 @@ export default class GameBoard {
     });
 
     this.#PATROL_BOAT_INFO.isOnBoard = true;
+    this.#PATROL_BOAT_INFO.shipHead.push(x, y);
+    this.#PATROL_BOAT_INFO.orientation = orientation;
     return true;
   }
 
@@ -620,6 +638,9 @@ export default class GameBoard {
       });
     });
     this.#PATROL_BOAT_INFO.occupying = [];
+    this.#PATROL_BOAT_INFO.isOnBoard = false;
+    this.#PATROL_BOAT_INFO.orientation = '';
+    this.#PATROL_BOAT_INFO.shipHead = [];
   }
 
   patrolBoatPlacement(orientation = 'horizontal') {
@@ -781,8 +802,36 @@ export default class GameBoard {
       orientation: this.#CARRIER_INFO.orientation,
     };
 
+    const battleShipPlacement = {
+      shipHead: this.#BATTLESHIP_INFO.shipHead,
+      occupyingLoc: this.#BATTLESHIP_INFO.occupying,
+      orientation: this.#BATTLESHIP_INFO.orientation,
+    };
+
+    const destroyerPlacement = {
+      shipHead: this.#DESTROYER_INFO.shipHead,
+      occupyingLoc: this.#DESTROYER_INFO.occupying,
+      orientation: this.#DESTROYER_INFO.orientation,
+    };
+
+    const subMarinePlacement = {
+      shipHead: this.#SUBMARINE_INFO.shipHead,
+      occupyingLoc: this.#SUBMARINE_INFO.occupying,
+      orientation: this.#SUBMARINE_INFO.orientation,
+    };
+
+    const patrolBoatPlacement = {
+      shipHead: this.#PATROL_BOAT_INFO.shipHead,
+      occupyingLoc: this.#PATROL_BOAT_INFO.occupying,
+      orientation: this.#PATROL_BOAT_INFO.orientation,
+    };
+
     return {
       carrierPlacement,
+      battleShipPlacement,
+      destroyerPlacement,
+      subMarinePlacement,
+      patrolBoatPlacement,
     };
   }
 }
