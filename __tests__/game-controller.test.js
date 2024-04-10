@@ -96,11 +96,29 @@ describe('game round creation', () => {
     expect(gameController.gameState).toBeDefined();
   });
 
+  test('allow round start when proper details are entered', () => {
+    const gameController = new GameController();
+
+    // enters player name
+    gameController.createHumanPlayer('Player 1');
+    // create bot
+    gameController.createBotPlayer();
+
+    // position player ships
+    gameController.autoPlaceHumanPlayerShips();
+
+    gameController.startRound();
+
+    expect(gameController.gameState.roundStart).toBeTruthy();
+  });
+
   test('should return round state when creating new round state', () => {
     const gameController = new GameController();
 
     gameController.createHumanPlayer('Player 1');
     gameController.createBotPlayer();
+
+    gameController.autoPlaceHumanPlayerShips();
 
     gameController.startRound();
 
@@ -124,6 +142,8 @@ describe('game round creation', () => {
     gameController.createHumanPlayer('Player 1');
     gameController.createBotPlayer();
 
+    gameController.autoPlaceHumanPlayerShips();
+
     gameController.startRound();
 
     const roundState = gameController.gameState;
@@ -134,6 +154,29 @@ describe('game round creation', () => {
     expect(roundState).toHaveProperty('roundStart', true);
 
     expect(roundState).toHaveProperty('roundEnd', false);
+  });
+
+  test('individual human ship placements works', () => {
+    const gameController = new GameController();
+
+    gameController.createHumanPlayer('Player 1');
+    gameController.createBotPlayer();
+
+    gameController.placeHumanPlayerBattleShip(0, 0, 'vertical');
+
+    gameController.placeHumanPlayerCarrier(0, 2, 'vertical');
+
+    gameController.placeHumanPlayerDestroyer(0, 4, 'vertical');
+
+    gameController.placeHumanPlayerSubMarine(0, 6, 'vertical');
+
+    gameController.placeHumanPlayerPatrolBoat(0, 8, 'vertical');
+
+    gameController.startRound();
+
+    const { roundStart } = gameController.gameState;
+
+    expect(roundStart).toBeTruthy();
   });
 
   test('refuse start if players not created', () => {
