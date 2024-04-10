@@ -2377,3 +2377,56 @@ describe('auto ship placement', () => {
     });
   });
 });
+
+describe('querying ship placement', () => {
+  test('method to check for ship placements exists', () => {
+    const board = new GameBoard();
+
+    expect(board.shipPlacements).toBeDefined();
+  });
+
+  describe('ship placement method returns correct data input', () => {
+    const gameBoard = new GameBoard();
+
+    gameBoard.placeCarrier(5, 0);
+
+    gameBoard.placeBattleShip(0, 4, 'vertical');
+
+    gameBoard.placeDestroyer(3, 3);
+    gameBoard.placeSubMarine(6, 6, 'vertical');
+
+    gameBoard.placePatrolBoat(1, 9);
+
+    const { shipPlacements } = gameBoard;
+
+    test('carrier placement returned is correct', () => {
+      expect(shipPlacements).toHaveProperty('carrierPlacement');
+
+      const { carrierPlacement } = shipPlacements;
+
+      expect(carrierPlacement).toHaveProperty('shipHead', [5, 0]);
+
+      expect(carrierPlacement).toHaveProperty('orientation', 'horizontal');
+
+      expect(carrierPlacement).toHaveProperty('occupyingLoc');
+
+      const { occupyingLoc } = carrierPlacement;
+
+      const toBeOccupied = ['5, 0', '6, 0', '7, 0', '8, 0', '9, 0'];
+
+      expect(occupyingLoc).toHaveLength(5);
+
+      let correct = false;
+
+      occupyingLoc.forEach((element) => {
+        const [x, y] = element;
+
+        const transform = `${x}, ${y}`;
+
+        correct = toBeOccupied.includes(transform);
+      });
+
+      expect(correct).toBeTruthy();
+    });
+  });
+});
