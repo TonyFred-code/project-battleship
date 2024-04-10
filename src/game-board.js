@@ -15,26 +15,41 @@ export default class GameBoard {
   #CARRIER_INFO = {
     isOnBoard: false,
     occupying: [],
+    shipHead: [],
+    orientation: '',
+    size: 0,
   };
 
   #BATTLESHIP_INFO = {
     isOnBoard: false,
     occupying: [],
+    shipHead: [],
+    orientation: '',
+    size: 0,
   };
 
   #DESTROYER_INFO = {
     isOnBoard: false,
     occupying: [],
+    shipHead: [],
+    orientation: '',
+    size: 0,
   };
 
   #SUBMARINE_INFO = {
     isOnBoard: false,
     occupying: [],
+    shipHead: [],
+    orientation: '',
+    size: 0,
   };
 
   #PATROL_BOAT_INFO = {
     isOnBoard: false,
     occupying: [],
+    shipHead: [],
+    orientation: '',
+    size: 0,
   };
 
   constructor() {
@@ -189,6 +204,8 @@ export default class GameBoard {
     });
 
     this.#CARRIER_INFO.isOnBoard = true;
+    this.#CARRIER_INFO.shipHead.push(x, y);
+    this.#CARRIER_INFO.orientation = orientation;
 
     return true;
   }
@@ -206,7 +223,11 @@ export default class GameBoard {
         this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = false;
       });
     });
+
     this.#CARRIER_INFO.occupying = [];
+    this.#CARRIER_INFO.isOnBoard = false;
+    this.#CARRIER_INFO.shipHead = [];
+    this.#CARRIER_INFO.orientation = '';
   }
 
   carrierPlacement(orientation = 'horizontal') {
@@ -751,6 +772,18 @@ export default class GameBoard {
     const available = this.board.filter((node) => !node.isHit);
 
     return available;
+  }
+
+  get shipPlacements() {
+    const carrierPlacement = {
+      shipHead: this.#CARRIER_INFO.shipHead,
+      occupyingLoc: this.#CARRIER_INFO.occupying,
+      orientation: this.#CARRIER_INFO.orientation,
+    };
+
+    return {
+      carrierPlacement,
+    };
   }
 }
 
