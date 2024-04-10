@@ -162,15 +162,16 @@ describe('game round creation', () => {
     gameController.createHumanPlayer('Player 1');
     gameController.createBotPlayer();
 
-    gameController.placeHumanPlayerBattleShip(0, 0, 'vertical');
+    // Individual ship placements
 
-    gameController.placeHumanPlayerCarrier(0, 2, 'vertical');
+    gameController.placeHumanPlayerCarrier(5, 0);
 
-    gameController.placeHumanPlayerDestroyer(0, 4, 'vertical');
+    gameController.placeHumanPlayerBattleShip(0, 4, 'vertical');
 
-    gameController.placeHumanPlayerSubMarine(0, 6, 'vertical');
+    gameController.placeHumanPlayerDestroyer(3, 3);
+    gameController.placeHumanPlayerSubMarine(6, 6, 'vertical');
 
-    gameController.placeHumanPlayerPatrolBoat(0, 8, 'vertical');
+    gameController.placeHumanPlayerPatrolBoat(1, 9);
 
     gameController.startRound();
 
