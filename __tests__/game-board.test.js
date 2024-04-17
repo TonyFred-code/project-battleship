@@ -2549,4 +2549,68 @@ describe('querying ship placement', () => {
       expect(correct).toBeTruthy();
     });
   });
+
+  describe('ship placement for non-placed ships', () => {
+    const gameBoard = new GameBoard();
+
+    test('un-placed carrier', () => {
+      const { carrierPlacement } = gameBoard.shipPlacements;
+
+      const { shipHead, occupyingLoc, orientation } = carrierPlacement;
+
+      expect(shipHead).toHaveLength(0);
+
+      expect(occupyingLoc).toHaveLength(0);
+
+      expect(orientation).toBe('');
+    });
+
+    test('un-placed battleShip', () => {
+      const { battleShipPlacement } = gameBoard.shipPlacements;
+
+      const { shipHead, occupyingLoc, orientation } = battleShipPlacement;
+
+      expect(shipHead).toHaveLength(0);
+
+      expect(occupyingLoc).toHaveLength(0);
+
+      expect(orientation).toBe('');
+    });
+
+    test('un-placed destroyer', () => {
+      const { destroyerPlacement } = gameBoard.shipPlacements;
+
+      const { shipHead, occupyingLoc, orientation } = destroyerPlacement;
+
+      expect(shipHead).toHaveLength(0);
+
+      expect(occupyingLoc).toHaveLength(0);
+
+      expect(orientation).toBe('');
+    });
+
+    test('un-placed subMarine', () => {
+      const { subMarinePlacement } = gameBoard.shipPlacements;
+
+      const { shipHead, occupyingLoc, orientation } = subMarinePlacement;
+
+      expect(shipHead).toHaveLength(0);
+
+      expect(occupyingLoc).toHaveLength(0);
+
+      expect(orientation).toBe('');
+    });
+
+    test('un-placed patrolBoat', () => {
+      const { patrolBoatPlacement } = gameBoard.shipPlacements;
+
+      const { shipHead, occupyingLoc, orientation } = patrolBoatPlacement;
+
+      expect(shipHead).toHaveLength(0);
+
+      expect(occupyingLoc).toHaveLength(0);
+
+      expect(orientation).toBe('');
+    });
+  });
 });
