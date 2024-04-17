@@ -798,30 +798,35 @@ export default class GameBoard {
   get shipPlacements() {
     const carrierPlacement = {
       shipHead: this.#CARRIER_INFO.shipHead,
+      isOnBoard: this.#CARRIER_INFO.isOnBoard,
       occupyingLoc: this.#CARRIER_INFO.occupying,
       orientation: this.#CARRIER_INFO.orientation,
     };
 
     const battleShipPlacement = {
       shipHead: this.#BATTLESHIP_INFO.shipHead,
+      isOnBoard: this.#BATTLESHIP_INFO.isOnBoard,
       occupyingLoc: this.#BATTLESHIP_INFO.occupying,
       orientation: this.#BATTLESHIP_INFO.orientation,
     };
 
     const destroyerPlacement = {
       shipHead: this.#DESTROYER_INFO.shipHead,
+      isOnBoard: this.#DESTROYER_INFO.isOnBoard,
       occupyingLoc: this.#DESTROYER_INFO.occupying,
       orientation: this.#DESTROYER_INFO.orientation,
     };
 
     const subMarinePlacement = {
       shipHead: this.#SUBMARINE_INFO.shipHead,
+      isOnBoard: this.#SUBMARINE_INFO.isOnBoard,
       occupyingLoc: this.#SUBMARINE_INFO.occupying,
       orientation: this.#SUBMARINE_INFO.orientation,
     };
 
     const patrolBoatPlacement = {
       shipHead: this.#PATROL_BOAT_INFO.shipHead,
+      isOnBoard: this.#PATROL_BOAT_INFO.isOnBoard,
       occupyingLoc: this.#PATROL_BOAT_INFO.occupying,
       orientation: this.#PATROL_BOAT_INFO.orientation,
     };
