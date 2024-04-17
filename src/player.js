@@ -51,4 +51,8 @@ export default class Player {
   autoPlaceShips() {
     return this.#PLAYER_BOARD.allShipsPlacement();
   }
+
+  shipPlacements() {
+    return this.#PLAYER_BOARD.shipPlacements;
+  }
 }
