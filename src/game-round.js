@@ -71,6 +71,42 @@ export default class GameRound {
       playerName,
     };
   }
+
+  botShipDetails() {
+    return this.#COMPUTER_PLAYER.shipPlacements();
+  }
+
+  humanPlayerShipDetails() {
+    return this.#HUMAN_PLAYER.shipPlacements();
+  }
+
+  placeHumanPlayerCarrier(x, y, orientation = 'horizontal') {
+    return this.#HUMAN_PLAYER.placeCarrier(x, y, orientation);
+  }
+
+  placeHumanPlayerBattleShip(x, y, orientation = 'horizontal') {
+    return this.#HUMAN_PLAYER.placeBattleShip(x, y, orientation);
+  }
+
+  placeHumanPlayerDestroyer(x, y, orientation = 'horizontal') {
+    return this.#HUMAN_PLAYER.placeDestroyer(x, y, orientation);
+  }
+
+  placeHumanPlayerSubMarine(x, y, orientation = 'horizontal') {
+    return this.#HUMAN_PLAYER.placeSubMarine(x, y, orientation);
+  }
+
+  placeHumanPlayerPatrolBoat(x, y, orientation = 'horizontal') {
+    return this.#HUMAN_PLAYER.placePatrolBoat(x, y, orientation);
+  }
+
+  autoPlaceHumanShips() {
+    return this.#HUMAN_PLAYER.autoPlaceShips();
+  }
+
+  autoPlaceBotShips() {
+    return this.#HUMAN_PLAYER.autoPlaceShips();
+  }
 }
 
 // function GameRound2() {
