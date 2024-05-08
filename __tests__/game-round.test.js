@@ -47,6 +47,23 @@ describe('can add human and bot players', () => {
     expect(gameRound.addBotPlayer()).toBeTruthy();
     expect(gameRound.addHumanPlayer('Player 2')).toBeTruthy();
   });
+
+  test('can create only one bot and one human players', () => {
+    const gameRound = new GameRound();
+
+    gameRound.addBotPlayer();
+    gameRound.addHumanPlayer('Player 2');
+
+    expect(gameRound.addBotPlayer()).toBeFalsy();
+    expect(gameRound.addHumanPlayer()).toBeFalsy();
+  });
+
+  // test('can create two human players', () => {
+  //   const gameRound = new GameRound();
+
+  //   expect(gameRound.addHumanPlayer('Player 1')).toBeTruthy();
+  //   expect(gameRound.addHumanPlayer('Player 2')).toBeTruthy();
+  // });
 });
 
 describe('round state can be returned', () => {});
