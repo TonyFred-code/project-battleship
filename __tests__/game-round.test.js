@@ -135,4 +135,45 @@ describe('can return particulars of both players', () => {
 
 describe('allows playing in turns', () => {});
 
-describe('can return ship particulars of both players', () => {});
+describe('can return ship particulars of both players', () => {
+  const gameRound = new GameRound();
+
+  gameRound.addBotPlayer();
+
+  gameRound.addHumanPlayer('Player 2');
+  test('botShipDetails method exists', () => {
+    expect(gameRound.botShipDetails).toBeDefined();
+  });
+
+  test('humanPlayerShipDetails method exists', () => {
+    expect(gameRound.humanPlayerShipDetails).toBeDefined();
+  });
+
+  test('placeBotShips method exists', () => {
+    expect(gameRound.autoPlaceBotShips).toBeDefined();
+  });
+
+  describe('human ship placement methods', () => {
+    test('human ship placing methods exists', () => {
+      expect(gameRound.placeHumanPlayerCarrier).toBeDefined();
+
+      expect(gameRound.placeHumanPlayerBattleShip).toBeDefined();
+
+      expect(gameRound.placeHumanPlayerDestroyer).toBeDefined();
+
+      expect(gameRound.placeHumanPlayerSubMarine).toBeDefined();
+
+      expect(gameRound.placeHumanPlayerPatrolBoat).toBeDefined();
+
+      expect(gameRound.autoPlaceHumanShips).toBeDefined();
+    });
+  });
+
+  test('botShipDetails returns correct data', () => {
+    // expect(gameRound.botShipDetails()).toBeFalsy();
+
+    gameRound.autoPlaceBotShips();
+
+    expect(gameRound.botShipDetails()).toBeTruthy();
+  });
+});
