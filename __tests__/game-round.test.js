@@ -1,6 +1,34 @@
 import GameRound from '../src/game-round.js';
 
-describe('can return active player', () => {});
+describe('can return active player', () => {
+  test('getActivePlayer method exists', () => {
+    const gameRound = new GameRound();
+
+    expect(gameRound.getActivePlayer).toBeDefined();
+  });
+
+  test('getActivePlayer returns correct active player', () => {
+    const gameRound = new GameRound();
+
+    let activePlayer = gameRound.getActivePlayer();
+
+    expect(activePlayer).toBeFalsy();
+
+    gameRound.addBotPlayer();
+
+    activePlayer = gameRound.getActivePlayer();
+
+    expect(activePlayer).toBeFalsy();
+
+    gameRound.addHumanPlayer('Player 2');
+
+    activePlayer = gameRound.getActivePlayer();
+    // First Active Player is always Human
+    expect(activePlayer).toBeTruthy();
+
+    expect(activePlayer).toHaveProperty('playerName', 'Player 2');
+  });
+});
 
 describe('can remove active players', () => {
   test('remove active players method exist', () => {
