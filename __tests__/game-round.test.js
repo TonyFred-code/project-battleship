@@ -133,7 +133,52 @@ describe('can return particulars of both players', () => {
   });
 });
 
-describe('allows playing in turns', () => {});
+describe('allows playing in turns', () => {
+  test('botMove method exists', () => {
+    const gameRound = new GameRound();
+    gameRound.addBotPlayer();
+    gameRound.addHumanPlayer('Player 2');
+
+    expect(gameRound.botMove).toBeDefined();
+  });
+
+  test('humanPlayerMove method exists', () => {
+    const gameRound = new GameRound();
+    gameRound.addBotPlayer();
+    gameRound.addHumanPlayer('Player 2');
+
+    expect(gameRound.humanPlayerMove).toBeDefined();
+  });
+
+  test('disallows moving unless all ships placed', () => {
+    const gameRound = new GameRound();
+    gameRound.addBotPlayer();
+    gameRound.addHumanPlayer('Player 2');
+
+    expect(gameRound.botMove(0, 0)).toBe(-1);
+    expect(gameRound.humanPlayerMove(0, 0)).toBe(-1);
+  });
+
+  test('allows moving when ships placed', () => {
+    const gameRound = new GameRound();
+    gameRound.addBotPlayer();
+    gameRound.addHumanPlayer('Player 2');
+
+    gameRound.autoPlaceBotShips();
+    gameRound.autoPlaceHumanShips();
+
+    function isValidHit(hitStatus) {
+      return hitStatus === 0 || hitStatus === 1;
+    }
+
+    const botHitStatus = gameRound.botMove(0, 0);
+
+    expect(isValidHit(botHitStatus)).toBe(true);
+
+    const humanHitStatus = gameRound.humanPlayerMove(0, 1);
+    expect(isValidHit(humanHitStatus)).toBe(true);
+  });
+});
 
 describe('can return ship particulars of both players', () => {
   const gameRound = new GameRound();
