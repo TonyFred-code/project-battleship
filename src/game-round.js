@@ -8,14 +8,49 @@ export default class GameRound {
 
   #activePlayer = null;
 
+  #HIT_STATUS_0 = 0;
+
+  #HIT_STATUS_1 = 1;
+
+  #isValidHitStatus(hitStatus) {
+    return hitStatus === this.#HIT_STATUS_0 || hitStatus === this.#HIT_STATUS_1;
+  }
+
+  #switchActivePlayer() {
+    if (this.#activePlayer === this.#HUMAN_PLAYER) {
+      this.#activePlayer = this.#COMPUTER_PLAYER;
+    } else if (this.#activePlayer === this.#COMPUTER_PLAYER) {
+      this.#activePlayer = this.#HUMAN_PLAYER;
+    }
+  }
+
+  #setActivePlayer() {
+    let activePlayer = null;
+
+    if (this.#canAddPlayer()) return activePlayer;
+
+    const random = Math.floor(Math.random() + 1);
+    if (random % 2 === 0) {
+      activePlayer = this.#COMPUTER_PLAYER;
+    } else {
+      activePlayer = this.#HUMAN_PLAYER;
+    }
+
+    return activePlayer;
+  }
+
   #canAddPlayer() {
-    return this.#COMPUTER_PLAYER === null && this.#HUMAN_PLAYER === null;
+    return this.#COMPUTER_PLAYER === null || this.#HUMAN_PLAYER === null;
   }
 
   addBotPlayer() {
     if (this.#COMPUTER_PLAYER !== null) return false;
 
     this.#COMPUTER_PLAYER = new ComputerPlayer();
+
+    if (!this.#canAddPlayer()) {
+      this.#activePlayer = this.#COMPUTER_PLAYER;
+    }
 
     return true;
   }
@@ -105,7 +140,31 @@ export default class GameRound {
   }
 
   autoPlaceBotShips() {
-    return this.#HUMAN_PLAYER.autoPlaceShips();
+    return this.#COMPUTER_PLAYER.autoPlaceShips();
+  }
+
+  botMove(x, y) {
+    if (this.#activePlayer !== this.#COMPUTER_PLAYER) return -1;
+
+    const hitStatus = this.#HUMAN_PLAYER.receiveAttack(x, y);
+
+    if (this.#isValidHitStatus(hitStatus)) {
+      this.#switchActivePlayer();
+    }
+
+    return hitStatus;
+  }
+
+  humanPlayerMove(x, y) {
+    if (this.#activePlayer !== this.#HUMAN_PLAYER) return -1;
+
+    const hitStatus = this.#COMPUTER_PLAYER.receiveAttack(x, y);
+
+    if (this.#isValidHitStatus(hitStatus)) {
+      this.#switchActivePlayer();
+    }
+
+    return hitStatus;
   }
 }
 
