@@ -23,7 +23,6 @@ describe('can return active player', () => {
     gameRound.addHumanPlayer('Player 2');
 
     activePlayer = gameRound.getActivePlayer();
-    // First Active Player is always Human
     expect(activePlayer).toBeTruthy();
 
     expect(activePlayer).toHaveProperty('playerName', 'Player 2');
@@ -171,12 +170,27 @@ describe('allows playing in turns', () => {
       return hitStatus === 0 || hitStatus === 1;
     }
 
+    const humanHitStatus = gameRound.humanPlayerMove(0, 1);
+
+    expect(isValidHit(humanHitStatus)).toBe(true);
+
     const botHitStatus = gameRound.botMove(0, 0);
 
     expect(isValidHit(botHitStatus)).toBe(true);
+  });
 
-    const humanHitStatus = gameRound.humanPlayerMove(0, 1);
-    expect(isValidHit(humanHitStatus)).toBe(true);
+  test('plays according to active player', () => {
+    const gameRound = new GameRound();
+
+    gameRound.addBotPlayer();
+    gameRound.addHumanPlayer('Player 2');
+    gameRound.autoPlaceBotShips();
+    gameRound.autoPlaceHumanShips();
+
+    gameRound.humanPlayerMove(0, 0);
+    expect(gameRound.humanPlayerMove(0, 1)).toBe(-1);
+
+    expect(gameRound.botMove(0, 3)).not.toBe(-1);
   });
 });
 
