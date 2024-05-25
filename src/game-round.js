@@ -12,6 +12,10 @@ export default class GameRound {
 
   #HIT_STATUS_1 = 1;
 
+  #ROUND_WINNER_NAME = '';
+
+  #ROUND_WON = false;
+
   #isValidHitStatus(hitStatus) {
     return hitStatus === this.#HIT_STATUS_0 || hitStatus === this.#HIT_STATUS_1;
   }
@@ -148,8 +152,13 @@ export default class GameRound {
 
     const hitStatus = this.#HUMAN_PLAYER.receiveAttack(x, y);
 
-    if (this.#isValidHitStatus(hitStatus)) {
+    if (hitStatus === this.#HIT_STATUS_0) {
       this.#switchActivePlayer();
+    }
+
+    if (this.#HUMAN_PLAYER.allShipSunk()) {
+      this.#ROUND_WINNER_NAME = this.#COMPUTER_PLAYER.name;
+      this.#ROUND_WON = true;
     }
 
     return hitStatus;
@@ -160,11 +169,23 @@ export default class GameRound {
 
     const hitStatus = this.#COMPUTER_PLAYER.receiveAttack(x, y);
 
-    if (this.#isValidHitStatus(hitStatus)) {
+    if (hitStatus === this.#HIT_STATUS_0) {
       this.#switchActivePlayer();
     }
 
+    if (this.#COMPUTER_PLAYER.allShipSunk()) {
+      this.#ROUND_WINNER_NAME = this.#HUMAN_PLAYER.name;
+      this.#ROUND_WON = true;
+    }
+
     return hitStatus;
+  }
+
+  get roundState() {
+    return {
+      roundWon: this.#ROUND_WON,
+      winnerName: this.#ROUND_WINNER_NAME,
+    };
   }
 }
 
@@ -433,3 +454,35 @@ export default class GameRound {
 //     // diagonalWin,
 //   };
 // }
+
+// const gameRound = new GameRound();
+
+// gameRound.addBotPlayer();
+// gameRound.addHumanPlayer('Player 2');
+
+// gameRound.autoPlaceBotShips();
+// gameRound.autoPlaceHumanShips();
+
+// function hit(locationNodes, hitMethod) {
+//   const statusCodes = new Set();
+
+//   locationNodes.forEach((locationNode) => {
+//     const [x, y] = locationNode;
+//     const statusCode = hitMethod(x, y);
+//     statusCodes.add(statusCode);
+//   });
+
+//   return [...statusCodes];
+// }
+
+// const botCarrierShipConfig = [
+//   [0, 0],
+//   [0, 2],
+// ];
+
+// const botCarrierHitStatus = hit(
+//   botCarrierShipConfig,
+//   gameRound.humanPlayerMove,
+// );
+
+// console.log(botCarrierHitStatus);
