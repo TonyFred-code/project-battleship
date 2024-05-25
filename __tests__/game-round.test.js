@@ -290,13 +290,92 @@ describe('allows playing in turns', () => {
 
     gameRound.addBotPlayer();
     gameRound.addHumanPlayer('Player 2');
-    gameRound.autoPlaceBotShips();
     gameRound.autoPlaceHumanShips();
 
-    gameRound.humanPlayerMove(0, 0);
-    expect(gameRound.humanPlayerMove(0, 1)).toBe(-1);
+    gameRound.autoPlaceBotShips();
 
-    expect(gameRound.botMove(0, 3)).not.toBe(-1);
+    gameRound.botMove(0, 0);
+    expect(gameRound.botMove(0, 1)).toBe(-1);
+
+    expect(gameRound.humanPlayerMove(0, 3)).not.toBe(-1);
+  });
+
+  test('player switches on hit miss only', () => {
+    const gameRound = new GameRound();
+
+    gameRound.addHumanPlayer('Player 2');
+    gameRound.addBotPlayer();
+
+    gameRound.autoPlaceBotShips();
+    // gameRound.autoPlaceHumanShips();
+
+    gameRound.placeHumanPlayerCarrier(5, 0);
+    gameRound.placeHumanPlayerBattleShip(0, 4, 'vertical');
+    gameRound.placeHumanPlayerDestroyer(3, 3);
+    gameRound.placeHumanPlayerSubMarine(6, 6, 'vertical');
+    gameRound.placeHumanPlayerPatrolBoat(1, 9);
+
+    // const botShipConfig = gameRound.botShipDetails();
+    const humanPlayerShipConfig = gameRound.humanPlayerShipDetails();
+
+    // const botCarrier = botShipConfig.carrierPlacement;
+    // const botBattleShip = botShipConfig.battleShipPlacement;
+    // const botDestroyer = botShipConfig.destroyerPlacement;
+    // const botSubMarine = botShipConfig.subMarinePlacement;
+    // const botPatrolBoat = botShipConfig.patrolBoatPlacement;
+
+    const humanPlayerCarrier = humanPlayerShipConfig.carrierPlacement;
+    // const humanPlayerBattleShip = humanPlayerShipConfig.battleShipPlacement;
+    // const humanPlayerDestroyer = humanPlayerShipConfig.destroyerPlacement;
+    // const humanPlayerSubMarine = humanPlayerShipConfig.subMarinePlacement;
+    // const humanPlayerPatrolBoat = humanPlayerShipConfig.patrolBoatPlacement;
+
+    // const botCarrierShipConfig = botCarrier.occupyingLoc;
+    // const botBattleShipShipConfig = botBattleShip.occupyingLoc;
+    // const botDestroyerShipConfig = botDestroyer.occupyingLoc;
+    // const botSubMarineShipConfig = botSubMarine.occupyingLoc;
+    // const botPatrolBoatShipConfig = botPatrolBoat.occupyingLoc;
+
+    const humanPlayerCarrierShipConfig = humanPlayerCarrier.occupyingLoc;
+    // const humanPlayerBattleShipShipConfig = humanPlayerBattleShip.occupyingLoc;
+    // const humanPlayerDestroyerShipConfig = humanPlayerDestroyer.occupyingLoc;
+    // const humanPlayerSubMarineShipConfig = humanPlayerSubMarine.occupyingLoc;
+    // const humanPlayerPatrolBoatShipConfig = humanPlayerPatrolBoat.occupyingLoc;
+
+    // function humanHit(locationNodes) {
+    //   const statusCodes = new Set();
+
+    //   locationNodes.forEach((locationNode) => {
+    //     const [x, y] = locationNode;
+    //     const statusCode = gameRound.humanPlayerMove(x, y);
+    //     statusCodes.add(statusCode);
+    //   });
+
+    //   return [...statusCodes];
+    // }
+
+    function botHit(locationNodes) {
+      const statusCodes = new Set();
+
+      locationNodes.forEach((locationNode) => {
+        const [x, y] = locationNode;
+        const statusCode = gameRound.botMove(x, y);
+        statusCodes.add(statusCode);
+      });
+
+      return [...statusCodes];
+    }
+
+    // auto sink carrier
+    let activePlayer = gameRound.getActivePlayer();
+    expect(activePlayer.playerName).toBe('jarvis');
+
+    botHit(humanPlayerCarrierShipConfig);
+    // miss hit
+    gameRound.botMove(0, 0);
+
+    activePlayer = gameRound.getActivePlayer();
+    expect(activePlayer.playerName).toBe('Player 2');
   });
 });
 
