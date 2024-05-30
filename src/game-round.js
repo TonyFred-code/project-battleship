@@ -164,6 +164,13 @@ export default class GameRound {
     return hitStatus;
   }
 
+  botRndPlay() {
+    const validMoves = this.#HUMAN_PLAYER.getValidMoves();
+    const [x, y] = this.#COMPUTER_PLAYER.getAttack(validMoves);
+
+    return this.botMove(x, y);
+  }
+
   humanPlayerMove(x, y) {
     if (this.#activePlayer !== this.#HUMAN_PLAYER) return -1;
 
