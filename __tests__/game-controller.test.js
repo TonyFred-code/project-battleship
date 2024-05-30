@@ -232,8 +232,3 @@ test('knows when game should end', () => {
   expect(roundState).toHaveProperty('winnerName', 'jarvis');
   expect(roundState).toHaveProperty('roundWon', true);
 });
-// });
-
-test.todo('can restart game when game end');
-
-test.todo('player can forfeit - surrender');
