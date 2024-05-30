@@ -12,12 +12,24 @@ export default class GameBoard {
 
   #VERTICAL = 'vertical';
 
+  #transform(x, y) {
+    return y + this.BOARD_SIZE * x;
+  }
+
+  #reverseTransform(index) {
+    const x = Math.floor(index / this.BOARD_SIZE);
+    const y = index % this.BOARD_SIZE;
+    return { x, y };
+  }
+
   #CARRIER_INFO = {
     isOnBoard: false,
     occupying: [],
     shipHead: [],
     orientation: '',
     size: 0,
+    exemptShipHead: [],
+    autoRemoved: false,
   };
 
   #BATTLESHIP_INFO = {
@@ -180,6 +192,62 @@ export default class GameBoard {
     // return allValid;
   }
 
+  #CarrierExempt(shipHead, orientation) {
+    const exemptShipHead = shipHead;
+    const exemptOrientation = orientation;
+    this.#CARRIER_INFO.exemptShipHead.push({
+      exemptShipHead,
+      exemptOrientation,
+    });
+  }
+
+  #isCarrierExempted(shipHead, orientation) {
+    const [shipHeadX, shipHeadY] = shipHead;
+    const transformedShipHead = this.#transform(shipHeadX, shipHeadY);
+
+    // let isExempted = false;
+
+    return this.#CARRIER_INFO.exemptShipHead.some((exempt) => {
+      const { exemptShipHead, exemptOrientation } = exempt;
+      const [x, y] = exemptShipHead;
+      const transformed = this.#transform(x, y);
+
+      return (
+        transformed === transformedShipHead && exemptOrientation === orientation
+      );
+    });
+
+    // this.#CARRIER_INFO.exemptShipHead.forEach((exempt) => {
+    //   const { exemptShipHead, exemptOrientation } = exempt;
+    //   const [x, y] = exemptShipHead;
+    //   const transformed = this.#transform(x, y);
+
+    //   if (
+    //     transformed === transformedShipHead &&
+    //     exemptOrientation === orientation
+    //   ) {
+    //     isExempted = true;
+    //   }
+    // });
+
+    // return isExempted;
+  }
+
+  #storeExemptConfig() {
+    if (this.#CARRIER_INFO.isOnBoard) {
+      const { shipHead, orientation } = this.#CARRIER_INFO;
+      // const [x, y] = shipHead;
+      this.#CarrierExempt(shipHead, orientation);
+    }
+  }
+
+  #reformPlacement() {
+    if (this.#CARRIER_INFO.autoRemoved) {
+      this.carrierAutoPlace();
+      this.#CARRIER_INFO.autoRemoved = false;
+    }
+  }
+
   placeCarrier(x, y, orientation = 'horizontal') {
     if (!this.#isValidOrientation(orientation)) return false;
 
@@ -248,7 +316,8 @@ export default class GameBoard {
 
       if (
         toBeOccupied.length === size &&
-        this.#checkNodeLocations(toBeOccupied)
+        this.#checkNodeLocations(toBeOccupied) &&
+        !this.#CarrierExempt([x, y], orientation)
       ) {
         canPlace.push([x, y]);
       }
@@ -257,10 +326,19 @@ export default class GameBoard {
     return canPlace;
   }
 
-  carrierAutoPlace(orientation) {
-    if (!this.#isValidOrientation(orientation)) return {};
+  carrierAutoPlace() {
+    // Randomly choose orientation
+    const orientation = Math.random() < 0.5 ? 'horizontal' : 'vertical';
 
     const available = this.carrierPlacement(orientation);
+
+    // if no space to place ship, reform
+    // if (available.length === 0) {
+    //   this.#storeExemptConfig();
+    //   this.removeAllShips();
+    //   this.#reformPlacement();
+    //   return this.carrierAutoPlace();
+    // }
 
     function getRndElement(array) {
       const rnd = Math.floor(Math.random() * array.length);
@@ -580,6 +658,10 @@ export default class GameBoard {
 
     const placeHead = getRndElement(available);
 
+    if (placeHead.length === 0) {
+      console.log(available);
+    }
+
     const [x, y] = placeHead;
 
     const { size } = this.#SUBMARINE_INFO;
@@ -842,6 +924,15 @@ export default class GameBoard {
 }
 
 // const gameBoard = new GameBoard();
+// gameBoard.allShip
+// const DestroyerHorizontalPlacements =
+//   gameBoard.destroyerPlacement('horizontal');
+
+// console.log(DestroyerHorizontalPlacements.length);
+
+// const DestroyerVerticalPlacements = gameBoard.destroyerPlacement('vertical');
+
+// console.log(DestroyerVerticalPlacements.length);
 
 // function rndOrientation() {
 //   const rnd = Math.floor(Math.random() * 10);
