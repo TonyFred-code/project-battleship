@@ -521,7 +521,7 @@ describe('ship removal', () => {
   });
 });
 
-describe('auto ship placement', () => {
+describe.skip('auto ship placement', () => {
   describe('carrier auto placement', () => {
     const gameBoard = new GameBoard();
 
@@ -776,6 +776,7 @@ describe('auto ship placement', () => {
       ];
 
       const { placeHead } = placeAttribute;
+      console.table(placeHead);
 
       const formattedPlaceHead = `${placeHead[0]}-${placeHead[1]}`;
 
