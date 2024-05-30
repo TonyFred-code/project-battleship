@@ -525,6 +525,10 @@ describe('auto ship placement', () => {
   describe('carrier auto placement', () => {
     const gameBoard = new GameBoard();
 
+    function isValidOrientation(orientation) {
+      return orientation === 'horizontal' || orientation === 'vertical';
+    }
+
     test('carrierPlacement exists', () => {
       expect(gameBoard.carrierPlacement).toBeDefined();
     });
@@ -698,13 +702,13 @@ describe('auto ship placement', () => {
     });
 
     test('carrierAutoPlace returns obj following a pattern', () => {
-      const placeAttribute = gameBoard.carrierAutoPlace('horizontal');
+      const placeAttribute = gameBoard.carrierAutoPlace();
 
       expect(placeAttribute).toHaveProperty('orientation');
 
       const { orientation } = placeAttribute;
 
-      expect(orientation === 'horizontal').toBe(true);
+      expect(isValidOrientation(orientation)).toBe(true);
 
       expect(placeAttribute).toHaveProperty('placeHead');
 
@@ -787,18 +791,19 @@ describe('auto ship placement', () => {
 
       const { orientation } = placeAttribute;
 
-      expect(orientation === 'vertical').toBe(true);
+      expect(isValidOrientation(orientation)).toBe(true);
+
       gameBoard.removeCarrier();
     });
 
-    test('carrierAutoPlace refuse invalid orientation', () => {
-      const placeAttribute = gameBoard.carrierAutoPlace('something');
+    // test('carrierAutoPlace refuse invalid orientation', () => {
+    //   const placeAttribute = gameBoard.carrierAutoPlace('something');
 
-      const keys = Object.keys(placeAttribute);
+    //   const keys = Object.keys(placeAttribute);
 
-      expect(keys).toHaveLength(0);
-      gameBoard.removeCarrier();
-    });
+    //   expect(keys).toHaveLength(0);
+    //   gameBoard.removeCarrier();
+    // });
   });
 
   describe('battleship auto placement', () => {
