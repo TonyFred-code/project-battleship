@@ -147,8 +147,6 @@ export default class GameController {
     return status;
   }
 
-  restartRound() {}
-
   endRound() {
     this.#GAME_END = true;
     this.#GAME_START = false;
