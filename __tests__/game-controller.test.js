@@ -12,61 +12,38 @@ describe('players', () => {
 
   test('doest not create invalid players', () => {
     const gameController = new GameController();
+    gameController.startRound();
     expect(gameController.createHumanPlayer()).not.toBeTruthy();
   });
 
   test('can create bot player', () => {
     const gameController = new GameController();
+    gameController.startRound();
     expect(gameController.createBotPlayer).toBeDefined();
   });
 
   test('can create one bot one human player', () => {
     const gameController = new GameController();
+    gameController.startRound();
+
     expect(gameController.createBotPlayer()).toBeTruthy();
     expect(gameController.createHumanPlayer('Player 2')).toBeTruthy();
   });
 
   test('can get players details', () => {
     const gameController = new GameController();
+    gameController.startRound();
 
-    expect(gameController.getPlayerDetails).toBeDefined();
-  });
-
-  test('returns empty array no player', () => {
-    const gameController = new GameController();
-
-    expect(gameController.getPlayerDetails()).toHaveLength(0);
-  });
-
-  test('returns one element array if only one player created', () => {
-    const gameController = new GameController();
-    gameController.createHumanPlayer('Player 1');
-
-    expect(gameController.getPlayerDetails()).toHaveLength(1);
-  });
-
-  test('gets correct player details', () => {
-    const gameController = new GameController();
-    gameController.createHumanPlayer('Player 1');
-    gameController.createBotPlayer();
-    const playerDetails = gameController.getPlayerDetails();
-    expect(playerDetails).toHaveLength(2);
-    const [player1, player2] = playerDetails;
-    expect(player1.name).toBe('Player 1');
-    expect(player2.name).toBe('jarvis');
-  });
-
-  test('only creates two players', () => {
-    const gameController = new GameController();
-    expect(gameController.createHumanPlayer('Player 1')).toBeTruthy();
-    expect(gameController.createBotPlayer()).toBeTruthy();
-    expect(gameController.createHumanPlayer('Player 3')).not.toBeTruthy();
+    expect(gameController.humanPlayerDetails).toBeDefined();
+    expect(gameController.botPlayerDetails).toBeDefined();
   });
 
   describe('has method for ship placements', () => {
     describe('ship placement methods for human-bot is defined', () => {
       test('players can place ships', () => {
         const gameController = new GameController();
+        gameController.startRound();
+
         expect(gameController.placeHumanPlayerCarrier).toBeDefined();
 
         expect(gameController.placeHumanPlayerBattleShip).toBeDefined();
@@ -77,7 +54,7 @@ describe('players', () => {
 
         expect(gameController.placeHumanPlayerPatrolBoat).toBeDefined();
 
-        expect(gameController.placeBotShips).toBeDefined();
+        expect(gameController.autoPlaceBotShips).toBeDefined();
 
         expect(gameController.autoPlaceHumanPlayerShips).toBeDefined();
       });
@@ -96,36 +73,18 @@ describe('game round creation', () => {
     expect(gameController.gameState).toBeDefined();
   });
 
-  test('allow round start when proper details are entered', () => {
-    const gameController = new GameController();
-
-    // enters player name
-    gameController.createHumanPlayer('Player 1');
-    // create bot
-    gameController.createBotPlayer();
-
-    // position player ships
-    gameController.autoPlaceHumanPlayerShips();
-
-    gameController.startRound();
-
-    expect(gameController.gameState.roundStart).toBeTruthy();
-  });
-
   test('should return round state when creating new round state', () => {
     const gameController = new GameController();
 
+    gameController.startRound();
+
     gameController.createHumanPlayer('Player 1');
     gameController.createBotPlayer();
 
     gameController.autoPlaceHumanPlayerShips();
-
-    gameController.startRound();
+    gameController.autoPlaceBotShips();
 
     const roundState = gameController.gameState;
-
-    expect(roundState).toHaveProperty('humanPlayerName', 'Player 1');
-    expect(roundState).toHaveProperty('botPlayerName', 'jarvis');
 
     expect(roundState).toHaveProperty('roundStart', true);
 
@@ -139,25 +98,24 @@ describe('game round creation', () => {
 
     expect(initialRoundState).toHaveProperty('roundStart', false);
 
+    gameController.startRound();
+
     gameController.createHumanPlayer('Player 1');
     gameController.createBotPlayer();
 
     gameController.autoPlaceHumanPlayerShips();
-
-    gameController.startRound();
+    gameController.autoPlaceBotShips();
 
     const roundState = gameController.gameState;
 
-    expect(roundState).toHaveProperty('humanPlayerName', 'Player 1');
-    expect(roundState).toHaveProperty('botPlayerName', 'jarvis');
-
     expect(roundState).toHaveProperty('roundStart', true);
-
     expect(roundState).toHaveProperty('roundEnd', false);
   });
 
   test('individual human ship placements works', () => {
     const gameController = new GameController();
+
+    gameController.startRound();
 
     gameController.createHumanPlayer('Player 1');
     gameController.createBotPlayer();
@@ -173,34 +131,109 @@ describe('game round creation', () => {
 
     gameController.placeHumanPlayerPatrolBoat(1, 9);
 
-    gameController.startRound();
-
     const { roundStart } = gameController.gameState;
 
     expect(roundStart).toBeTruthy();
   });
-
-  test('refuse start if players not created', () => {
-    const gameController = new GameController();
-
-    gameController.startRound();
-
-    const { gameState } = gameController;
-
-    expect(gameState).toHaveProperty('roundStart', false);
-  });
 });
 
-test.todo('allows players to play in turns');
+test('knows when game should end', () => {
+  const gameController = new GameController();
 
-test.todo('can get details of players');
+  gameController.startRound();
 
-test.todo('can get properties of active player');
+  gameController.createHumanPlayer('Player 1');
+  gameController.createBotPlayer();
 
-test.todo('knows when game should end');
+  // Individual ship placements
+
+  gameController.placeHumanPlayerCarrier(5, 0);
+
+  gameController.placeHumanPlayerBattleShip(0, 4, 'vertical');
+
+  gameController.placeHumanPlayerDestroyer(3, 3);
+  gameController.placeHumanPlayerSubMarine(6, 6, 'vertical');
+
+  gameController.placeHumanPlayerPatrolBoat(1, 9);
+
+  let { roundStart, roundEnd } = gameController.gameState;
+
+  expect(roundStart).toBeTruthy();
+  expect(roundEnd).toBeFalsy();
+
+  const activePlayer = gameController.getActivePlayer();
+
+  expect(activePlayer).toHaveProperty('playerName', 'jarvis');
+
+  const humanPlayerShipConfig = gameController.humanPlayerShipDetails();
+
+  // const botCarrier = botShipConfig.carrierPlacement;
+  // const botBattleShip = botShipConfig.battleShipPlacement;
+  // const botDestroyer = botShipConfig.destroyerPlacement;
+  // const botSubMarine = botShipConfig.subMarinePlacement;
+  // const botPatrolBoat = botShipConfig.patrolBoatPlacement;
+
+  const humanPlayerCarrier = humanPlayerShipConfig.carrierPlacement;
+  const humanPlayerBattleShip = humanPlayerShipConfig.battleShipPlacement;
+  const humanPlayerDestroyer = humanPlayerShipConfig.destroyerPlacement;
+  const humanPlayerSubMarine = humanPlayerShipConfig.subMarinePlacement;
+  const humanPlayerPatrolBoat = humanPlayerShipConfig.patrolBoatPlacement;
+
+  // const botCarrierShipConfig = botCarrier.occupyingLoc;
+  // const botBattleShipShipConfig = botBattleShip.occupyingLoc;
+  // const botDestroyerShipConfig = botDestroyer.occupyingLoc;
+  // const botSubMarineShipConfig = botSubMarine.occupyingLoc;
+  // const botPatrolBoatShipConfig = botPatrolBoat.occupyingLoc;
+
+  const humanPlayerCarrierShipConfig = humanPlayerCarrier.occupyingLoc;
+  const humanPlayerBattleShipShipConfig = humanPlayerBattleShip.occupyingLoc;
+  const humanPlayerDestroyerShipConfig = humanPlayerDestroyer.occupyingLoc;
+  const humanPlayerSubMarineShipConfig = humanPlayerSubMarine.occupyingLoc;
+  const humanPlayerPatrolBoatShipConfig = humanPlayerPatrolBoat.occupyingLoc;
+
+  // function humanHit(locationNodes) {
+  //   const statusCodes = new Set();
+
+  //   locationNodes.forEach((locationNode) => {
+  //     const [x, y] = locationNode;
+  //     const statusCode = gameRound.humanPlayerMove(x, y);
+  //     statusCodes.add(statusCode);
+  //   });
+
+  //   return [...statusCodes];
+  // }
+
+  function botHit(locationNodes) {
+    const statusCodes = new Set();
+
+    locationNodes.forEach((locationNode) => {
+      const [x, y] = locationNode;
+      const statusCode = gameController.botMove(x, y);
+      statusCodes.add(statusCode);
+    });
+
+    return [...statusCodes];
+  }
+
+  // auto sink all ships
+  botHit(humanPlayerCarrierShipConfig);
+  botHit(humanPlayerBattleShipShipConfig);
+  botHit(humanPlayerDestroyerShipConfig);
+  botHit(humanPlayerSubMarineShipConfig);
+  botHit(humanPlayerPatrolBoatShipConfig);
+
+  ({ roundEnd, roundStart } = gameController.gameState);
+
+  expect(roundEnd).toBeTruthy();
+  expect(roundStart).toBeFalsy();
+
+  const { roundState } = gameController;
+
+  expect(roundState).toHaveProperty('winnerName', 'jarvis');
+  expect(roundState).toHaveProperty('roundWon', true);
+});
+// });
 
 test.todo('can restart game when game end');
 
 test.todo('player can forfeit - surrender');
-
-test.todo('');
