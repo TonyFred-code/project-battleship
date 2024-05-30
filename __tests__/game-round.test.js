@@ -109,11 +109,22 @@ describe('round state can be returned', () => {
     gameRound.addBotPlayer();
     gameRound.addHumanPlayer('Player 2');
 
-    gameRound.autoPlaceBotShips();
-    gameRound.autoPlaceHumanShips();
+    // gameRound.autoPlaceBotShips();
+    // gameRound.autoPlaceHumanShips();
+
+    gameRound.placeHumanPlayerCarrier(5, 0);
+    gameRound.placeHumanPlayerBattleShip(0, 4, 'vertical');
+    gameRound.placeHumanPlayerDestroyer(3, 3);
+    gameRound.placeHumanPlayerSubMarine(6, 6, 'vertical');
+    gameRound.placeHumanPlayerPatrolBoat(1, 9);
+
+    gameRound.placeComputerCarrier(5, 0);
+    gameRound.placeComputerBattleShip(0, 4, 'vertical');
+    gameRound.placeComputerDestroyer(3, 3);
+    gameRound.placeComputerSubMarine(6, 6, 'vertical');
+    gameRound.placeComputerPatrolBoat(1, 9);
 
     const botShipConfig = gameRound.botShipDetails();
-    // const humanShipConfig = ;
 
     // use ship config to make a player win and check
     // to ensure roundState() reflects the round win
@@ -123,12 +134,6 @@ describe('round state can be returned', () => {
     const botDestroyer = botShipConfig.destroyerPlacement;
     const botSubMarine = botShipConfig.subMarinePlacement;
     const botPatrolBoat = botShipConfig.patrolBoatPlacement;
-
-    // const humanCarrier = humanShipConfig.carrierPlacement;
-    // const humanBattleShip = humanShipConfig.battleShipPlacement;
-    // const humanDestroyer = humanShipConfig.destroyerPlacement;
-    // const humanSubMarine = humanShipConfig.subMarinePlacement;
-    // const humanPatrolBoat = humanShipConfig.patrolBoatPlacement;
 
     const botCarrierShipConfig = botCarrier.occupyingLoc;
     const botBattleShipShipConfig = botBattleShip.occupyingLoc;
@@ -269,8 +274,20 @@ describe('allows playing in turns', () => {
     gameRound.addBotPlayer();
     gameRound.addHumanPlayer('Player 2');
 
-    gameRound.autoPlaceBotShips();
-    gameRound.autoPlaceHumanShips();
+    // gameRound.autoPlaceBotShips();
+    // gameRound.autoPlaceHumanShips();
+
+    gameRound.placeHumanPlayerCarrier(5, 0);
+    gameRound.placeHumanPlayerBattleShip(0, 4, 'vertical');
+    gameRound.placeHumanPlayerDestroyer(3, 3);
+    gameRound.placeHumanPlayerSubMarine(6, 6, 'vertical');
+    gameRound.placeHumanPlayerPatrolBoat(1, 9);
+
+    gameRound.placeComputerCarrier(5, 0);
+    gameRound.placeComputerBattleShip(0, 4, 'vertical');
+    gameRound.placeComputerDestroyer(3, 3);
+    gameRound.placeComputerSubMarine(6, 6, 'vertical');
+    gameRound.placeComputerPatrolBoat(1, 9);
 
     function isValidHit(hitStatus) {
       return hitStatus === 0 || hitStatus === 1;
@@ -290,9 +307,21 @@ describe('allows playing in turns', () => {
 
     gameRound.addBotPlayer();
     gameRound.addHumanPlayer('Player 2');
-    gameRound.autoPlaceHumanShips();
+    // gameRound.autoPlaceHumanShips();
 
-    gameRound.autoPlaceBotShips();
+    // gameRound.autoPlaceBotShips();
+
+    gameRound.placeHumanPlayerCarrier(5, 0);
+    gameRound.placeHumanPlayerBattleShip(0, 4, 'vertical');
+    gameRound.placeHumanPlayerDestroyer(3, 3);
+    gameRound.placeHumanPlayerSubMarine(6, 6, 'vertical');
+    gameRound.placeHumanPlayerPatrolBoat(1, 9);
+
+    gameRound.placeComputerCarrier(5, 0);
+    gameRound.placeComputerBattleShip(0, 4, 'vertical');
+    gameRound.placeComputerDestroyer(3, 3);
+    gameRound.placeComputerSubMarine(6, 6, 'vertical');
+    gameRound.placeComputerPatrolBoat(1, 9);
 
     gameRound.botMove(0, 0);
     expect(gameRound.botMove(0, 1)).toBe(-1);
@@ -306,7 +335,7 @@ describe('allows playing in turns', () => {
     gameRound.addHumanPlayer('Player 2');
     gameRound.addBotPlayer();
 
-    gameRound.autoPlaceBotShips();
+    // gameRound.autoPlaceBotShips();
     // gameRound.autoPlaceHumanShips();
 
     gameRound.placeHumanPlayerCarrier(5, 0);
@@ -314,6 +343,12 @@ describe('allows playing in turns', () => {
     gameRound.placeHumanPlayerDestroyer(3, 3);
     gameRound.placeHumanPlayerSubMarine(6, 6, 'vertical');
     gameRound.placeHumanPlayerPatrolBoat(1, 9);
+
+    gameRound.placeComputerCarrier(5, 0);
+    gameRound.placeComputerBattleShip(0, 4, 'vertical');
+    gameRound.placeComputerDestroyer(3, 3);
+    gameRound.placeComputerSubMarine(6, 6, 'vertical');
+    gameRound.placeComputerPatrolBoat(1, 9);
 
     // const botShipConfig = gameRound.botShipDetails();
     const humanPlayerShipConfig = gameRound.humanPlayerShipDetails();
@@ -378,48 +413,3 @@ describe('allows playing in turns', () => {
     expect(activePlayer.playerName).toBe('Player 2');
   });
 });
-
-// describe('can return ship particulars of both players', () => {
-//   const gameRound = new GameRound();
-
-//   gameRound.addBotPlayer();
-
-//   gameRound.addHumanPlayer('Player 2');
-//   test('botShipDetails method exists', () => {
-//     expect(gameRound.botShipDetails).toBeDefined();
-//   });
-
-//   test('humanPlayerShipDetails method exists', () => {
-//     expect(gameRound.humanPlayerShipDetails).toBeDefined();
-//   });
-
-//   test('placeBotShips method exists', () => {
-//     expect(gameRound.autoPlaceBotShips).toBeDefined();
-//   });
-
-//   describe('human ship placement methods', () => {
-//     test('human ship placing methods exists', () => {
-//       expect(gameRound.placeHumanPlayerCarrier).toBeDefined();
-
-//       expect(gameRound.placeHumanPlayerBattleShip).toBeDefined();
-
-//       expect(gameRound.placeHumanPlayerDestroyer).toBeDefined();
-
-//       expect(gameRound.placeHumanPlayerSubMarine).toBeDefined();
-
-//       expect(gameRound.placeHumanPlayerPatrolBoat).toBeDefined();
-
-//       expect(gameRound.autoPlaceHumanShips).toBeDefined();
-//     });
-//   });
-
-//   test('botShipDetails returns correct data', () => {
-//     // expect(gameRound.botShipDetails()).toBeFalsy();
-
-//     gameRound.autoPlaceBotShips();
-
-//     expect(gameRound.botShipDetails()).toBeTruthy();
-//   });
-// });
-
-// todo: add test to properly check for continuous hits
