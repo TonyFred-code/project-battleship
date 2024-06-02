@@ -16,12 +16,6 @@ export default class GameBoard {
     return y + this.BOARD_SIZE * x;
   }
 
-  #reverseTransform(index) {
-    const x = Math.floor(index / this.BOARD_SIZE);
-    const y = index % this.BOARD_SIZE;
-    return { x, y };
-  }
-
   #CARRIER_INFO = {
     isOnBoard: false,
     occupying: [],
@@ -139,8 +133,9 @@ export default class GameBoard {
     // const toBeOccupied = this.#getToBeOccupied(x, y, orientation);
 
     const node = this.board[y * this.BOARD_SIZE + x];
-    if (node.isHit || node.isOccupied || node.isNeighboringOccupied)
+    if (node.isHit || node.isOccupied || node.isNeighboringOccupied) {
       return false;
+    }
 
     return true;
   }
@@ -316,8 +311,7 @@ export default class GameBoard {
 
       if (
         toBeOccupied.length === size &&
-        this.#checkNodeLocations(toBeOccupied) &&
-        !this.#CarrierExempt([x, y], orientation)
+        this.#checkNodeLocations(toBeOccupied)
       ) {
         canPlace.push([x, y]);
       }
@@ -333,24 +327,33 @@ export default class GameBoard {
     const available = this.carrierPlacement(orientation);
 
     // if no space to place ship, reform
-    // if (available.length === 0) {
-    //   this.#storeExemptConfig();
-    //   this.removeAllShips();
-    //   this.#reformPlacement();
-    //   return this.carrierAutoPlace();
-    // }
+    if (available.length === 0) {
+      // this.#storeExemptConfig();
+      // this.removeAllShips();
+      // this.#reformPlacement();
+      // return this.carrierAutoPlace();
+      console.table(this.board);
+    }
 
     function getRndElement(array) {
       const rnd = Math.floor(Math.random() * array.length);
+      const element = array[rnd];
 
-      return array[rnd];
+      return {
+        element,
+        index: rnd,
+      };
     }
+    const { size } = this.#CARRIER_INFO;
 
-    const placeHead = getRndElement(available);
+    // let placed = false;
+
+    const { index } = getRndElement(available);
+
+    const [placeHead] = available.splice(index, 1);
+    console.log(placeHead);
 
     const [x, y] = placeHead;
-
-    const { size } = this.#CARRIER_INFO;
 
     const occupyingNodeLoc = this.#getToBeOccupied(size, x, y, orientation);
 
@@ -418,6 +421,8 @@ export default class GameBoard {
       (node) => !node.isHit && !node.isOccupied && !node.isNeighboringOccupied,
     );
 
+    // console.table(availableNodes);
+
     const { size } = this.#BATTLESHIP_INFO;
 
     const canPlace = [];
@@ -450,6 +455,7 @@ export default class GameBoard {
     }
 
     const placeHead = getRndElement(available);
+    // console.log(placeHead);
 
     const [x, y] = placeHead;
 
@@ -546,6 +552,8 @@ export default class GameBoard {
 
     const available = this.destroyerPlacement(orientation);
 
+    // console.table(available);
+
     function getRndElement(array) {
       const rnd = Math.floor(Math.random() * array.length);
 
@@ -553,6 +561,8 @@ export default class GameBoard {
     }
 
     const placeHead = getRndElement(available);
+
+    // console.log(placeHead);
 
     const [x, y] = placeHead;
 
@@ -650,6 +660,8 @@ export default class GameBoard {
 
     const available = this.subMarinePlacement(orientation);
 
+    // console.log(available);
+
     function getRndElement(array) {
       const rnd = Math.floor(Math.random() * array.length);
 
@@ -657,6 +669,7 @@ export default class GameBoard {
     }
 
     const placeHead = getRndElement(available);
+    // console.table(placeHead);
 
     if (placeHead.length === 0) {
       console.log(available);
@@ -764,6 +777,9 @@ export default class GameBoard {
     }
 
     const placeHead = getRndElement(available);
+
+    // console.table(placeHead);
+    // console.table(available);
 
     const [x, y] = placeHead;
 
