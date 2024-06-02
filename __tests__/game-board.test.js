@@ -521,7 +521,7 @@ describe('ship removal', () => {
   });
 });
 
-describe.only('auto ship placement', () => {
+describe('auto ship placement', () => {
   describe('carrier auto placement', () => {
     const gameBoard = new GameBoard();
 
@@ -860,7 +860,7 @@ describe.only('auto ship placement', () => {
     });
 
     test('carrierAutoPlace can place vertically', () => {
-      const placeAttribute = gameBoard.carrierAutoPlace('vertical');
+      const placeAttribute = gameBoard.carrierAutoPlace();
 
       const { orientation } = placeAttribute;
 
@@ -868,15 +868,6 @@ describe.only('auto ship placement', () => {
 
       gameBoard.removeCarrier();
     });
-
-    // test('carrierAutoPlace refuse invalid orientation', () => {
-    //   const placeAttribute = gameBoard.carrierAutoPlace('something');
-
-    //   const keys = Object.keys(placeAttribute);
-
-    //   expect(keys).toHaveLength(0);
-    //   gameBoard.removeCarrier();
-    // });
   });
 
   describe('battleship auto placement', () => {
