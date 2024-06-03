@@ -1,7 +1,7 @@
 {
-  "name": "template",
+  "name": "BattleShip Game",
   "version": "1.0.0",
-  "description": "first template",
+  "description": "A classic board game",
   "main": "main.js",
   "type": "module",
   "scripts": {
@@ -14,8 +14,8 @@
     "watch-tests": "jest --watch ./__tests__/*.js"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Tony Fred",
+  "license": "MIT",
   "devDependencies": {
     "@babel/cli": "^7.23.4",
     "@babel/core": "^7.23.6",
