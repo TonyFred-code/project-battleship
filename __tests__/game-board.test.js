@@ -1,4 +1,3 @@
-/* eslint-disable jest/no-disabled-tests */
 import GameBoard from '../src/game-board.js';
 import Ship from '../src/ship.js';
 import Carrier from '../src/carrier.js';
