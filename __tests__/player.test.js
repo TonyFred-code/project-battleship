@@ -75,5 +75,5 @@ test('player board can receive attack', () => {
   expect(player.placeSubMarine(6, 6, 'vertical')).toBe(true);
   expect(player.placePatrolBoat(1, 9)).toBe(true);
 
-  expect(player.receiveAttack(0, 0)).toBe(true);
+  expect(player.receiveAttack(0, 0)).toBe(0);
 });

@@ -1,4 +1,5 @@
 import Ship from './ship.js';
+import './style.css';
 
 const hello = () => console.log('hello');
 

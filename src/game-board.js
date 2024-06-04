@@ -12,29 +12,50 @@ export default class GameBoard {
 
   #VERTICAL = 'vertical';
 
+  #transform(x, y) {
+    return y + this.BOARD_SIZE * x;
+  }
+
   #CARRIER_INFO = {
     isOnBoard: false,
     occupying: [],
+    shipHead: [],
+    orientation: '',
+    size: 0,
+    exemptShipHead: [],
+    autoRemoved: false,
   };
 
   #BATTLESHIP_INFO = {
     isOnBoard: false,
     occupying: [],
+    shipHead: [],
+    orientation: '',
+    size: 0,
   };
 
   #DESTROYER_INFO = {
     isOnBoard: false,
     occupying: [],
+    shipHead: [],
+    orientation: '',
+    size: 0,
   };
 
   #SUBMARINE_INFO = {
     isOnBoard: false,
     occupying: [],
+    shipHead: [],
+    orientation: '',
+    size: 0,
   };
 
   #PATROL_BOAT_INFO = {
     isOnBoard: false,
     occupying: [],
+    shipHead: [],
+    orientation: '',
+    size: 0,
   };
 
   constructor() {
@@ -109,8 +130,12 @@ export default class GameBoard {
       return false;
     }
 
+    // const toBeOccupied = this.#getToBeOccupied(x, y, orientation);
+
     const node = this.board[y * this.BOARD_SIZE + x];
-    if (node.isOccupied || node.isNeighboringOccupied) return false;
+    if (node.isHit || node.isOccupied || node.isNeighboringOccupied) {
+      return false;
+    }
 
     return true;
   }
@@ -145,16 +170,77 @@ export default class GameBoard {
   }
 
   #checkNodeLocations(nodeLocations) {
-    let allValid = true;
+    // let allValid = true;
 
-    nodeLocations.forEach((nodeLocation) => {
-      const [nx, ny] = nodeLocation;
-      if (!this.#isValidCoordinate(nx, ny) || !this.#canPlaceShip(nx, ny)) {
-        allValid = false;
-      }
+    // nodeLocations.forEach((nodeLocation) => {
+    //   const [nx, ny] = nodeLocation;
+    //   if (!this.#canPlaceShip(nx, ny)) {
+    //     allValid = false;
+    //   }
+    // });
+
+    return nodeLocations.every((nodeLoc) => {
+      const [nx, ny] = nodeLoc;
+      return this.#canPlaceShip(nx, ny);
     });
 
-    return allValid;
+    // return allValid;
+  }
+
+  #CarrierExempt(shipHead, orientation) {
+    const exemptShipHead = shipHead;
+    const exemptOrientation = orientation;
+    this.#CARRIER_INFO.exemptShipHead.push({
+      exemptShipHead,
+      exemptOrientation,
+    });
+  }
+
+  #isCarrierExempted(shipHead, orientation) {
+    const [shipHeadX, shipHeadY] = shipHead;
+    const transformedShipHead = this.#transform(shipHeadX, shipHeadY);
+
+    // let isExempted = false;
+
+    return this.#CARRIER_INFO.exemptShipHead.some((exempt) => {
+      const { exemptShipHead, exemptOrientation } = exempt;
+      const [x, y] = exemptShipHead;
+      const transformed = this.#transform(x, y);
+
+      return (
+        transformed === transformedShipHead && exemptOrientation === orientation
+      );
+    });
+
+    // this.#CARRIER_INFO.exemptShipHead.forEach((exempt) => {
+    //   const { exemptShipHead, exemptOrientation } = exempt;
+    //   const [x, y] = exemptShipHead;
+    //   const transformed = this.#transform(x, y);
+
+    //   if (
+    //     transformed === transformedShipHead &&
+    //     exemptOrientation === orientation
+    //   ) {
+    //     isExempted = true;
+    //   }
+    // });
+
+    // return isExempted;
+  }
+
+  #storeExemptConfig() {
+    if (this.#CARRIER_INFO.isOnBoard) {
+      const { shipHead, orientation } = this.#CARRIER_INFO;
+      // const [x, y] = shipHead;
+      this.#CarrierExempt(shipHead, orientation);
+    }
+  }
+
+  #reformPlacement() {
+    if (this.#CARRIER_INFO.autoRemoved) {
+      this.carrierAutoPlace();
+      this.#CARRIER_INFO.autoRemoved = false;
+    }
   }
 
   placeCarrier(x, y, orientation = 'horizontal') {
@@ -181,8 +267,103 @@ export default class GameBoard {
     });
 
     this.#CARRIER_INFO.isOnBoard = true;
+    this.#CARRIER_INFO.shipHead.push(x, y);
+    this.#CARRIER_INFO.orientation = orientation;
 
     return true;
+  }
+
+  removeCarrier() {
+    const { occupying } = this.#CARRIER_INFO;
+
+    occupying.forEach((location) => {
+      const [nx, ny] = location;
+
+      const node = this.board[ny * this.BOARD_SIZE + nx];
+      node.isOccupied = false;
+      node.neighbors.forEach((nodeLoc) => {
+        const [nnx, nny] = nodeLoc;
+        this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = false;
+      });
+    });
+
+    this.#CARRIER_INFO.occupying = [];
+    this.#CARRIER_INFO.isOnBoard = false;
+    this.#CARRIER_INFO.shipHead = [];
+    this.#CARRIER_INFO.orientation = '';
+  }
+
+  carrierPlacement(orientation = 'horizontal') {
+    if (!this.#isValidOrientation(orientation)) return [];
+
+    const availableNodes = this.board.filter(
+      (node) => !node.isHit && !node.isOccupied && !node.isNeighboringOccupied,
+    );
+
+    const { size } = this.#CARRIER_INFO;
+
+    const canPlace = [];
+
+    availableNodes.forEach((node) => {
+      const [x, y] = node.address;
+
+      const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
+
+      if (
+        toBeOccupied.length === size &&
+        this.#checkNodeLocations(toBeOccupied)
+      ) {
+        canPlace.push([x, y]);
+      }
+    });
+
+    return canPlace;
+  }
+
+  carrierAutoPlace() {
+    // Randomly choose orientation
+    const orientation = Math.random() < 0.5 ? 'horizontal' : 'vertical';
+
+    const available = this.carrierPlacement(orientation);
+
+    // if no space to place ship, reform
+    if (available.length === 0) {
+      // this.#storeExemptConfig();
+      // this.removeAllShips();
+      // this.#reformPlacement();
+      // return this.carrierAutoPlace();
+      console.table(this.board);
+    }
+
+    function getRndElement(array) {
+      const rnd = Math.floor(Math.random() * array.length);
+      const element = array[rnd];
+
+      return {
+        element,
+        index: rnd,
+      };
+    }
+    const { size } = this.#CARRIER_INFO;
+
+    // let placed = false;
+
+    const { index } = getRndElement(available);
+
+    const [placeHead] = available.splice(index, 1);
+    console.log(placeHead);
+
+    const [x, y] = placeHead;
+
+    const occupyingNodeLoc = this.#getToBeOccupied(size, x, y, orientation);
+
+    this.placeCarrier(x, y, orientation);
+
+    return {
+      orientation,
+      placeHead,
+      occupyingNodeLoc,
+    };
   }
 
   placeBattleShip(x, y, orientation = 'horizontal') {
@@ -209,7 +390,86 @@ export default class GameBoard {
     });
 
     this.#BATTLESHIP_INFO.isOnBoard = true;
+    this.#BATTLESHIP_INFO.shipHead.push(x, y);
+    this.#BATTLESHIP_INFO.orientation = orientation;
     return true;
+  }
+
+  removeBattleShip() {
+    const { occupying } = this.#BATTLESHIP_INFO;
+
+    occupying.forEach((location) => {
+      const [nx, ny] = location;
+
+      const node = this.board[ny * this.BOARD_SIZE + nx];
+      node.isOccupied = false;
+      node.neighbors.forEach((nodeLoc) => {
+        const [nnx, nny] = nodeLoc;
+        this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = false;
+      });
+    });
+    this.#BATTLESHIP_INFO.occupying = [];
+    this.#BATTLESHIP_INFO.isOnBoard = false;
+    this.#BATTLESHIP_INFO.orientation = '';
+    this.#BATTLESHIP_INFO.shipHead = [];
+  }
+
+  battleShipPlacement(orientation = 'horizontal') {
+    if (!this.#isValidOrientation(orientation)) return [];
+
+    const availableNodes = this.board.filter(
+      (node) => !node.isHit && !node.isOccupied && !node.isNeighboringOccupied,
+    );
+
+    // console.table(availableNodes);
+
+    const { size } = this.#BATTLESHIP_INFO;
+
+    const canPlace = [];
+
+    availableNodes.forEach((node) => {
+      const [x, y] = node.address;
+
+      const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
+
+      if (
+        toBeOccupied.length === size &&
+        this.#checkNodeLocations(toBeOccupied)
+      ) {
+        canPlace.push([x, y]);
+      }
+    });
+
+    return canPlace;
+  }
+
+  battleShipAutoPlace(orientation) {
+    if (!this.#isValidOrientation(orientation)) return {};
+
+    const available = this.battleShipPlacement(orientation);
+
+    function getRndElement(array) {
+      const rnd = Math.floor(Math.random() * array.length);
+
+      return array[rnd];
+    }
+
+    const placeHead = getRndElement(available);
+    // console.log(placeHead);
+
+    const [x, y] = placeHead;
+
+    const { size } = this.#BATTLESHIP_INFO;
+
+    const occupyingNodeLoc = this.#getToBeOccupied(size, x, y, orientation);
+
+    this.placeBattleShip(x, y, orientation);
+
+    return {
+      orientation,
+      placeHead,
+      occupyingNodeLoc,
+    };
   }
 
   placeDestroyer(x, y, orientation = 'horizontal') {
@@ -236,7 +496,87 @@ export default class GameBoard {
     });
 
     this.#DESTROYER_INFO.isOnBoard = true;
+    this.#DESTROYER_INFO.shipHead.push(x, y);
+    this.#DESTROYER_INFO.orientation = orientation;
     return true;
+  }
+
+  removeDestroyer() {
+    const { occupying } = this.#DESTROYER_INFO;
+
+    occupying.forEach((location) => {
+      const [nx, ny] = location;
+
+      const node = this.board[ny * this.BOARD_SIZE + nx];
+      node.isOccupied = false;
+      node.neighbors.forEach((nodeLoc) => {
+        const [nnx, nny] = nodeLoc;
+        this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = false;
+      });
+    });
+    this.#DESTROYER_INFO.occupying = [];
+    this.#DESTROYER_INFO.isOnBoard = false;
+    this.#DESTROYER_INFO.orientation = '';
+    this.#DESTROYER_INFO.shipHead = [];
+  }
+
+  destroyerPlacement(orientation = 'horizontal') {
+    if (!this.#isValidOrientation(orientation)) return [];
+
+    const availableNodes = this.board.filter(
+      (node) => !node.isHit && !node.isOccupied && !node.isNeighboringOccupied,
+    );
+
+    const { size } = this.#DESTROYER_INFO;
+
+    const canPlace = [];
+
+    availableNodes.forEach((node) => {
+      const [x, y] = node.address;
+
+      const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
+
+      if (
+        toBeOccupied.length === size &&
+        this.#checkNodeLocations(toBeOccupied)
+      ) {
+        canPlace.push([x, y]);
+      }
+    });
+
+    return canPlace;
+  }
+
+  destroyerAutoPlace(orientation) {
+    if (!this.#isValidOrientation(orientation)) return {};
+
+    const available = this.destroyerPlacement(orientation);
+
+    // console.table(available);
+
+    function getRndElement(array) {
+      const rnd = Math.floor(Math.random() * array.length);
+
+      return array[rnd];
+    }
+
+    const placeHead = getRndElement(available);
+
+    // console.log(placeHead);
+
+    const [x, y] = placeHead;
+
+    const { size } = this.#DESTROYER_INFO;
+
+    const occupyingNodeLoc = this.#getToBeOccupied(size, x, y, orientation);
+
+    this.placeDestroyer(x, y, orientation);
+
+    return {
+      orientation,
+      placeHead,
+      occupyingNodeLoc,
+    };
   }
 
   placeSubMarine(x, y, orientation = 'horizontal') {
@@ -263,7 +603,91 @@ export default class GameBoard {
     });
 
     this.#SUBMARINE_INFO.isOnBoard = true;
+    this.#SUBMARINE_INFO.shipHead.push(x, y);
+    this.#SUBMARINE_INFO.orientation = orientation;
     return true;
+  }
+
+  removeSubMarine() {
+    const { occupying } = this.#SUBMARINE_INFO;
+
+    occupying.forEach((location) => {
+      const [nx, ny] = location;
+
+      const node = this.board[ny * this.BOARD_SIZE + nx];
+      node.isOccupied = false;
+      node.neighbors.forEach((nodeLoc) => {
+        const [nnx, nny] = nodeLoc;
+        this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = false;
+      });
+    });
+
+    this.#SUBMARINE_INFO.occupying = [];
+    this.#SUBMARINE_INFO.isOnBoard = false;
+    this.#SUBMARINE_INFO.orientation = '';
+    this.#SUBMARINE_INFO.shipHead = [];
+  }
+
+  subMarinePlacement(orientation = 'horizontal') {
+    if (!this.#isValidOrientation(orientation)) return [];
+
+    const availableNodes = this.board.filter(
+      (node) => !node.isHit && !node.isOccupied && !node.isNeighboringOccupied,
+    );
+
+    const { size } = this.#SUBMARINE_INFO;
+
+    const canPlace = [];
+
+    availableNodes.forEach((node) => {
+      const [x, y] = node.address;
+
+      const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
+
+      if (
+        toBeOccupied.length === size &&
+        this.#checkNodeLocations(toBeOccupied)
+      ) {
+        canPlace.push([x, y]);
+      }
+    });
+
+    return canPlace;
+  }
+
+  subMarineAutoPlace(orientation) {
+    if (!this.#isValidOrientation(orientation)) return {};
+
+    const available = this.subMarinePlacement(orientation);
+
+    // console.log(available);
+
+    function getRndElement(array) {
+      const rnd = Math.floor(Math.random() * array.length);
+
+      return array[rnd];
+    }
+
+    const placeHead = getRndElement(available);
+    // console.table(placeHead);
+
+    if (placeHead.length === 0) {
+      console.log(available);
+    }
+
+    const [x, y] = placeHead;
+
+    const { size } = this.#SUBMARINE_INFO;
+
+    const occupyingNodeLoc = this.#getToBeOccupied(size, x, y, orientation);
+
+    this.placeSubMarine(x, y, orientation);
+
+    return {
+      orientation,
+      placeHead,
+      occupyingNodeLoc,
+    };
   }
 
   placePatrolBoat(x, y, orientation = 'horizontal') {
@@ -290,26 +714,133 @@ export default class GameBoard {
     });
 
     this.#PATROL_BOAT_INFO.isOnBoard = true;
+    this.#PATROL_BOAT_INFO.shipHead.push(x, y);
+    this.#PATROL_BOAT_INFO.orientation = orientation;
     return true;
   }
 
-  receiveAttack(x, y) {
-    if (!this.#isValidCoordinate(x, y)) return false;
+  removePatrolBoat() {
+    const { occupying } = this.#PATROL_BOAT_INFO;
 
-    if (!this.#allShipOnBoard()) return false;
+    occupying.forEach((location) => {
+      const [nx, ny] = location;
+
+      const node = this.board[ny * this.BOARD_SIZE + nx];
+      node.isOccupied = false;
+      node.neighbors.forEach((nodeLoc) => {
+        const [nnx, nny] = nodeLoc;
+        this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = false;
+      });
+    });
+    this.#PATROL_BOAT_INFO.occupying = [];
+    this.#PATROL_BOAT_INFO.isOnBoard = false;
+    this.#PATROL_BOAT_INFO.orientation = '';
+    this.#PATROL_BOAT_INFO.shipHead = [];
+  }
+
+  patrolBoatPlacement(orientation = 'horizontal') {
+    if (!this.#isValidOrientation(orientation)) return [];
+
+    const availableNodes = this.board.filter(
+      (node) => !node.isHit && !node.isOccupied && !node.isNeighboringOccupied,
+    );
+
+    const { size } = this.#PATROL_BOAT_INFO;
+
+    const canPlace = [];
+
+    availableNodes.forEach((node) => {
+      const [x, y] = node.address;
+
+      const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
+
+      if (
+        toBeOccupied.length === size &&
+        this.#checkNodeLocations(toBeOccupied)
+      ) {
+        canPlace.push([x, y]);
+      }
+    });
+
+    return canPlace;
+  }
+
+  patrolBoatAutoPlace(orientation) {
+    if (!this.#isValidOrientation(orientation)) return {};
+
+    const available = this.patrolBoatPlacement(orientation);
+
+    function getRndElement(array) {
+      const rnd = Math.floor(Math.random() * array.length);
+
+      return array[rnd];
+    }
+
+    const placeHead = getRndElement(available);
+
+    // console.table(placeHead);
+    // console.table(available);
+
+    const [x, y] = placeHead;
+
+    const { size } = this.#PATROL_BOAT_INFO;
+
+    const occupyingNodeLoc = this.#getToBeOccupied(size, x, y, orientation);
+
+    this.placePatrolBoat(x, y, orientation);
+
+    return {
+      orientation,
+      placeHead,
+      occupyingNodeLoc,
+    };
+  }
+
+  removeAllShips() {
+    this.removeCarrier();
+    this.removeBattleShip();
+    this.removeDestroyer();
+    this.removeSubMarine();
+    this.removePatrolBoat();
+  }
+
+  allShipsPlacement() {
+    function rndOrientation() {
+      const rnd = Math.floor(Math.random() * 10);
+
+      if (rnd % 2 === 0) return 'vertical';
+
+      return 'horizontal';
+    }
+    const placementInfo = [];
+
+    placementInfo.push(this.carrierAutoPlace(rndOrientation()));
+    placementInfo.push(this.battleShipAutoPlace(rndOrientation()));
+    placementInfo.push(this.destroyerAutoPlace(rndOrientation()));
+    placementInfo.push(this.subMarineAutoPlace(rndOrientation()));
+    placementInfo.push(this.patrolBoatAutoPlace(rndOrientation()));
+
+    return placementInfo;
+  }
+
+  receiveAttack(x, y) {
+    if (!this.#isValidCoordinate(x, y)) return -1;
+
+    if (!this.#allShipOnBoard()) return -1;
 
     const node = this.board[y * this.BOARD_SIZE + x];
 
     if (node.isHit) {
-      return false;
+      return -1;
     }
 
     node.isHit = true;
     if (node.isOccupied) {
       node.isOccupied.hit();
+      return 1;
     }
 
-    return true;
+    return 0;
   }
 
   #allShipOnBoard() {
@@ -361,4 +892,87 @@ export default class GameBoard {
 
     return available;
   }
+
+  get shipPlacements() {
+    const carrierPlacement = {
+      shipHead: this.#CARRIER_INFO.shipHead,
+      isOnBoard: this.#CARRIER_INFO.isOnBoard,
+      occupyingLoc: this.#CARRIER_INFO.occupying,
+      orientation: this.#CARRIER_INFO.orientation,
+    };
+
+    const battleShipPlacement = {
+      shipHead: this.#BATTLESHIP_INFO.shipHead,
+      isOnBoard: this.#BATTLESHIP_INFO.isOnBoard,
+      occupyingLoc: this.#BATTLESHIP_INFO.occupying,
+      orientation: this.#BATTLESHIP_INFO.orientation,
+    };
+
+    const destroyerPlacement = {
+      shipHead: this.#DESTROYER_INFO.shipHead,
+      isOnBoard: this.#DESTROYER_INFO.isOnBoard,
+      occupyingLoc: this.#DESTROYER_INFO.occupying,
+      orientation: this.#DESTROYER_INFO.orientation,
+    };
+
+    const subMarinePlacement = {
+      shipHead: this.#SUBMARINE_INFO.shipHead,
+      isOnBoard: this.#SUBMARINE_INFO.isOnBoard,
+      occupyingLoc: this.#SUBMARINE_INFO.occupying,
+      orientation: this.#SUBMARINE_INFO.orientation,
+    };
+
+    const patrolBoatPlacement = {
+      shipHead: this.#PATROL_BOAT_INFO.shipHead,
+      isOnBoard: this.#PATROL_BOAT_INFO.isOnBoard,
+      occupyingLoc: this.#PATROL_BOAT_INFO.occupying,
+      orientation: this.#PATROL_BOAT_INFO.orientation,
+    };
+
+    return {
+      carrierPlacement,
+      battleShipPlacement,
+      destroyerPlacement,
+      subMarinePlacement,
+      patrolBoatPlacement,
+    };
+  }
 }
+
+// const gameBoard = new GameBoard();
+// gameBoard.allShip
+// const DestroyerHorizontalPlacements =
+//   gameBoard.destroyerPlacement('horizontal');
+
+// console.log(DestroyerHorizontalPlacements.length);
+
+// const DestroyerVerticalPlacements = gameBoard.destroyerPlacement('vertical');
+
+// console.log(DestroyerVerticalPlacements.length);
+
+// function rndOrientation() {
+//   const rnd = Math.floor(Math.random() * 10);
+
+//   if (rnd % 2 === 0) return 'vertical';
+
+//   return 'horizontal';
+// }
+// const carrierPlaceInfo = gameBoard.carrierAutoPlace(rndOrientation());
+
+// const battleShipPlaceInfo = gameBoard.battleShipAutoPlace(rndOrientation());
+
+// const destroyerPlaceInfo = gameBoard.destroyerAutoPlace(rndOrientation());
+
+// const subMarinePlaceInfo = gameBoard.subMarineAutoPlace(rndOrientation());
+
+// const patrolBoatPlaceInfo = gameBoard.patrolBoatAutoPlace(rndOrientation());
+
+// const carrierOccupying = carrierPlaceInfo.occupyingNodeLoc;
+
+// const carrierHits = new Set();
+
+// carrierOccupying.forEach((nodeLoc) => {
+//   const [x, y] = nodeLoc;
+
+//   carrierHits.add(gameBoard.receiveAttack(x, y));
+// });
