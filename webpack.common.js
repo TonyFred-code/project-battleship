@@ -1,9 +1,8 @@
-import path from 'path';
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import { dirname, path } from 'path';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const DIRNAME = dirname(fileURLToPath(import.meta.url));
 
 export default {
   entry: './src/main.js',
@@ -16,7 +15,7 @@ export default {
   ],
   output: {
     filename: '[name].bundle.js',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(DIRNAME, 'dist'),
     clean: true,
   },
   module: {
