@@ -127,3 +127,9 @@ body {
     clip-path: inset(0 -34% 0 0);
   }
 }
+
+@media (min-width: 1024px) {
+  html {
+    font-size: 12px;
+  }
+}
