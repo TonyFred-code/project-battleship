@@ -1,0 +1,129 @@
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  box-sizing: inherit;
+  font-size: 10px;
+}
+
+body {
+  font-size: 2.1rem;
+}
+
+.container {
+  width: 72%;
+  max-width: 1128px;
+  margin: 0 auto;
+}
+
+.d-flex__row {
+  display: flex;
+  flex-direction: row;
+  gap: 50px;
+}
+
+.d-flex__col {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+}
+
+.centered_flex {
+  justify-content: center;
+  align-items: center;
+}
+
+.gap_10 {
+  gap: 10px;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.loading-title {
+  text-align: center;
+}
+
+.loading-title h1 {
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.loading-title h2 {
+  font-size: 3.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1.8px;
+}
+
+.loading-screen {
+  min-height: 660px;
+  padding: 100px 0;
+  text-align: center;
+}
+
+.loader-container {
+}
+
+.loading-bar {
+  height: auto;
+  width: 100%;
+}
+
+.loading-line {
+  height: 25px;
+  border: 2px solid red;
+  border-radius: 100px;
+}
+
+.line {
+  height: 100%;
+  border-radius: 100px;
+  background-color: red;
+  animation-name: loading;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  animation-duration: 2s;
+  animation-delay: 150ms;
+  animation-timing-function: cubic-bezier(0, 0, 0, 0);
+  animation-direction: normal;
+}
+
+@keyframes loading {
+  0% {
+    width: 0%;
+  }
+
+  100% {
+    width: 100%;
+  }
+}
+
+.loading-text {
+  font-size: 1.5rem;
+  letter-spacing: 1.3px;
+}
+
+
+.loader {
+  display: inline-block;
+  margin-left: 3px;
+  width: 24px;
+  aspect-ratio: 4;
+  background: radial-gradient(circle closest-side, #000 90%, #0000) 0 /
+    calc(100% / 3) 100% space;
+  clip-path: inset(0 100% 0 0);
+  animation: l1 1s steps(4) infinite;
+}
+
+@keyframes l1 {
+  to {
+    clip-path: inset(0 -34% 0 0);
+  }
+}
