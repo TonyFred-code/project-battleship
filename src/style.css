@@ -13,7 +13,22 @@ html {
 
 body {
   font-size: 2.1rem;
-  overflow-y: hidden;
+}
+
+.z_index_1 {
+  z-index: 1;
+}
+
+.z_index_2 {
+  z-index: 2;
+}
+
+.z_index_3 {
+  z-index: 3;
+}
+
+.hidden {
+  display: none;
 }
 
 .container {
@@ -138,6 +153,37 @@ body {
   padding: 100px 0;
   text-align: center;
   min-height: 660px;
+}
+
+.home-page h1 {
+  text-transform: uppercase;
+}
+
+.home-page .btn {
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.home-page__btn-group {
+  width: 50%;
+  max-width: 200px;
+}
+
+.home-page__btn-group .btn {
+  padding: 12px 20px;
+  font-size: 1.5rem;
+}
+
+.tutorial-btn-container {
+  position: absolute;
+  top: 25px;
+  left: 25px;
+}
+
+.tutorial__btn {
+  padding: 6px 14px;
+  font-weight: bolder;
+  font-size: 3rem;
 }
 /* HOME PAGE ENDS */
 
