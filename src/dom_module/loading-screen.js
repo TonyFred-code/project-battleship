@@ -63,5 +63,5 @@ export default function createLoadScreen() {
 
   loadingScreenContainer.appendChild(genericContainer);
 
-  return loadingScreenContainer;
+  return { loadingScreenContainer, line };
 }
