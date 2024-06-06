@@ -1,20 +1,26 @@
-import Ship from './ship.js';
-// import './dom_module/loading-screen.js';
-import './style.css';
 import createLoadScreen from './dom_module/loading-screen.js';
+import createHomePage from './dom_module/home-page.js';
+import './style.css';
 
-const content = document.querySelector('body');
+function changeScreen(incoming, delay) {
+  const content = document.querySelector('body');
 
-const loadingScreenContainer = createLoadScreen();
-content.appendChild(loadingScreenContainer);
-const hello = () => console.log('hello');
+  setTimeout(() => {
+    content.innerHTML = '';
+    content.appendChild(incoming);
+  }, delay);
+}
 
-const array = ['a', 'b', 'c'];
+function renderInitialScreen() {
+  const content = document.querySelector('body');
 
-const spread = [...array];
+  const homePageContainer = createHomePage();
+  const { loadingScreenContainer, line } = createLoadScreen();
+  content.appendChild(loadingScreenContainer);
 
-console.log(spread);
+  line.addEventListener('animationend', () => {
+    changeScreen(homePageContainer, 350);
+  });
+}
 
-hello();
-
-console.log(new Ship(2));
+renderInitialScreen();
