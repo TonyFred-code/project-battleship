@@ -13,6 +13,7 @@ html {
 
 body {
   font-size: 2.1rem;
+  overflow-y: hidden;
 }
 
 .container {
@@ -45,6 +46,8 @@ body {
 .d-flex {
   display: flex;
 }
+
+/* LOADING SCREEN */
 
 .loading-title {
   text-align: center;
@@ -127,6 +130,16 @@ body {
     clip-path: inset(0 -34% 0 0);
   }
 }
+
+/* LOADING SCREEN ENDS */
+
+/* HOME PAGE */
+.home-page {
+  padding: 100px 0;
+  text-align: center;
+  min-height: 660px;
+}
+/* HOME PAGE ENDS */
 
 @media (min-width: 1024px) {
   html {
