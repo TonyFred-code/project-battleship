@@ -385,6 +385,10 @@ export default class GameBoard {
 
     if (!this.#checkNodeLocations(toBeOccupied)) return false;
 
+    if (this.#BATTLESHIP_INFO.isOnBoard) {
+      this.removeBattleShip();
+    }
+
     toBeOccupied.forEach((location) => {
       const [nx, ny] = location;
 
@@ -490,6 +494,10 @@ export default class GameBoard {
     if (toBeOccupied.length < size) return false;
 
     if (!this.#checkNodeLocations(toBeOccupied)) return false;
+
+    if (this.#DESTROYER_INFO.isOnBoard) {
+      this.removeDestroyer();
+    }
 
     toBeOccupied.forEach((location) => {
       const [nx, ny] = location;
@@ -597,6 +605,10 @@ export default class GameBoard {
     if (toBeOccupied.length < size) return false;
 
     if (!this.#checkNodeLocations(toBeOccupied)) return false;
+
+    if (this.#SUBMARINE_INFO.isOnBoard) {
+      this.removeSubMarine();
+    }
 
     toBeOccupied.forEach((location) => {
       const [nx, ny] = location;
@@ -708,6 +720,10 @@ export default class GameBoard {
     if (toBeOccupied.length < size) return false;
 
     if (!this.#checkNodeLocations(toBeOccupied)) return false;
+
+    if (this.#PATROL_BOAT_INFO.isOnBoard) {
+      this.removePatrolBoat();
+    }
 
     toBeOccupied.forEach((location) => {
       const [nx, ny] = location;
