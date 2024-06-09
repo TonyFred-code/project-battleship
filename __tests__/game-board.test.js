@@ -2578,4 +2578,91 @@ describe('ship placing methods', () => {
       expect(gameBoard.shipPlacements.carrierPlacement.isOnBoard).toBeTruthy();
     });
   });
+
+  describe('battleship placing', () => {
+    test('placeBattleShip() allows ship to be re-placed', () => {
+      const gameBoard = new GameBoard();
+
+      gameBoard.placeBattleShip(0, 0);
+
+      expect(gameBoard.placeBattleShip(0, 2)).toBeTruthy();
+    });
+
+    test('placeBattleShip() disallows ship to be re-placed if new coordinate or orientation is invalid', () => {
+      const gameBoard = new GameBoard();
+
+      gameBoard.placeBattleShip(0, 0);
+
+      expect(gameBoard.placeBattleShip(0, -2)).toBeFalsy();
+
+      expect(
+        gameBoard.shipPlacements.battleShipPlacement.isOnBoard,
+      ).toBeTruthy();
+    });
+  });
+
+  describe('destroyer placing', () => {
+    test('placeDestroyer() allows ship to be re-placed', () => {
+      const gameBoard = new GameBoard();
+
+      gameBoard.placeDestroyer(0, 0);
+
+      expect(gameBoard.placeDestroyer(0, 2)).toBeTruthy();
+    });
+
+    test('placeDestroyer() disallows ship to be re-placed if new coordinate or orientation is invalid', () => {
+      const gameBoard = new GameBoard();
+
+      gameBoard.placeDestroyer(0, 0);
+
+      expect(gameBoard.placeDestroyer(0, -2)).toBeFalsy();
+
+      expect(
+        gameBoard.shipPlacements.destroyerPlacement.isOnBoard,
+      ).toBeTruthy();
+    });
+  });
+
+  describe('submarine placing', () => {
+    test('placeSubMarine() allows ship to be re-placed', () => {
+      const gameBoard = new GameBoard();
+
+      gameBoard.placeSubMarine(0, 0);
+
+      expect(gameBoard.placeSubMarine(0, 2)).toBeTruthy();
+    });
+
+    test('placeSubMarine() disallows ship to be re-placed if new coordinate or orientation is invalid', () => {
+      const gameBoard = new GameBoard();
+
+      gameBoard.placeSubMarine(0, 0);
+
+      expect(gameBoard.placeSubMarine(0, -2)).toBeFalsy();
+
+      expect(
+        gameBoard.shipPlacements.subMarinePlacement.isOnBoard,
+      ).toBeTruthy();
+    });
+  });
+  describe('patrol boat placing', () => {
+    test('placePatrolBoat() allows ship to be re-placed', () => {
+      const gameBoard = new GameBoard();
+
+      gameBoard.placePatrolBoat(0, 0);
+
+      expect(gameBoard.placePatrolBoat(0, 2)).toBeTruthy();
+    });
+
+    test('placePatrolBoat() disallows ship to be re-placed if new coordinate or orientation is invalid', () => {
+      const gameBoard = new GameBoard();
+
+      gameBoard.placePatrolBoat(0, 0);
+
+      expect(gameBoard.placePatrolBoat(0, -2)).toBeFalsy();
+
+      expect(
+        gameBoard.shipPlacements.patrolBoatPlacement.isOnBoard,
+      ).toBeTruthy();
+    });
+  });
 });
