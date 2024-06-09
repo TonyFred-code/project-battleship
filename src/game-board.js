@@ -258,6 +258,10 @@ export default class GameBoard {
 
     if (!this.#checkNodeLocations(toBeOccupied)) return false;
 
+    if (this.#CARRIER_INFO.isOnBoard) {
+      this.removeCarrier();
+    }
+
     toBeOccupied.forEach((location) => {
       const [nx, ny] = location;
 
@@ -944,6 +948,8 @@ export default class GameBoard {
 }
 
 // const gameBoard = new GameBoard();
+
+// console.log(gameBoard.carrierPlacement('horizontal'));
 
 // const HorizontalPlacements = [
 //   '0-0',
