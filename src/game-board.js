@@ -149,14 +149,14 @@ export default class GameBoard {
     if (orientation === 'vertical') {
       for (let i = 0; i < size - 1; i += 1) {
         const occupied = y + i + 1;
-        if (occupied < this.BOARD_SIZE) {
+        if (this.#isValidCoordinate(x, occupied)) {
           toBeOccupied.push([x, occupied]);
         }
       }
     } else if (orientation === 'horizontal') {
       for (let i = 0; i < size - 1; i += 1) {
         const occupied = x + i + 1;
-        if (occupied < this.BOARD_SIZE) {
+        if (this.#isValidCoordinate(occupied, y)) {
           toBeOccupied.push([occupied, y]);
         }
       }
@@ -256,11 +256,11 @@ export default class GameBoard {
 
     if (toBeOccupied.length < size) return false;
 
-    if (!this.#checkNodeLocations(toBeOccupied)) return false;
-
     if (this.#CARRIER_INFO.isOnBoard) {
       this.removeCarrier();
     }
+
+    if (!this.#checkNodeLocations(toBeOccupied)) return false;
 
     toBeOccupied.forEach((location) => {
       const [nx, ny] = location;
