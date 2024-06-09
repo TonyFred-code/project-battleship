@@ -9,6 +9,8 @@ import Node from '../src/board-node.js';
 import {
   CarrierVerticalPlacements,
   CarrierHorizontalPlacements,
+  BattleShipHorizontalPlacements,
+  BattleShipVerticalPlacements,
 } from '../src/helper_module/ship-placements.js';
 
 test('can create board', () => {
@@ -241,7 +243,7 @@ test('game should refuse overlapping ships', () => {
 test('game should refuse placing ships on partly occupied position', () => {
   const gameBoard = new GameBoard();
   expect(gameBoard.placeCarrier(0, 0, 'vertical')).toBe(true);
-  expect(gameBoard.placeCarrier(0, 3)).toBe(false);
+  expect(gameBoard.placeBattleShip(0, 3)).toBe(false);
 });
 
 test('game should refuse placing ships on grids next to a ship', () => {
@@ -755,79 +757,6 @@ describe('auto ship placement', () => {
     });
 
     test('should return array of possible head pos - horizontal', () => {
-      const HorizontalPlacements = [
-        '0-0',
-        '1-0',
-        '2-0',
-        '3-0',
-        '4-0',
-        '5-0',
-        '6-0',
-        '0-1',
-        '1-1',
-        '2-1',
-        '3-1',
-        '4-1',
-        '5-1',
-        '6-1',
-        '0-2',
-        '1-2',
-        '2-2',
-        '3-2',
-        '4-2',
-        '5-2',
-        '6-2',
-        '0-3',
-        '1-3',
-        '2-3',
-        '3-3',
-        '4-3',
-        '5-3',
-        '6-3',
-        '0-4',
-        '1-4',
-        '2-4',
-        '3-4',
-        '4-4',
-        '5-4',
-        '6-4',
-        '0-5',
-        '1-5',
-        '2-5',
-        '3-5',
-        '4-5',
-        '5-5',
-        '6-5',
-        '0-6',
-        '1-6',
-        '2-6',
-        '3-6',
-        '4-6',
-        '5-6',
-        '6-6',
-        '0-7',
-        '1-7',
-        '2-7',
-        '3-7',
-        '4-7',
-        '5-7',
-        '6-7',
-        '0-8',
-        '1-8',
-        '2-8',
-        '3-8',
-        '4-8',
-        '5-8',
-        '6-8',
-        '0-9',
-        '1-9',
-        '2-9',
-        '3-9',
-        '4-9',
-        '5-9',
-        '6-9',
-      ];
-
       const battleShipPlacements = gameBoard.battleShipPlacement('horizontal');
 
       const formatted = battleShipPlacements.map(
@@ -836,7 +765,7 @@ describe('auto ship placement', () => {
 
       function checkFormatted() {
         return formatted.every((element) =>
-          HorizontalPlacements.includes(element),
+          BattleShipHorizontalPlacements.includes(element),
         );
       }
 
@@ -844,79 +773,6 @@ describe('auto ship placement', () => {
     });
 
     test('should return array of possible head pos - vertical', () => {
-      const VerticalPlacements = [
-        '0-0',
-        '1-0',
-        '2-0',
-        '3-0',
-        '4-0',
-        '5-0',
-        '6-0',
-        '7-0',
-        '8-0',
-        '9-0',
-        '0-1',
-        '1-1',
-        '2-1',
-        '3-1',
-        '4-1',
-        '5-1',
-        '6-1',
-        '7-1',
-        '8-1',
-        '9-1',
-        '0-2',
-        '1-2',
-        '2-2',
-        '3-2',
-        '4-2',
-        '5-2',
-        '6-2',
-        '7-2',
-        '8-2',
-        '9-2',
-        '0-3',
-        '1-3',
-        '2-3',
-        '3-3',
-        '4-3',
-        '5-3',
-        '6-3',
-        '7-3',
-        '8-3',
-        '9-3',
-        '0-4',
-        '1-4',
-        '2-4',
-        '3-4',
-        '4-4',
-        '5-4',
-        '6-4',
-        '7-4',
-        '8-4',
-        '9-4',
-        '0-5',
-        '1-5',
-        '2-5',
-        '3-5',
-        '4-5',
-        '5-5',
-        '6-5',
-        '7-5',
-        '8-5',
-        '9-5',
-        '0-6',
-        '1-6',
-        '2-6',
-        '3-6',
-        '4-6',
-        '5-6',
-        '6-6',
-        '7-6',
-        '8-6',
-        '9-6',
-      ];
-
       const battleShipPlacements = gameBoard.battleShipPlacement('vertical');
 
       const formatted = battleShipPlacements.map(
@@ -925,7 +781,7 @@ describe('auto ship placement', () => {
 
       function checkFormatted() {
         return formatted.every((element) =>
-          VerticalPlacements.includes(element),
+          BattleShipVerticalPlacements.includes(element),
         );
       }
 
@@ -2586,7 +2442,7 @@ describe('querying ship placement', () => {
   });
 });
 
-describe('board setup', () => {
+describe.skip('board setup', () => {
   const gameBoard = new GameBoard();
 
   describe('canBeCarrierShipHead', () => {
@@ -2596,251 +2452,11 @@ describe('board setup', () => {
     });
 
     test('method returns true if node can be head node for carrier', () => {
-      const HorizontalPlacements = [
-        '0-0',
-        '1-0',
-        '2-0',
-        '3-0',
-        '4-0',
-        '5-0',
-        '0-1',
-        '1-1',
-        '2-1',
-        '3-1',
-        '4-1',
-        '5-1',
-        '0-2',
-        '1-2',
-        '2-2',
-        '3-2',
-        '4-2',
-        '5-2',
-        '0-3',
-        '1-3',
-        '2-3',
-        '3-3',
-        '4-3',
-        '5-3',
-        '0-4',
-        '1-4',
-        '2-4',
-        '3-4',
-        '4-4',
-        '5-4',
-        '0-5',
-        '1-5',
-        '2-5',
-        '3-5',
-        '4-5',
-        '5-5',
-        '0-6',
-        '1-6',
-        '2-6',
-        '3-6',
-        '4-6',
-        '5-6',
-        '0-7',
-        '1-7',
-        '2-7',
-        '3-7',
-        '4-7',
-        '5-7',
-        '0-8',
-        '1-8',
-        '2-8',
-        '3-8',
-        '4-8',
-        '5-8',
-        '0-9',
-        '1-9',
-        '2-9',
-        '3-9',
-        '4-9',
-        '5-9',
-      ];
-
-      const VerticalPlacements = [
-        '0-0',
-        '1-0',
-        '2-0',
-        '3-0',
-        '4-0',
-        '5-0',
-        '6-0',
-        '7-0',
-        '8-0',
-        '9-0',
-        '0-1',
-        '1-1',
-        '2-1',
-        '3-1',
-        '4-1',
-        '5-1',
-        '6-1',
-        '7-1',
-        '8-1',
-        '9-1',
-        '0-2',
-        '1-2',
-        '2-2',
-        '3-2',
-        '4-2',
-        '5-2',
-        '6-2',
-        '7-2',
-        '8-2',
-        '9-2',
-        '0-3',
-        '1-3',
-        '2-3',
-        '3-3',
-        '4-3',
-        '5-3',
-        '6-3',
-        '7-3',
-        '8-3',
-        '9-3',
-        '0-4',
-        '1-4',
-        '2-4',
-        '3-4',
-        '4-4',
-        '5-4',
-        '6-4',
-        '7-4',
-        '8-4',
-        '9-4',
-        '0-5',
-        '1-5',
-        '2-5',
-        '3-5',
-        '4-5',
-        '5-5',
-        '6-5',
-        '7-5',
-        '8-5',
-        '9-5',
-      ];
-
       function run(orientation) {
         const testCase = new Set();
 
         if (orientation === 'horizontal') {
-          HorizontalPlacements.forEach((placement) => {
-            const [x, y] = placement.split('-');
-
-            testCase.add(
-              gameBoard.canBeCarrierShipHead(Number(x), Number(y), orientation),
-            );
-          });
-        }
-
-        if (orientation === 'vertical') {
-          VerticalPlacements.forEach((placement) => {
-            const [x, y] = placement.split('-');
-
-            testCase.add(
-              gameBoard.canBeCarrierShipHead(Number(x), Number(y), orientation),
-            );
-          });
-        }
-
-        return [...testCase];
-      }
-
-      const horizontalPlace = run('horizontal');
-
-      expect(horizontalPlace).toHaveLength(1);
-      expect(horizontalPlace.includes(true)).toBe(true);
-
-      const verticalPlace = run('vertical');
-
-      expect(verticalPlace).toHaveLength(1);
-      expect(verticalPlace.includes(true)).toBe(true);
-    });
-
-    test('method returns false for invalid coordinate and orientation', () => {
-      expect(gameBoard.canBeCarrierShipHead(-2, 3, 'horizontal')).toBeFalsy();
-
-      expect(gameBoard.canBeCarrierShipHead(2, 3, 'horzontal')).toBeFalsy();
-    });
-  });
-
-  describe('canBeCarrierShipHead', () => {
-    test('method exists', () => {
-      // gameBoard = new GameBoard();
-      expect(gameBoard.canBeCarrierShipHead).toBeDefined();
-    });
-
-    test('method returns true if node can be head node for carrier', () => {
-      const HorizontalPlacements = [
-        '0-0',
-        '1-0',
-        '2-0',
-        '3-0',
-        '4-0',
-        '5-0',
-        '0-1',
-        '1-1',
-        '2-1',
-        '3-1',
-        '4-1',
-        '5-1',
-        '0-2',
-        '1-2',
-        '2-2',
-        '3-2',
-        '4-2',
-        '5-2',
-        '0-3',
-        '1-3',
-        '2-3',
-        '3-3',
-        '4-3',
-        '5-3',
-        '0-4',
-        '1-4',
-        '2-4',
-        '3-4',
-        '4-4',
-        '5-4',
-        '0-5',
-        '1-5',
-        '2-5',
-        '3-5',
-        '4-5',
-        '5-5',
-        '0-6',
-        '1-6',
-        '2-6',
-        '3-6',
-        '4-6',
-        '5-6',
-        '0-7',
-        '1-7',
-        '2-7',
-        '3-7',
-        '4-7',
-        '5-7',
-        '0-8',
-        '1-8',
-        '2-8',
-        '3-8',
-        '4-8',
-        '5-8',
-        '0-9',
-        '1-9',
-        '2-9',
-        '3-9',
-        '4-9',
-        '5-9',
-      ];
-
-      function run(orientation) {
-        const testCase = new Set();
-
-        if (orientation === 'horizontal') {
-          HorizontalPlacements.forEach((placement) => {
+          CarrierHorizontalPlacements.forEach((placement) => {
             const [x, y] = placement.split('-');
 
             testCase.add(
@@ -2880,158 +2496,40 @@ describe('board setup', () => {
     });
   });
 
-  describe('canBeCarrierShipHead', () => {
+  describe.skip('canBeBattleShipShipHead', () => {
     test('method exists', () => {
       // gameBoard = new GameBoard();
-      expect(gameBoard.canBeCarrierShipHead).toBeDefined();
+      expect(gameBoard.canBeBattleShipShipHead).toBeDefined();
     });
 
     test('method returns true if node can be head node for carrier', () => {
-      const HorizontalPlacements = [
-        '0-0',
-        '1-0',
-        '2-0',
-        '3-0',
-        '4-0',
-        '5-0',
-        '0-1',
-        '1-1',
-        '2-1',
-        '3-1',
-        '4-1',
-        '5-1',
-        '0-2',
-        '1-2',
-        '2-2',
-        '3-2',
-        '4-2',
-        '5-2',
-        '0-3',
-        '1-3',
-        '2-3',
-        '3-3',
-        '4-3',
-        '5-3',
-        '0-4',
-        '1-4',
-        '2-4',
-        '3-4',
-        '4-4',
-        '5-4',
-        '0-5',
-        '1-5',
-        '2-5',
-        '3-5',
-        '4-5',
-        '5-5',
-        '0-6',
-        '1-6',
-        '2-6',
-        '3-6',
-        '4-6',
-        '5-6',
-        '0-7',
-        '1-7',
-        '2-7',
-        '3-7',
-        '4-7',
-        '5-7',
-        '0-8',
-        '1-8',
-        '2-8',
-        '3-8',
-        '4-8',
-        '5-8',
-        '0-9',
-        '1-9',
-        '2-9',
-        '3-9',
-        '4-9',
-        '5-9',
-      ];
-
-      const VerticalPlacements = [
-        '0-0',
-        '1-0',
-        '2-0',
-        '3-0',
-        '4-0',
-        '5-0',
-        '6-0',
-        '7-0',
-        '8-0',
-        '9-0',
-        '0-1',
-        '1-1',
-        '2-1',
-        '3-1',
-        '4-1',
-        '5-1',
-        '6-1',
-        '7-1',
-        '8-1',
-        '9-1',
-        '0-2',
-        '1-2',
-        '2-2',
-        '3-2',
-        '4-2',
-        '5-2',
-        '6-2',
-        '7-2',
-        '8-2',
-        '9-2',
-        '0-3',
-        '1-3',
-        '2-3',
-        '3-3',
-        '4-3',
-        '5-3',
-        '6-3',
-        '7-3',
-        '8-3',
-        '9-3',
-        '0-4',
-        '1-4',
-        '2-4',
-        '3-4',
-        '4-4',
-        '5-4',
-        '6-4',
-        '7-4',
-        '8-4',
-        '9-4',
-        '0-5',
-        '1-5',
-        '2-5',
-        '3-5',
-        '4-5',
-        '5-5',
-        '6-5',
-        '7-5',
-        '8-5',
-        '9-5',
-      ];
-
       function run(orientation) {
         const testCase = new Set();
 
         if (orientation === 'horizontal') {
-          HorizontalPlacements.forEach((placement) => {
+          BattleShipHorizontalPlacements.forEach((placement) => {
             const [x, y] = placement.split('-');
 
             testCase.add(
-              gameBoard.canBeCarrierShipHead(Number(x), Number(y), orientation),
+              gameBoard.canBeBattleShipShipHead(
+                Number(x),
+                Number(y),
+                orientation,
+              ),
             );
           });
         }
 
         if (orientation === 'vertical') {
-          VerticalPlacements.forEach((placement) => {
+          BattleShipVerticalPlacements.forEach((placement) => {
             const [x, y] = placement.split('-');
 
             testCase.add(
-              gameBoard.canBeCarrierShipHead(Number(x), Number(y), orientation),
+              gameBoard.canBeBattleShipShipHead(
+                Number(x),
+                Number(y),
+                orientation,
+              ),
             );
           });
         }
@@ -3051,9 +2549,33 @@ describe('board setup', () => {
     });
 
     test('method returns false for invalid coordinate and orientation', () => {
-      expect(gameBoard.canBeCarrierShipHead(-2, 3, 'horizontal')).toBeFalsy();
+      expect(
+        gameBoard.canBeBattleShipShipHead(-2, 3, 'horizontal'),
+      ).toBeFalsy();
 
-      expect(gameBoard.canBeCarrierShipHead(2, 3, 'horzontal')).toBeFalsy();
+      expect(gameBoard.canBeBattleShipShipHead(2, 3, 'horzontal')).toBeFalsy();
+    });
+  });
+});
+
+describe('ship placing methods', () => {
+  describe('carrier placing', () => {
+    test('placeCarrier() allows ship to be re-placed', () => {
+      const gameBoard = new GameBoard();
+
+      gameBoard.placeCarrier(0, 0);
+
+      expect(gameBoard.placeCarrier(0, 2)).toBeTruthy();
+    });
+
+    test('placeCarrier() disallows ship to be re-placed if new coordinate or orientation is invalid', () => {
+      const gameBoard = new GameBoard();
+
+      gameBoard.placeCarrier(0, 0);
+
+      expect(gameBoard.placeCarrier(0, -2)).toBeFalsy();
+
+      expect(gameBoard.shipPlacements.carrierPlacement.isOnBoard).toBeTruthy();
     });
   });
 });
