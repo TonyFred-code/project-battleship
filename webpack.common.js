@@ -1,5 +1,5 @@
 import { fileURLToPath } from 'url';
-import { dirname, path } from 'path';
+import path, { dirname } from 'path';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 
 const DIRNAME = dirname(fileURLToPath(import.meta.url));
