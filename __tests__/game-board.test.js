@@ -2563,9 +2563,40 @@ describe('ship placing methods', () => {
     test('placeCarrier() allows ship to be re-placed', () => {
       const gameBoard = new GameBoard();
 
-      gameBoard.placeCarrier(0, 0);
+      function runCheck() {
+        const check = new Set();
 
-      expect(gameBoard.placeCarrier(0, 2)).toBeTruthy();
+        CarrierHorizontalPlacements.forEach((placement) => {
+          const [x, y] = placement.split('-');
+
+          const placeStatus = gameBoard.placeCarrier(
+            Number(x),
+            Number(y),
+            'horizontal',
+          );
+
+          check.add(placeStatus);
+        });
+
+        CarrierVerticalPlacements.forEach((placement) => {
+          const [x, y] = placement.split('-');
+
+          const placeStatus = gameBoard.placeCarrier(
+            Number(x),
+            Number(y),
+            'vertical',
+          );
+
+          check.add(placeStatus);
+        });
+
+        return [...check];
+      }
+
+      const placeStatus = runCheck();
+
+      expect(placeStatus).toHaveLength(1);
+      expect(placeStatus.includes(true)).toBeTruthy();
     });
 
     test('placeCarrier() disallows ship to be re-placed if new coordinate or orientation is invalid', () => {
