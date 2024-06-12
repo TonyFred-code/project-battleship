@@ -11,7 +11,7 @@
     "build": "npm run babel && webpack --config webpack.prod.js",
     "babel": "babel src -d dist",
     "test": "jest",
-    "watch-tests": "jest --watch ./__tests__/*.js"
+    "watch-tests": "jest --watch ./__tests__/*.test.js"
   },
   "keywords": [],
   "author": "Tony Fred",
