@@ -263,8 +263,8 @@ test('game should refuse placing ships off board', () => {
 
 test('should refuse to place ship on grids siding a ship on the board', () => {
   const gameBoard = new GameBoard();
-  expect(gameBoard.placeCarrier(5, 0)).toBe(true);
-  expect(gameBoard.placeSubMarine(5, 1)).toBe(false);
+  expect(gameBoard.placeCarrier(4, 5)).toBe(true);
+  expect(gameBoard.placeBattleShip(5, 1, 'vertical')).toBe(false);
 });
 
 test('gameBoard should have a receiveAttack() method', () => {
@@ -2442,122 +2442,6 @@ describe('querying ship placement', () => {
   });
 });
 
-describe.skip('board setup', () => {
-  const gameBoard = new GameBoard();
-
-  describe('canBeCarrierShipHead', () => {
-    test('method exists', () => {
-      // gameBoard = new GameBoard();
-      expect(gameBoard.canBeCarrierShipHead).toBeDefined();
-    });
-
-    test('method returns true if node can be head node for carrier', () => {
-      function run(orientation) {
-        const testCase = new Set();
-
-        if (orientation === 'horizontal') {
-          CarrierHorizontalPlacements.forEach((placement) => {
-            const [x, y] = placement.split('-');
-
-            testCase.add(
-              gameBoard.canBeCarrierShipHead(Number(x), Number(y), orientation),
-            );
-          });
-        }
-
-        if (orientation === 'vertical') {
-          CarrierVerticalPlacements.forEach((placement) => {
-            const [x, y] = placement.split('-');
-
-            testCase.add(
-              gameBoard.canBeCarrierShipHead(Number(x), Number(y), orientation),
-            );
-          });
-        }
-
-        return [...testCase];
-      }
-
-      const horizontalPlace = run('horizontal');
-
-      expect(horizontalPlace).toHaveLength(1);
-      expect(horizontalPlace.includes(true)).toBe(true);
-
-      const verticalPlace = run('vertical');
-
-      expect(verticalPlace).toHaveLength(1);
-      expect(verticalPlace.includes(true)).toBe(true);
-    });
-
-    test('method returns false for invalid coordinate and orientation', () => {
-      expect(gameBoard.canBeCarrierShipHead(-2, 3, 'horizontal')).toBeFalsy();
-
-      expect(gameBoard.canBeCarrierShipHead(2, 3, 'horzontal')).toBeFalsy();
-    });
-  });
-
-  describe.skip('canBeBattleShipShipHead', () => {
-    test('method exists', () => {
-      // gameBoard = new GameBoard();
-      expect(gameBoard.canBeBattleShipShipHead).toBeDefined();
-    });
-
-    test('method returns true if node can be head node for carrier', () => {
-      function run(orientation) {
-        const testCase = new Set();
-
-        if (orientation === 'horizontal') {
-          BattleShipHorizontalPlacements.forEach((placement) => {
-            const [x, y] = placement.split('-');
-
-            testCase.add(
-              gameBoard.canBeBattleShipShipHead(
-                Number(x),
-                Number(y),
-                orientation,
-              ),
-            );
-          });
-        }
-
-        if (orientation === 'vertical') {
-          BattleShipVerticalPlacements.forEach((placement) => {
-            const [x, y] = placement.split('-');
-
-            testCase.add(
-              gameBoard.canBeBattleShipShipHead(
-                Number(x),
-                Number(y),
-                orientation,
-              ),
-            );
-          });
-        }
-
-        return [...testCase];
-      }
-
-      const horizontalPlace = run('horizontal');
-
-      expect(horizontalPlace).toHaveLength(1);
-      expect(horizontalPlace.includes(true)).toBe(true);
-
-      const verticalPlace = run('vertical');
-
-      expect(verticalPlace).toHaveLength(1);
-      expect(verticalPlace.includes(true)).toBe(true);
-    });
-
-    test('method returns false for invalid coordinate and orientation', () => {
-      expect(
-        gameBoard.canBeBattleShipShipHead(-2, 3, 'horizontal'),
-      ).toBeFalsy();
-
-      expect(gameBoard.canBeBattleShipShipHead(2, 3, 'horzontal')).toBeFalsy();
-    });
-  });
-});
-
 describe('ship placing methods', () => {
   describe('carrier placing', () => {
     test('placeCarrier() allows ship to be re-placed', () => {
@@ -2607,6 +2491,11 @@ describe('ship placing methods', () => {
       expect(gameBoard.placeCarrier(0, -2)).toBeFalsy();
 
       expect(gameBoard.shipPlacements.carrierPlacement.isOnBoard).toBeTruthy();
+
+      expect(gameBoard.shipPlacements.carrierPlacement).toHaveProperty(
+        'shipHead',
+        [0, 0],
+      );
     });
   });
 
