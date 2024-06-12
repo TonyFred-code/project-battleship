@@ -214,56 +214,60 @@ export default class GameRound {
       winnerName: this.#ROUND_WINNER_NAME,
     };
   }
+
+  canBeHumanPlayerCarrierShipHead(x, y, orientation) {
+    return this.#HUMAN_PLAYER.canBeCarrierShipHead(x, y, orientation);
+  }
 }
 
-const gameRound = new GameRound();
+// const gameRound = new GameRound();
 
-gameRound.addBotPlayer();
-gameRound.addHumanPlayer('Player 2');
+// gameRound.addBotPlayer();
+// gameRound.addHumanPlayer('Player 2');
 
-// gameRound.autoPlaceBotShips();
-// gameRound.autoPlaceHumanShips();
+// // gameRound.autoPlaceBotShips();
+// // gameRound.autoPlaceHumanShips();
 
-gameRound.placeHumanPlayerCarrier(5, 0);
-gameRound.placeHumanPlayerBattleShip(0, 4, 'vertical');
-gameRound.placeHumanPlayerDestroyer(3, 3);
-gameRound.placeHumanPlayerSubMarine(6, 6, 'vertical');
-gameRound.placeHumanPlayerPatrolBoat(1, 9);
+// gameRound.placeHumanPlayerCarrier(5, 0);
+// gameRound.placeHumanPlayerBattleShip(0, 4, 'vertical');
+// gameRound.placeHumanPlayerDestroyer(3, 3);
+// gameRound.placeHumanPlayerSubMarine(6, 6, 'vertical');
+// gameRound.placeHumanPlayerPatrolBoat(1, 9);
 
-gameRound.placeComputerCarrier(5, 0);
-gameRound.placeComputerBattleShip(0, 4, 'vertical');
-gameRound.placeComputerDestroyer(3, 3);
-gameRound.placeComputerSubMarine(6, 6, 'vertical');
-gameRound.placeComputerPatrolBoat(1, 9);
+// gameRound.placeComputerCarrier(5, 0);
+// gameRound.placeComputerBattleShip(0, 4, 'vertical');
+// gameRound.placeComputerDestroyer(3, 3);
+// gameRound.placeComputerSubMarine(6, 6, 'vertical');
+// gameRound.placeComputerPatrolBoat(1, 9);
 
-function hit(locationNodes) {
-  const statusCodes = new Set();
+// function hit(locationNodes) {
+//   const statusCodes = new Set();
 
-  locationNodes.forEach((locationNode) => {
-    const [x, y] = locationNode;
-    const statusCode = gameRound.humanPlayerMove(x, y);
-    statusCodes.add(statusCode);
-  });
+//   locationNodes.forEach((locationNode) => {
+//     const [x, y] = locationNode;
+//     const statusCode = gameRound.humanPlayerMove(x, y);
+//     statusCodes.add(statusCode);
+//   });
 
-  return [...statusCodes];
-}
-const botShipConfig = gameRound.botShipDetails();
+//   return [...statusCodes];
+// }
+// const botShipConfig = gameRound.botShipDetails();
 
-// use ship config to make a player win and check
-// to ensure roundState() reflects the round win
+// // use ship config to make a player win and check
+// // to ensure roundState() reflects the round win
 
-const botCarrier = botShipConfig.carrierPlacement;
-// const botBattleShip = botShipConfig.battleShipPlacement;
-// const botDestroyer = botShipConfig.destroyerPlacement;
-// const botSubMarine = botShipConfig.subMarinePlacement;
-// const botPatrolBoat = botShipConfig.patrolBoatPlacement;
+// const botCarrier = botShipConfig.carrierPlacement;
+// // const botBattleShip = botShipConfig.battleShipPlacement;
+// // const botDestroyer = botShipConfig.destroyerPlacement;
+// // const botSubMarine = botShipConfig.subMarinePlacement;
+// // const botPatrolBoat = botShipConfig.patrolBoatPlacement;
 
-const botCarrierShipConfig = botCarrier.occupyingLoc;
-// const botBattleShipShipConfig = botBattleShip.occupyingLoc;
-// const botDestroyerShipConfig = botDestroyer.occupyingLoc;
-// const botSubMarineShipConfig = botSubMarine.occupyingLoc;
-// const botPatrolBoatShipConfig = botPatrolBoat.occupyingLoc;
+// const botCarrierShipConfig = botCarrier.occupyingLoc;
+// // const botBattleShipShipConfig = botBattleShip.occupyingLoc;
+// // const botDestroyerShipConfig = botDestroyer.occupyingLoc;
+// // const botSubMarineShipConfig = botSubMarine.occupyingLoc;
+// // const botPatrolBoatShipConfig = botPatrolBoat.occupyingLoc;
 
-const botCarrierHitStatus = hit(botCarrierShipConfig);
+// const botCarrierHitStatus = hit(botCarrierShipConfig);
 
-console.log(botCarrierHitStatus);
+// console.log(botCarrierHitStatus);
