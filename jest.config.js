@@ -3,4 +3,5 @@ export default {
   transform: {
     '^.+\\.js$': 'babel-jest',
   },
+  testPathIgnorePatterns: ['_home_output'],
 };
