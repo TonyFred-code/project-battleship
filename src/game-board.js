@@ -13,7 +13,7 @@ export default class GameBoard {
   #VERTICAL = 'vertical';
 
   #transform(x, y) {
-    return y + this.BOARD_SIZE * x;
+    return y * this.BOARD_SIZE + x;
   }
 
   #CARRIER_INFO = {
@@ -92,10 +92,13 @@ export default class GameBoard {
     for (let y = 0; y < this.BOARD_SIZE; y += 1) {
       for (let x = 0; x < this.BOARD_SIZE; x += 1) {
         const node = new Node(x, y);
-        this.#addNeighbors(node);
         this.board[y * this.BOARD_SIZE + x] = node;
       }
     }
+
+    this.board.forEach((boardNode) => {
+      this.#addNeighbors(boardNode);
+    });
   }
 
   #addNeighbors(node) {
@@ -116,7 +119,9 @@ export default class GameBoard {
     neighbors.forEach((neighbor) => {
       const [nx, ny] = neighbor;
       if (this.#isValidCoordinate(nx, ny)) {
-        node.neighbors.push(neighbor);
+        const index = this.#transform(nx, ny);
+        const nodeNeighbor = this.board[index];
+        node.addNeighbor(nodeNeighbor);
       }
     });
   }
@@ -267,11 +272,11 @@ export default class GameBoard {
 
       this.#CARRIER_INFO.occupying.push([nx, ny]);
       const node = this.board[ny * this.BOARD_SIZE + nx];
-      node.isOccupied = this.shipYard.carrier;
-      node.neighbors.forEach((nodeLoc) => {
-        const [nnx, nny] = nodeLoc;
-        this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = true;
-      });
+      node.occupy(this.shipYard.carrier);
+      //   node.neighbors.forEach((nodeLoc) => {
+      //     const [nnx, nny] = nodeLoc;
+      //     this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = true;
+      //   });
     });
 
     this.#CARRIER_INFO.isOnBoard = true;
@@ -288,11 +293,12 @@ export default class GameBoard {
       const [nx, ny] = location;
 
       const node = this.board[ny * this.BOARD_SIZE + nx];
-      node.isOccupied = false;
-      node.neighbors.forEach((nodeLoc) => {
-        const [nnx, nny] = nodeLoc;
-        this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = false;
-      });
+      // node.isOccupied = false;
+      // node.neighbors.forEach((nodeLoc) => {
+      //   const [nnx, nny] = nodeLoc;
+      //   this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = false;
+      // });
+      node.removeOccupant();
     });
 
     this.#CARRIER_INFO.occupying = [];
@@ -383,22 +389,22 @@ export default class GameBoard {
 
     if (toBeOccupied.length < size) return false;
 
-    if (!this.#checkNodeLocations(toBeOccupied)) return false;
-
     if (this.#BATTLESHIP_INFO.isOnBoard) {
       this.removeBattleShip();
     }
+
+    if (!this.#checkNodeLocations(toBeOccupied)) return false;
 
     toBeOccupied.forEach((location) => {
       const [nx, ny] = location;
 
       this.#BATTLESHIP_INFO.occupying.push([nx, ny]);
       const node = this.board[ny * this.BOARD_SIZE + nx];
-      node.isOccupied = this.shipYard.battleship;
-      node.neighbors.forEach((nodeLoc) => {
-        const [nnx, nny] = nodeLoc;
-        this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = true;
-      });
+      node.occupy(this.shipYard.battleship);
+      // node.neighbors.forEach((nodeLoc) => {
+      //   const [nnx, nny] = nodeLoc;
+      //   this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = true;
+      // });
     });
 
     this.#BATTLESHIP_INFO.isOnBoard = true;
@@ -414,11 +420,11 @@ export default class GameBoard {
       const [nx, ny] = location;
 
       const node = this.board[ny * this.BOARD_SIZE + nx];
-      node.isOccupied = false;
-      node.neighbors.forEach((nodeLoc) => {
-        const [nnx, nny] = nodeLoc;
-        this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = false;
-      });
+      node.removeOccupant();
+      // node.neighbors.forEach((nodeLoc) => {
+      //   const [nnx, nny] = nodeLoc;
+      //   this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = false;
+      // });
     });
     this.#BATTLESHIP_INFO.occupying = [];
     this.#BATTLESHIP_INFO.isOnBoard = false;
@@ -493,22 +499,22 @@ export default class GameBoard {
 
     if (toBeOccupied.length < size) return false;
 
-    if (!this.#checkNodeLocations(toBeOccupied)) return false;
-
     if (this.#DESTROYER_INFO.isOnBoard) {
       this.removeDestroyer();
     }
+
+    if (!this.#checkNodeLocations(toBeOccupied)) return false;
 
     toBeOccupied.forEach((location) => {
       const [nx, ny] = location;
 
       this.#DESTROYER_INFO.occupying.push([nx, ny]);
       const node = this.board[ny * this.BOARD_SIZE + nx];
-      node.isOccupied = this.shipYard.destroyer;
-      node.neighbors.forEach((nodeLoc) => {
-        const [nnx, nny] = nodeLoc;
-        this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = true;
-      });
+      node.occupy(this.shipYard.destroyer);
+      // node.neighbors.forEach((nodeLoc) => {
+      // const [nnx, nny] = nodeLoc;
+      // this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = true;
+      // });
     });
 
     this.#DESTROYER_INFO.isOnBoard = true;
@@ -524,11 +530,11 @@ export default class GameBoard {
       const [nx, ny] = location;
 
       const node = this.board[ny * this.BOARD_SIZE + nx];
-      node.isOccupied = false;
-      node.neighbors.forEach((nodeLoc) => {
-        const [nnx, nny] = nodeLoc;
-        this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = false;
-      });
+      node.removeOccupant();
+      // node.neighbors.forEach((nodeLoc) => {
+      // const [nnx, nny] = nodeLoc;
+      // this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = false;
+      // });
     });
     this.#DESTROYER_INFO.occupying = [];
     this.#DESTROYER_INFO.isOnBoard = false;
@@ -604,22 +610,22 @@ export default class GameBoard {
 
     if (toBeOccupied.length < size) return false;
 
-    if (!this.#checkNodeLocations(toBeOccupied)) return false;
-
     if (this.#SUBMARINE_INFO.isOnBoard) {
       this.removeSubMarine();
     }
+
+    if (!this.#checkNodeLocations(toBeOccupied)) return false;
 
     toBeOccupied.forEach((location) => {
       const [nx, ny] = location;
 
       this.#SUBMARINE_INFO.occupying.push([nx, ny]);
       const node = this.board[ny * this.BOARD_SIZE + nx];
-      node.isOccupied = this.shipYard.submarine;
-      node.neighbors.forEach((nodeLoc) => {
-        const [nnx, nny] = nodeLoc;
-        this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = true;
-      });
+      node.occupy(this.shipYard.submarine);
+      // node.neighbors.forEach((nodeLoc) => {
+      // const [nnx, nny] = nodeLoc;
+      // this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = true;
+      // });
     });
 
     this.#SUBMARINE_INFO.isOnBoard = true;
@@ -635,11 +641,11 @@ export default class GameBoard {
       const [nx, ny] = location;
 
       const node = this.board[ny * this.BOARD_SIZE + nx];
-      node.isOccupied = false;
-      node.neighbors.forEach((nodeLoc) => {
-        const [nnx, nny] = nodeLoc;
-        this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = false;
-      });
+      node.removeOccupant();
+      // node.neighbors.forEach((nodeLoc) => {
+      // const [nnx, nny] = nodeLoc;
+      // this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = false;
+      // });
     });
 
     this.#SUBMARINE_INFO.occupying = [];
@@ -719,22 +725,22 @@ export default class GameBoard {
 
     if (toBeOccupied.length < size) return false;
 
-    if (!this.#checkNodeLocations(toBeOccupied)) return false;
-
     if (this.#PATROL_BOAT_INFO.isOnBoard) {
       this.removePatrolBoat();
     }
+
+    if (!this.#checkNodeLocations(toBeOccupied)) return false;
 
     toBeOccupied.forEach((location) => {
       const [nx, ny] = location;
 
       this.#PATROL_BOAT_INFO.occupying.push([nx, ny]);
       const node = this.board[ny * this.BOARD_SIZE + nx];
-      node.isOccupied = this.shipYard.patrolBoat;
-      node.neighbors.forEach((nodeLoc) => {
-        const [nnx, nny] = nodeLoc;
-        this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = true;
-      });
+      node.occupy(this.shipYard.patrolBoat);
+      // node.neighbors.forEach((nodeLoc) => {
+      // const [nnx, nny] = nodeLoc;
+      // this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = true;
+      // });
     });
 
     this.#PATROL_BOAT_INFO.isOnBoard = true;
@@ -750,11 +756,11 @@ export default class GameBoard {
       const [nx, ny] = location;
 
       const node = this.board[ny * this.BOARD_SIZE + nx];
-      node.isOccupied = false;
-      node.neighbors.forEach((nodeLoc) => {
-        const [nnx, nny] = nodeLoc;
-        this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = false;
-      });
+      node.removeOccupant();
+      // node.neighbors.forEach((nodeLoc) => {
+      // const [nnx, nny] = nodeLoc;
+      // this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = false;
+      // });
     });
     this.#PATROL_BOAT_INFO.occupying = [];
     this.#PATROL_BOAT_INFO.isOnBoard = false;
@@ -844,7 +850,7 @@ export default class GameBoard {
     placementInfo.push(this.subMarineAutoPlace(rndOrientation()));
     placementInfo.push(this.patrolBoatAutoPlace(rndOrientation()));
 
-    return placementInfo;
+    return this.shipPlacements;
   }
 
   receiveAttack(x, y) {
@@ -858,9 +864,9 @@ export default class GameBoard {
       return -1;
     }
 
-    node.isHit = true;
+    node.hit();
     if (node.isOccupied) {
-      node.isOccupied.hit();
+      // node.isOccupied.hit();
       return 1;
     }
 
@@ -963,7 +969,9 @@ export default class GameBoard {
   }
 }
 
-// const gameBoard = new GameBoard();
+const gameBoard = new GameBoard();
+console.log(gameBoard.placeCarrier(4, 5));
+console.log(gameBoard.placeBattleShip(5, 1, 'vertical'));
 
 // console.log(gameBoard.carrierPlacement('horizontal'));
 
