@@ -19,6 +19,10 @@ export default class GameController {
     return this.#GAME_ROUND.addBotPlayer();
   }
 
+  canBeHumanPlayerCarrierShipHead(x, y, orientation) {
+    return this.#GAME_ROUND.canBeHumanPlayerCarrierShipHead(x, y, orientation);
+  }
+
   placeHumanPlayerCarrier(x, y, orientation) {
     if (!this.#GAME_START) return false;
 
