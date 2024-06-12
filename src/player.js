@@ -55,4 +55,8 @@ export default class Player {
   shipPlacements() {
     return this.#PLAYER_BOARD.shipPlacements;
   }
+
+  canBeCarrierShipHead(x, y, orientation) {
+    return this.#PLAYER_BOARD.canBeCarrierShipHead(x, y, orientation);
+  }
 }
