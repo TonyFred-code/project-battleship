@@ -89,6 +89,46 @@ export default class GameController {
     return this.#GAME_ROUND.botPlayerShipDetails();
   }
 
+  get humanPlayerCarrierPlacementDetails() {
+    return this.#GAME_ROUND.humanPlayerCarrierPlacementDetails;
+  }
+
+  get humanPlayerBattleShipPlacementDetails() {
+    return this.#GAME_ROUND.humanPlayerBattleShipPlacementDetails;
+  }
+
+  get humanPlayerDestroyerPlacementDetails() {
+    return this.#GAME_ROUND.humanPlayerDestroyerPlacementDetails;
+  }
+
+  get humanPlayerSubMarinePlacementDetails() {
+    return this.#GAME_ROUND.humanPlayerSubMarinePlacementDetails;
+  }
+
+  get humanPlayerPatrolBoatPlacementDetails() {
+    return this.#GAME_ROUND.humanPlayerPatrolBoatPlacementDetails;
+  }
+
+  get computerPlayerCarrierPlacementDetails() {
+    return this.#GAME_ROUND.computerPlayerCarrierPlacementDetails;
+  }
+
+  get computerPlayerBattleShipPlacementDetails() {
+    return this.#GAME_ROUND.computerPlayerBattleShipPlacementDetails;
+  }
+
+  get computerPlayerDestroyerPlacementDetails() {
+    return this.#GAME_ROUND.computerPlayerDestroyerPlacementDetails;
+  }
+
+  get computerPlayerSubMarinePlacementDetails() {
+    return this.#GAME_ROUND.computerPlayerSubMarinePlacementDetails;
+  }
+
+  get computerPlayerPatrolBoatPlacementDetails() {
+    return this.#GAME_ROUND.computerPlayerPatrolBoatPlacementDetails;
+  }
+
   get gameState() {
     // winner name?
     // lost or won
