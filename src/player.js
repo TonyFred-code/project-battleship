@@ -56,6 +56,26 @@ export default class Player {
     return this.#PLAYER_BOARD.shipPlacements;
   }
 
+  get carrierPlacementDetails() {
+    return this.#PLAYER_BOARD.carrierPlacementDetails;
+  }
+
+  get battleShipPlacementDetails() {
+    return this.#PLAYER_BOARD.battleShipPlacementDetails;
+  }
+
+  get destroyerPlacementDetails() {
+    return this.#PLAYER_BOARD.destroyerPlacementDetails;
+  }
+
+  get subMarinePlacementDetails() {
+    return this.#PLAYER_BOARD.subMarinePlacementDetails;
+  }
+
+  get patrolBoatPlacementDetails() {
+    return this.#PLAYER_BOARD.patrolBoatPlacementDetails;
+  }
+
   canBeCarrierShipHead(x, y, orientation) {
     return this.#PLAYER_BOARD.canBeCarrierShipHead(x, y, orientation);
   }
