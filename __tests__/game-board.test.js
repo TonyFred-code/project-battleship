@@ -2586,3 +2586,245 @@ describe('ship placing methods', () => {
     });
   });
 });
+
+describe('ship-typePlacementDetails', () => {
+  function runOccupyingCheck(occupyingLoc, expectedOccupyingLoc) {
+    let status = false;
+
+    occupyingLoc.forEach((loc) => {
+      const [x, y] = loc;
+
+      const index = expectedOccupyingLoc.indexOf(`${x}-${y}`);
+
+      if (index === -1) {
+        status = false;
+      }
+
+      expectedOccupyingLoc.splice(index, 1);
+    });
+
+    status = expectedOccupyingLoc.length === 0;
+
+    return status;
+  }
+
+  describe('carrierPlacementDetails', () => {
+    let gameBoard;
+
+    beforeEach(() => {
+      gameBoard = new GameBoard();
+    });
+
+    test('should exists', () => {
+      expect(gameBoard.carrierPlacementDetails).toBeDefined();
+    });
+
+    test('should return placement details', () => {
+      let placementDetails = gameBoard.carrierPlacementDetails;
+
+      expect(placementDetails).toHaveProperty('shipHead', []);
+
+      expect(placementDetails).toHaveProperty('isOnBoard', false);
+
+      expect(placementDetails).toHaveProperty('orientation', '');
+
+      expect(placementDetails).toHaveProperty('occupyingLoc', []);
+
+      gameBoard.placeCarrier(0, 0, 'horizontal');
+
+      placementDetails = gameBoard.carrierPlacementDetails;
+
+      expect(placementDetails).toHaveProperty('shipHead', [0, 0]);
+
+      expect(placementDetails).toHaveProperty('isOnBoard', true);
+
+      expect(placementDetails).toHaveProperty('orientation', 'horizontal');
+
+      expect(placementDetails).toHaveProperty('occupyingLoc');
+
+      const { occupyingLoc } = placementDetails;
+
+      const expectedOccupyingLoc = ['0-0', '1-0', '2-0', '3-0', '4-0'];
+
+      expect(
+        runOccupyingCheck(occupyingLoc, expectedOccupyingLoc),
+      ).toBeTruthy();
+    });
+  });
+
+  describe('battleShipPlacementDetails', () => {
+    let gameBoard;
+
+    beforeEach(() => {
+      gameBoard = new GameBoard();
+    });
+
+    test('should exists', () => {
+      expect(gameBoard.battleShipPlacementDetails).toBeDefined();
+    });
+
+    test('should return placement details', () => {
+      let placementDetails = gameBoard.battleShipPlacementDetails;
+
+      expect(placementDetails).toHaveProperty('shipHead', []);
+
+      expect(placementDetails).toHaveProperty('isOnBoard', false);
+
+      expect(placementDetails).toHaveProperty('orientation', '');
+
+      expect(placementDetails).toHaveProperty('occupyingLoc', []);
+
+      gameBoard.placeBattleShip(0, 0, 'horizontal');
+
+      placementDetails = gameBoard.battleShipPlacementDetails;
+
+      expect(placementDetails).toHaveProperty('shipHead', [0, 0]);
+
+      expect(placementDetails).toHaveProperty('isOnBoard', true);
+
+      expect(placementDetails).toHaveProperty('orientation', 'horizontal');
+
+      expect(placementDetails).toHaveProperty('occupyingLoc');
+
+      const { occupyingLoc } = placementDetails;
+
+      const expectedOccupyingLoc = ['0-0', '1-0', '2-0', '3-0'];
+
+      expect(
+        runOccupyingCheck(occupyingLoc, expectedOccupyingLoc),
+      ).toBeTruthy();
+    });
+  });
+
+  describe('destroyerPlacementDetails', () => {
+    let gameBoard;
+
+    beforeEach(() => {
+      gameBoard = new GameBoard();
+    });
+
+    test('should exists', () => {
+      expect(gameBoard.destroyerPlacementDetails).toBeDefined();
+    });
+
+    test('should return placement details', () => {
+      let placementDetails = gameBoard.destroyerPlacementDetails;
+
+      expect(placementDetails).toHaveProperty('shipHead', []);
+
+      expect(placementDetails).toHaveProperty('isOnBoard', false);
+
+      expect(placementDetails).toHaveProperty('orientation', '');
+
+      expect(placementDetails).toHaveProperty('occupyingLoc', []);
+
+      gameBoard.placeDestroyer(0, 0, 'horizontal');
+
+      placementDetails = gameBoard.destroyerPlacementDetails;
+
+      expect(placementDetails).toHaveProperty('shipHead', [0, 0]);
+
+      expect(placementDetails).toHaveProperty('isOnBoard', true);
+
+      expect(placementDetails).toHaveProperty('orientation', 'horizontal');
+
+      expect(placementDetails).toHaveProperty('occupyingLoc');
+
+      const { occupyingLoc } = placementDetails;
+
+      const expectedOccupyingLoc = ['0-0', '1-0', '2-0'];
+
+      expect(
+        runOccupyingCheck(occupyingLoc, expectedOccupyingLoc),
+      ).toBeTruthy();
+    });
+  });
+
+  describe('subMarinePlacementDetails', () => {
+    let gameBoard;
+
+    beforeEach(() => {
+      gameBoard = new GameBoard();
+    });
+
+    test('should exists', () => {
+      expect(gameBoard.subMarinePlacementDetails).toBeDefined();
+    });
+
+    test('should return placement details', () => {
+      let placementDetails = gameBoard.subMarinePlacementDetails;
+
+      expect(placementDetails).toHaveProperty('shipHead', []);
+
+      expect(placementDetails).toHaveProperty('isOnBoard', false);
+
+      expect(placementDetails).toHaveProperty('orientation', '');
+
+      expect(placementDetails).toHaveProperty('occupyingLoc', []);
+
+      gameBoard.placeSubMarine(0, 0, 'horizontal');
+
+      placementDetails = gameBoard.subMarinePlacementDetails;
+
+      expect(placementDetails).toHaveProperty('shipHead', [0, 0]);
+
+      expect(placementDetails).toHaveProperty('isOnBoard', true);
+
+      expect(placementDetails).toHaveProperty('orientation', 'horizontal');
+
+      expect(placementDetails).toHaveProperty('occupyingLoc');
+
+      const { occupyingLoc } = placementDetails;
+
+      const expectedOccupyingLoc = ['0-0', '1-0', '2-0'];
+
+      expect(
+        runOccupyingCheck(occupyingLoc, expectedOccupyingLoc),
+      ).toBeTruthy();
+    });
+  });
+
+  describe('patrolBoatPlacementDetails', () => {
+    let gameBoard;
+
+    beforeEach(() => {
+      gameBoard = new GameBoard();
+    });
+
+    test('should exists', () => {
+      expect(gameBoard.patrolBoatPlacementDetails).toBeDefined();
+    });
+
+    test('should return placement details', () => {
+      let placementDetails = gameBoard.patrolBoatPlacementDetails;
+
+      expect(placementDetails).toHaveProperty('shipHead', []);
+
+      expect(placementDetails).toHaveProperty('isOnBoard', false);
+
+      expect(placementDetails).toHaveProperty('orientation', '');
+
+      expect(placementDetails).toHaveProperty('occupyingLoc', []);
+
+      gameBoard.placePatrolBoat(0, 0, 'horizontal');
+
+      placementDetails = gameBoard.patrolBoatPlacementDetails;
+
+      expect(placementDetails).toHaveProperty('shipHead', [0, 0]);
+
+      expect(placementDetails).toHaveProperty('isOnBoard', true);
+
+      expect(placementDetails).toHaveProperty('orientation', 'horizontal');
+
+      expect(placementDetails).toHaveProperty('occupyingLoc');
+
+      const { occupyingLoc } = placementDetails;
+
+      const expectedOccupyingLoc = ['0-0', '1-0'];
+
+      expect(
+        runOccupyingCheck(occupyingLoc, expectedOccupyingLoc),
+      ).toBeTruthy();
+    });
+  });
+});
