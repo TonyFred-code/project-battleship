@@ -923,41 +923,61 @@ export default class GameBoard {
     return available;
   }
 
-  get shipPlacements() {
-    const carrierPlacement = {
+  get carrierPlacementDetails() {
+    return {
       shipHead: this.#CARRIER_INFO.shipHead,
       isOnBoard: this.#CARRIER_INFO.isOnBoard,
       occupyingLoc: this.#CARRIER_INFO.occupying,
       orientation: this.#CARRIER_INFO.orientation,
     };
+  }
 
-    const battleShipPlacement = {
+  get battleShipPlacementDetails() {
+    return {
       shipHead: this.#BATTLESHIP_INFO.shipHead,
       isOnBoard: this.#BATTLESHIP_INFO.isOnBoard,
       occupyingLoc: this.#BATTLESHIP_INFO.occupying,
       orientation: this.#BATTLESHIP_INFO.orientation,
     };
+  }
 
-    const destroyerPlacement = {
+  get destroyerPlacementDetails() {
+    return {
       shipHead: this.#DESTROYER_INFO.shipHead,
       isOnBoard: this.#DESTROYER_INFO.isOnBoard,
       occupyingLoc: this.#DESTROYER_INFO.occupying,
       orientation: this.#DESTROYER_INFO.orientation,
     };
+  }
 
-    const subMarinePlacement = {
+  get subMarinePlacementDetails() {
+    return {
       shipHead: this.#SUBMARINE_INFO.shipHead,
       isOnBoard: this.#SUBMARINE_INFO.isOnBoard,
       occupyingLoc: this.#SUBMARINE_INFO.occupying,
       orientation: this.#SUBMARINE_INFO.orientation,
     };
+  }
 
-    const patrolBoatPlacement = {
+  get patrolBoatPlacementDetails() {
+    return {
       shipHead: this.#PATROL_BOAT_INFO.shipHead,
       isOnBoard: this.#PATROL_BOAT_INFO.isOnBoard,
       occupyingLoc: this.#PATROL_BOAT_INFO.occupying,
       orientation: this.#PATROL_BOAT_INFO.orientation,
     };
+  }
+
+  get shipPlacements() {
+    const carrierPlacement = this.carrierPlacementDetails;
+
+    const battleShipPlacement = this.battleShipPlacementDetails;
+
+    const destroyerPlacement = this.destroyerPlacementDetails;
+
+    const subMarinePlacement = this.subMarinePlacementDetails;
+
+    const patrolBoatPlacement = this.patrolBoatPlacementDetails;
 
     return {
       carrierPlacement,
@@ -969,10 +989,33 @@ export default class GameBoard {
   }
 }
 
-const gameBoard = new GameBoard();
-console.log(gameBoard.placeCarrier(4, 5));
-console.log(gameBoard.placeBattleShip(5, 1, 'vertical'));
+// const gameBoard = new GameBoard();
+// console.log(gameBoard.placeCarrier(0, 0));
+// function runOccupyingCheck(occupyingLoc, expectedOccupyingLoc) {
+//   let status = false;
 
+//   occupyingLoc.forEach((loc) => {
+//     const [x, y] = loc;
+
+//     const transformed = `${x}-${y}`;
+
+//     const index = expectedOccupyingLoc.findIndex(transformed);
+
+//     if (index === -1) {
+//       status = false;
+//     }
+
+//     expectedOccupyingLoc.splice(index, 1);
+//   });
+
+//   status = expectedOccupyingLoc.length === 0;
+
+//   return status;
+// }
+// const { occupyingLoc } = gameBoard.carrierPlacementDetails;
+// const expectedOccupyingLoc = ['0-0', '1-0', '2-0', '3-0', '4-0'];
+// console.log(typeof expectedOccupyingLoc);
+// runOccupyingCheck(occupyingLoc, expectedOccupyingLoc);
 // console.log(gameBoard.carrierPlacement('horizontal'));
 
 // const HorizontalPlacements = [
