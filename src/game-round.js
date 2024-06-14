@@ -215,6 +215,46 @@ export default class GameRound {
     };
   }
 
+  get humanPlayerCarrierPlacementDetails() {
+    return this.#HUMAN_PLAYER.carrierPlacementDetails;
+  }
+
+  get humanPlayerBattleShipPlacementDetails() {
+    return this.#HUMAN_PLAYER.battleShipPlacementDetails;
+  }
+
+  get humanPlayerDestroyerPlacementDetails() {
+    return this.#HUMAN_PLAYER.destroyerPlacementDetails;
+  }
+
+  get humanPlayerSubMarinePlacementDetails() {
+    return this.#HUMAN_PLAYER.subMarinePlacementDetails;
+  }
+
+  get humanPlayerPatrolBoatPlacementDetails() {
+    return this.#HUMAN_PLAYER.patrolBoatPlacementDetails;
+  }
+
+  get computerPlayerCarrierPlacementDetails() {
+    return this.#COMPUTER_PLAYER.carrierPlacementDetails;
+  }
+
+  get computerPlayerBattleShipPlacementDetails() {
+    return this.#COMPUTER_PLAYER.battleShipPlacementDetails;
+  }
+
+  get computerPlayerDestroyerPlacementDetails() {
+    return this.#COMPUTER_PLAYER.destroyerPlacementDetails;
+  }
+
+  get computerPlayerSubMarinePlacementDetails() {
+    return this.#COMPUTER_PLAYER.subMarinePlacementDetails;
+  }
+
+  get computerPlayerPatrolBoatPlacementDetails() {
+    return this.#COMPUTER_PLAYER.patrolBoatPlacementDetails;
+  }
+
   canBeHumanPlayerCarrierShipHead(x, y, orientation) {
     return this.#HUMAN_PLAYER.canBeCarrierShipHead(x, y, orientation);
   }
