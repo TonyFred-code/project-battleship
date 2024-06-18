@@ -5,6 +5,9 @@ import SubMarine from './submarine.js';
 import PatrolBoat from './patrol-boat.js';
 import Node from './board-node.js';
 
+import getRndElement from './helper_module/rnd-array-element.js';
+import transform from './helper_module/number-transform.js';
+
 export default class GameBoard {
   BOARD_SIZE = 10;
 
@@ -13,7 +16,7 @@ export default class GameBoard {
   #VERTICAL = 'vertical';
 
   #transform(x, y) {
-    return y * this.BOARD_SIZE + x;
+    return transform(x, y, this.BOARD_SIZE);
   }
 
   #CARRIER_INFO = {
@@ -22,7 +25,7 @@ export default class GameBoard {
     shipHead: [],
     orientation: '',
     size: 0,
-    exemptShipHead: [],
+    exempt: [],
     autoRemoved: false,
   };
 
@@ -186,7 +189,7 @@ export default class GameBoard {
   #CarrierExempt(shipHead, orientation) {
     const exemptShipHead = shipHead;
     const exemptOrientation = orientation;
-    this.#CARRIER_INFO.exemptShipHead.push({
+    this.#CARRIER_INFO.exempt.push({
       exemptShipHead,
       exemptOrientation,
     });
@@ -334,50 +337,54 @@ export default class GameBoard {
     return canPlace;
   }
 
+  #carrierAutoPlaceArray() {
+    const horizontalPlace = this.carrierPlacement(this.#HORIZONTAL);
+    const verticalPlace = this.carrierPlacement(this.#VERTICAL);
+
+    const available = [];
+
+    horizontalPlace.forEach((loc) => {
+      available.push({
+        loc,
+        orientation: 'horizontal',
+      });
+    });
+
+    verticalPlace.forEach((loc) => {
+      available.push({
+        loc,
+        orientation: 'vertical',
+      });
+    });
+
+    return available;
+  }
+
   carrierAutoPlace() {
-    // Randomly choose orientation
-    const orientation = Math.random() < 0.5 ? 'horizontal' : 'vertical';
+    const available = this.#carrierAutoPlaceArray();
 
-    const available = this.carrierPlacement(orientation);
-
-    // if no space to place ship, reform
     if (available.length === 0) {
-      // this.#storeExemptConfig();
-      // this.removeAllShips();
-      // this.#reformPlacement();
-      // return this.carrierAutoPlace();
-      console.table(this.board);
+      // exempt configuration
+      // remove all ships on board
+      // place all removed ships on new config
+      console.log(this.allShipsPlacement());
+
+      return [];
     }
 
-    function getRndElement(array) {
-      const rnd = Math.floor(Math.random() * array.length);
-      const element = array[rnd];
+    let placed = false;
 
-      return {
-        element,
-        index: rnd,
-      };
+    while (!placed) {
+      const { element } = getRndElement(available);
+
+      const { loc, orientation } = element;
+
+      const [x, y] = loc;
+
+      placed = this.placeCarrier(x, y, orientation);
     }
-    const { size } = this.#CARRIER_INFO;
 
-    // let placed = false;
-
-    const { index } = getRndElement(available);
-
-    const [placeHead] = available.splice(index, 1);
-    console.log(placeHead);
-
-    const [x, y] = placeHead;
-
-    const occupyingNodeLoc = this.#getToBeOccupied(size, x, y, orientation);
-
-    this.placeCarrier(x, y, orientation);
-
-    return {
-      orientation,
-      placeHead,
-      occupyingNodeLoc,
-    };
+    return this.carrierPlacementDetails;
   }
 
   placeBattleShip(x, y, orientation = 'horizontal') {
@@ -461,33 +468,49 @@ export default class GameBoard {
     return canPlace;
   }
 
-  battleShipAutoPlace(orientation) {
-    if (!this.#isValidOrientation(orientation)) return {};
+  #battleShipAutoPlaceArray() {
+    const horizontalPlace = this.battleShipPlacement(this.#HORIZONTAL);
+    const verticalPlace = this.battleShipPlacement(this.#VERTICAL);
 
-    const available = this.battleShipPlacement(orientation);
+    const available = [];
 
-    function getRndElement(array) {
-      const rnd = Math.floor(Math.random() * array.length);
+    horizontalPlace.forEach((loc) => {
+      available.push({
+        loc,
+        orientation: 'horizontal',
+      });
+    });
 
-      return array[rnd];
+    verticalPlace.forEach((loc) => {
+      available.push({
+        loc,
+        orientation: 'vertical',
+      });
+    });
+
+    return available;
+  }
+
+  battleShipAutoPlace() {
+    const available = this.#battleShipAutoPlaceArray();
+
+    if (available.length === 0) {
+      return [];
     }
 
-    const placeHead = getRndElement(available);
-    // console.log(placeHead);
+    let placed = false;
 
-    const [x, y] = placeHead;
+    while (!placed) {
+      const { element } = getRndElement(available);
 
-    const { size } = this.#BATTLESHIP_INFO;
+      const { loc, orientation } = element;
 
-    const occupyingNodeLoc = this.#getToBeOccupied(size, x, y, orientation);
+      const [x, y] = loc;
 
-    this.placeBattleShip(x, y, orientation);
+      placed = this.placeBattleShip(x, y, orientation);
+    }
 
-    return {
-      orientation,
-      placeHead,
-      occupyingNodeLoc,
-    };
+    return this.battleShipPlacementDetails;
   }
 
   placeDestroyer(x, y, orientation = 'horizontal') {
@@ -569,36 +592,49 @@ export default class GameBoard {
     return canPlace;
   }
 
-  destroyerAutoPlace(orientation) {
-    if (!this.#isValidOrientation(orientation)) return {};
+  #destroyerAutoPlaceArray() {
+    const horizontalPlace = this.destroyerPlacement(this.#HORIZONTAL);
+    const verticalPlace = this.destroyerPlacement(this.#VERTICAL);
 
-    const available = this.destroyerPlacement(orientation);
+    const available = [];
 
-    // console.table(available);
+    horizontalPlace.forEach((loc) => {
+      available.push({
+        loc,
+        orientation: 'horizontal',
+      });
+    });
 
-    function getRndElement(array) {
-      const rnd = Math.floor(Math.random() * array.length);
+    verticalPlace.forEach((loc) => {
+      available.push({
+        loc,
+        orientation: 'vertical',
+      });
+    });
 
-      return array[rnd];
+    return available;
+  }
+
+  destroyerAutoPlace() {
+    const available = this.#destroyerAutoPlaceArray();
+
+    if (available.length === 0) {
+      return [];
     }
 
-    const placeHead = getRndElement(available);
+    let placed = false;
 
-    // console.log(placeHead);
+    while (!placed) {
+      const { element } = getRndElement(available);
 
-    const [x, y] = placeHead;
+      const { loc, orientation } = element;
 
-    const { size } = this.#DESTROYER_INFO;
+      const [x, y] = loc;
 
-    const occupyingNodeLoc = this.#getToBeOccupied(size, x, y, orientation);
+      placed = this.placeDestroyer(x, y, orientation);
+    }
 
-    this.placeDestroyer(x, y, orientation);
-
-    return {
-      orientation,
-      placeHead,
-      occupyingNodeLoc,
-    };
+    return this.destroyerPlacementDetails;
   }
 
   placeSubMarine(x, y, orientation = 'horizontal') {
@@ -681,39 +717,49 @@ export default class GameBoard {
     return canPlace;
   }
 
-  subMarineAutoPlace(orientation) {
-    if (!this.#isValidOrientation(orientation)) return {};
+  #subMarineAutoPlaceArray() {
+    const horizontalPlace = this.subMarinePlacement(this.#HORIZONTAL);
+    const verticalPlace = this.subMarinePlacement(this.#VERTICAL);
 
-    const available = this.subMarinePlacement(orientation);
+    const available = [];
 
-    // console.log(available);
+    horizontalPlace.forEach((loc) => {
+      available.push({
+        loc,
+        orientation: 'horizontal',
+      });
+    });
 
-    function getRndElement(array) {
-      const rnd = Math.floor(Math.random() * array.length);
+    verticalPlace.forEach((loc) => {
+      available.push({
+        loc,
+        orientation: 'vertical',
+      });
+    });
 
-      return array[rnd];
+    return available;
+  }
+
+  subMarineAutoPlace() {
+    const available = this.#subMarineAutoPlaceArray();
+
+    if (available.length === 0) {
+      return [];
     }
 
-    const placeHead = getRndElement(available);
-    // console.table(placeHead);
+    let placed = false;
 
-    if (placeHead.length === 0) {
-      console.log(available);
+    while (!placed) {
+      const { element } = getRndElement(available);
+
+      const { loc, orientation } = element;
+
+      const [x, y] = loc;
+
+      placed = this.placeSubMarine(x, y, orientation);
     }
 
-    const [x, y] = placeHead;
-
-    const { size } = this.#SUBMARINE_INFO;
-
-    const occupyingNodeLoc = this.#getToBeOccupied(size, x, y, orientation);
-
-    this.placeSubMarine(x, y, orientation);
-
-    return {
-      orientation,
-      placeHead,
-      occupyingNodeLoc,
-    };
+    return this.subMarinePlacementDetails;
   }
 
   placePatrolBoat(x, y, orientation = 'horizontal') {
@@ -795,35 +841,49 @@ export default class GameBoard {
     return canPlace;
   }
 
-  patrolBoatAutoPlace(orientation) {
-    if (!this.#isValidOrientation(orientation)) return {};
+  #patrolBoatAutoPlaceArray() {
+    const horizontalPlace = this.patrolBoatPlacement(this.#HORIZONTAL);
+    const verticalPlace = this.patrolBoatPlacement(this.#VERTICAL);
 
-    const available = this.patrolBoatPlacement(orientation);
+    const available = [];
 
-    function getRndElement(array) {
-      const rnd = Math.floor(Math.random() * array.length);
+    horizontalPlace.forEach((loc) => {
+      available.push({
+        loc,
+        orientation: 'horizontal',
+      });
+    });
 
-      return array[rnd];
+    verticalPlace.forEach((loc) => {
+      available.push({
+        loc,
+        orientation: 'vertical',
+      });
+    });
+
+    return available;
+  }
+
+  patrolBoatAutoPlace() {
+    const available = this.#patrolBoatAutoPlaceArray();
+
+    if (available.length === 0) {
+      return [];
     }
 
-    const placeHead = getRndElement(available);
+    let placed = false;
 
-    // console.table(placeHead);
-    // console.table(available);
+    while (!placed) {
+      const { element } = getRndElement(available);
 
-    const [x, y] = placeHead;
+      const { loc, orientation } = element;
 
-    const { size } = this.#PATROL_BOAT_INFO;
+      const [x, y] = loc;
 
-    const occupyingNodeLoc = this.#getToBeOccupied(size, x, y, orientation);
+      placed = this.placePatrolBoat(x, y, orientation);
+    }
 
-    this.placePatrolBoat(x, y, orientation);
-
-    return {
-      orientation,
-      placeHead,
-      occupyingNodeLoc,
-    };
+    return this.patrolBoatPlacementDetails;
   }
 
   removeAllShips() {
@@ -835,20 +895,11 @@ export default class GameBoard {
   }
 
   allShipsPlacement() {
-    function rndOrientation() {
-      const rnd = Math.floor(Math.random() * 10);
-
-      if (rnd % 2 === 0) return 'vertical';
-
-      return 'horizontal';
-    }
-    const placementInfo = [];
-
-    placementInfo.push(this.carrierAutoPlace(rndOrientation()));
-    placementInfo.push(this.battleShipAutoPlace(rndOrientation()));
-    placementInfo.push(this.destroyerAutoPlace(rndOrientation()));
-    placementInfo.push(this.subMarineAutoPlace(rndOrientation()));
-    placementInfo.push(this.patrolBoatAutoPlace(rndOrientation()));
+    this.carrierAutoPlace();
+    this.battleShipAutoPlace();
+    this.destroyerAutoPlace();
+    this.subMarineAutoPlace();
+    this.patrolBoatAutoPlace();
 
     return this.shipPlacements;
   }
