@@ -6,7 +6,9 @@ import PatrolBoat from './patrol-boat.js';
 import Node from './board-node.js';
 
 import getRndElement from './helper_module/rnd-array-element.js';
-import transform from './helper_module/number-transform.js';
+import transform, {
+  reverseTransform,
+} from './helper_module/number-transform.js';
 
 export default class GameBoard {
   BOARD_SIZE = 10;
@@ -19,6 +21,10 @@ export default class GameBoard {
     return transform(x, y, this.BOARD_SIZE);
   }
 
+  #reverseTransform(index) {
+    return reverseTransform(index, this.BOARD_SIZE);
+  }
+
   #CARRIER_INFO = {
     isOnBoard: false,
     occupying: [],
@@ -26,7 +32,6 @@ export default class GameBoard {
     orientation: '',
     size: 0,
     exempt: [],
-    autoRemoved: false,
   };
 
   #BATTLESHIP_INFO = {
@@ -35,6 +40,7 @@ export default class GameBoard {
     shipHead: [],
     orientation: '',
     size: 0,
+    exempt: [],
   };
 
   #DESTROYER_INFO = {
@@ -43,6 +49,7 @@ export default class GameBoard {
     shipHead: [],
     orientation: '',
     size: 0,
+    exempt: [],
   };
 
   #SUBMARINE_INFO = {
@@ -51,6 +58,7 @@ export default class GameBoard {
     shipHead: [],
     orientation: '',
     size: 0,
+    exempt: [],
   };
 
   #PATROL_BOAT_INFO = {
@@ -59,6 +67,7 @@ export default class GameBoard {
     shipHead: [],
     orientation: '',
     size: 0,
+    exempt: [],
   };
 
   constructor() {
@@ -186,59 +195,117 @@ export default class GameBoard {
     // return allValid;
   }
 
-  #CarrierExempt(shipHead, orientation) {
+  #ShipExempt(SHIP_INFO, shipHead, orientation) {
+    if (!this.#isValidOrientation(orientation)) return false;
+
+    const [x, y] = shipHead;
+    if (!this.#isValidCoordinate(x, y)) return false;
+
     const exemptShipHead = shipHead;
     const exemptOrientation = orientation;
-    this.#CARRIER_INFO.exempt.push({
+    SHIP_INFO.exempt.push({
       exemptShipHead,
       exemptOrientation,
+    });
+
+    return true;
+  }
+
+  #CarrierExempt(shipHead, orientation) {
+    this.#ShipExempt(this.#CARRIER_INFO, shipHead, orientation);
+  }
+
+  #BattleShipExempt(shipHead, orientation) {
+    this.#ShipExempt(this.#BATTLESHIP_INFO, shipHead, orientation);
+  }
+
+  #DestroyerExempt(shipHead, orientation) {
+    this.#ShipExempt(this.#DESTROYER_INFO, shipHead, orientation);
+  }
+
+  #SubMarineExempt(shipHead, orientation) {
+    this.#ShipExempt(this.#SUBMARINE_INFO, shipHead, orientation);
+  }
+
+  #PatrolBoatExempt(shipHead, orientation) {
+    this.#ShipExempt(this.#PATROL_BOAT_INFO, shipHead, orientation);
+  }
+
+  #isShipExempted(SHIP_INFO, shipHead, orientation) {
+    const [shipHeadX, shipHeadY] = shipHead;
+    const transformedShipHead = this.#transform(shipHeadX, shipHeadY);
+
+    if (SHIP_INFO.exempt.length === 0) return false;
+
+    return SHIP_INFO.exempt.every((exempt) => {
+      const { exemptShipHead, exemptOrientation } = exempt;
+      const [x, y] = exemptShipHead;
+      const exemptTransformed = this.#transform(x, y);
+
+      return (
+        exemptTransformed !== transformedShipHead &&
+        exemptOrientation !== orientation
+      );
     });
   }
 
   #isCarrierExempted(shipHead, orientation) {
-    const [shipHeadX, shipHeadY] = shipHead;
-    const transformedShipHead = this.#transform(shipHeadX, shipHeadY);
-
-    // let isExempted = false;
-
-    return this.#CARRIER_INFO.exemptShipHead.some((exempt) => {
-      const { exemptShipHead, exemptOrientation } = exempt;
-      const [x, y] = exemptShipHead;
-      const transformed = this.#transform(x, y);
-
-      return (
-        transformed === transformedShipHead && exemptOrientation === orientation
-      );
-    });
-
-    // this.#CARRIER_INFO.exemptShipHead.forEach((exempt) => {
-    //   const { exemptShipHead, exemptOrientation } = exempt;
-    //   const [x, y] = exemptShipHead;
-    //   const transformed = this.#transform(x, y);
-
-    //   if (
-    //     transformed === transformedShipHead &&
-    //     exemptOrientation === orientation
-    //   ) {
-    //     isExempted = true;
-    //   }
-    // });
-
-    // return isExempted;
+    return this.#isShipExempted(this.#CARRIER_INFO, shipHead, orientation);
   }
 
-  #storeExemptConfig() {
+  #isBattleShipExempted(shipHead, orientation) {
+    return this.#isShipExempted(this.#BATTLESHIP_INFO, shipHead, orientation);
+  }
+
+  #isDestroyerExempted(shipHead, orientation) {
+    return this.#isShipExempted(this.#DESTROYER_INFO, shipHead, orientation);
+  }
+
+  #isSubMarineExempted(shipHead, orientation) {
+    return this.#isShipExempted(this.#SUBMARINE_INFO, shipHead, orientation);
+  }
+
+  #isPatrolBoatExempted(shipHead, orientation) {
+    return this.#isShipExempted(this.#PATROL_BOAT_INFO, shipHead, orientation);
+  }
+
+  // exempt configuration
+  // remove all ships on board
+  // place all removed ships on new config
+  #reformShipPlacements() {
     if (this.#CARRIER_INFO.isOnBoard) {
       const { shipHead, orientation } = this.#CARRIER_INFO;
-      // const [x, y] = shipHead;
       this.#CarrierExempt(shipHead, orientation);
-    }
-  }
-
-  #reformPlacement() {
-    if (this.#CARRIER_INFO.autoRemoved) {
+      this.removeCarrier();
       this.carrierAutoPlace();
-      this.#CARRIER_INFO.autoRemoved = false;
+    }
+
+    if (this.#BATTLESHIP_INFO.isOnBoard) {
+      const { shipHead, orientation } = this.#BATTLESHIP_INFO;
+      this.#BattleShipExempt(shipHead, orientation);
+      this.removeBattleShip();
+      this.battleShipAutoPlace();
+    }
+
+    if (this.#DESTROYER_INFO.isOnBoard) {
+      const { shipHead, orientation } = this.#DESTROYER_INFO;
+      this.#DestroyerExempt(shipHead, orientation);
+      this.removePatrolBoat();
+      this.destroyerAutoPlace();
+    }
+
+    if (this.#SUBMARINE_INFO.isOnBoard) {
+      const { shipHead, orientation } = this.#SUBMARINE_INFO;
+      this.#SubMarineExempt(shipHead, orientation);
+      this.removeSubMarine();
+      this.subMarineAutoPlace();
+    }
+
+    if (this.#PATROL_BOAT_INFO.isOnBoard) {
+      const { shipHead, orientation } = this.#PATROL_BOAT_INFO;
+      this.#PatrolBoatExempt(shipHead, orientation);
+      this.removePatrolBoat();
+      this.patrolBoatAutoPlace();
     }
   }
 
@@ -344,17 +411,21 @@ export default class GameBoard {
     const available = [];
 
     horizontalPlace.forEach((loc) => {
-      available.push({
-        loc,
-        orientation: 'horizontal',
-      });
+      if (!this.#isCarrierExempted(loc, 'horizontal')) {
+        available.push({
+          loc,
+          orientation: 'horizontal',
+        });
+      }
     });
 
     verticalPlace.forEach((loc) => {
-      available.push({
-        loc,
-        orientation: 'vertical',
-      });
+      if (!this.#isCarrierExempted(loc, 'vertical')) {
+        available.push({
+          loc,
+          orientation: 'vertical',
+        });
+      }
     });
 
     return available;
@@ -364,11 +435,7 @@ export default class GameBoard {
     const available = this.#carrierAutoPlaceArray();
 
     if (available.length === 0) {
-      // exempt configuration
-      // remove all ships on board
-      // place all removed ships on new config
-      console.log(this.allShipsPlacement());
-
+      this.#reformShipPlacements();
       return [];
     }
 
@@ -475,17 +542,21 @@ export default class GameBoard {
     const available = [];
 
     horizontalPlace.forEach((loc) => {
-      available.push({
-        loc,
-        orientation: 'horizontal',
-      });
+      if (!this.#isBattleShipExempted(loc, 'horizontal')) {
+        available.push({
+          loc,
+          orientation: 'horizontal',
+        });
+      }
     });
 
     verticalPlace.forEach((loc) => {
-      available.push({
-        loc,
-        orientation: 'vertical',
-      });
+      if (!this.#isBattleShipExempted(loc, 'vertical')) {
+        available.push({
+          loc,
+          orientation: 'vertical',
+        });
+      }
     });
 
     return available;
