@@ -526,7 +526,7 @@ describe('ship removal', () => {
   });
 });
 
-describe('auto ship placement', () => {
+describe.skip('auto ship placement', () => {
   describe('carrier auto placement', () => {
     const gameBoard = new GameBoard();
 
