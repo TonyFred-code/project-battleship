@@ -10,8 +10,10 @@ import transform, {
   reverseTransform,
 } from './helper_module/number-transform.js';
 
+import gameSettings from './GAME_SETTINGS/game-settings.js';
+
 export default class GameBoard {
-  BOARD_SIZE = 10;
+  BOARD_SIZE;
 
   #HORIZONTAL = 'horizontal';
 
@@ -31,6 +33,7 @@ export default class GameBoard {
     shipHead: [],
     orientation: '',
     size: 0,
+    name: '',
     exempt: [],
   };
 
@@ -40,6 +43,7 @@ export default class GameBoard {
     shipHead: [],
     orientation: '',
     size: 0,
+    name: '',
     exempt: [],
   };
 
@@ -49,6 +53,7 @@ export default class GameBoard {
     shipHead: [],
     orientation: '',
     size: 0,
+    name: '',
     exempt: [],
   };
 
@@ -58,6 +63,7 @@ export default class GameBoard {
     shipHead: [],
     orientation: '',
     size: 0,
+    name: '',
     exempt: [],
   };
 
@@ -67,10 +73,12 @@ export default class GameBoard {
     shipHead: [],
     orientation: '',
     size: 0,
+    name: '',
     exempt: [],
   };
 
   constructor() {
+    this.BOARD_SIZE = gameSettings.BOARD_SIZE;
     this.shipYard = {};
     this.ships = [];
     this.board = [];
@@ -82,22 +90,27 @@ export default class GameBoard {
     const carrier = new Carrier();
     this.shipYard.carrier = carrier;
     this.#CARRIER_INFO.size = carrier.length;
+    this.#CARRIER_INFO.name = carrier.name;
 
     const battleship = new BattleShip();
     this.shipYard.battleship = battleship;
     this.#BATTLESHIP_INFO.size = battleship.length;
+    this.#BATTLESHIP_INFO.name = battleship.name;
 
     const destroyer = new Destroyer();
     this.shipYard.destroyer = destroyer;
     this.#DESTROYER_INFO.size = destroyer.length;
+    this.#DESTROYER_INFO.name = destroyer.name;
 
     const submarine = new SubMarine();
     this.shipYard.submarine = submarine;
     this.#SUBMARINE_INFO.size = submarine.length;
+    this.#SUBMARINE_INFO.name = submarine.name;
 
     const patrolBoat = new PatrolBoat();
     this.shipYard.patrolBoat = patrolBoat;
     this.#PATROL_BOAT_INFO.size = patrolBoat.length;
+    this.#PATROL_BOAT_INFO.name = patrolBoat.name;
   }
 
   #buildBoard() {
@@ -147,14 +160,16 @@ export default class GameBoard {
       return false;
     }
 
-    // const toBeOccupied = this.#getToBeOccupied(x, y, orientation);
-
     const node = this.board[y * this.BOARD_SIZE + x];
     if (node.isHit || node.isOccupied || node.isNeighboringOccupied) {
       return false;
     }
 
     return true;
+  }
+
+  #boardHitNodes() {
+    return this.board.filter((node) => node.isHit);
   }
 
   #getToBeOccupied(size, x, y, orientation) {
@@ -343,10 +358,6 @@ export default class GameBoard {
       this.#CARRIER_INFO.occupying.push([nx, ny]);
       const node = this.board[ny * this.BOARD_SIZE + nx];
       node.occupy(this.shipYard.carrier);
-      //   node.neighbors.forEach((nodeLoc) => {
-      //     const [nnx, nny] = nodeLoc;
-      //     this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = true;
-      //   });
     });
 
     this.#CARRIER_INFO.isOnBoard = true;
@@ -363,11 +374,7 @@ export default class GameBoard {
       const [nx, ny] = location;
 
       const node = this.board[ny * this.BOARD_SIZE + nx];
-      // node.isOccupied = false;
-      // node.neighbors.forEach((nodeLoc) => {
-      //   const [nnx, nny] = nodeLoc;
-      //   this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = false;
-      // });
+
       node.removeOccupant();
     });
 
@@ -435,7 +442,6 @@ export default class GameBoard {
     const available = this.#carrierAutoPlaceArray();
 
     if (available.length === 0) {
-      this.#reformShipPlacements();
       return [];
     }
 
@@ -475,10 +481,6 @@ export default class GameBoard {
       this.#BATTLESHIP_INFO.occupying.push([nx, ny]);
       const node = this.board[ny * this.BOARD_SIZE + nx];
       node.occupy(this.shipYard.battleship);
-      // node.neighbors.forEach((nodeLoc) => {
-      //   const [nnx, nny] = nodeLoc;
-      //   this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = true;
-      // });
     });
 
     this.#BATTLESHIP_INFO.isOnBoard = true;
@@ -495,10 +497,6 @@ export default class GameBoard {
 
       const node = this.board[ny * this.BOARD_SIZE + nx];
       node.removeOccupant();
-      // node.neighbors.forEach((nodeLoc) => {
-      //   const [nnx, nny] = nodeLoc;
-      //   this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = false;
-      // });
     });
     this.#BATTLESHIP_INFO.occupying = [];
     this.#BATTLESHIP_INFO.isOnBoard = false;
@@ -512,8 +510,6 @@ export default class GameBoard {
     const availableNodes = this.board.filter(
       (node) => !node.isHit && !node.isOccupied && !node.isNeighboringOccupied,
     );
-
-    // console.table(availableNodes);
 
     const { size } = this.#BATTLESHIP_INFO;
 
@@ -605,10 +601,6 @@ export default class GameBoard {
       this.#DESTROYER_INFO.occupying.push([nx, ny]);
       const node = this.board[ny * this.BOARD_SIZE + nx];
       node.occupy(this.shipYard.destroyer);
-      // node.neighbors.forEach((nodeLoc) => {
-      // const [nnx, nny] = nodeLoc;
-      // this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = true;
-      // });
     });
 
     this.#DESTROYER_INFO.isOnBoard = true;
@@ -625,10 +617,6 @@ export default class GameBoard {
 
       const node = this.board[ny * this.BOARD_SIZE + nx];
       node.removeOccupant();
-      // node.neighbors.forEach((nodeLoc) => {
-      // const [nnx, nny] = nodeLoc;
-      // this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = false;
-      // });
     });
     this.#DESTROYER_INFO.occupying = [];
     this.#DESTROYER_INFO.isOnBoard = false;
@@ -729,10 +717,6 @@ export default class GameBoard {
       this.#SUBMARINE_INFO.occupying.push([nx, ny]);
       const node = this.board[ny * this.BOARD_SIZE + nx];
       node.occupy(this.shipYard.submarine);
-      // node.neighbors.forEach((nodeLoc) => {
-      // const [nnx, nny] = nodeLoc;
-      // this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = true;
-      // });
     });
 
     this.#SUBMARINE_INFO.isOnBoard = true;
@@ -749,10 +733,6 @@ export default class GameBoard {
 
       const node = this.board[ny * this.BOARD_SIZE + nx];
       node.removeOccupant();
-      // node.neighbors.forEach((nodeLoc) => {
-      // const [nnx, nny] = nodeLoc;
-      // this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = false;
-      // });
     });
 
     this.#SUBMARINE_INFO.occupying = [];
@@ -854,10 +834,6 @@ export default class GameBoard {
       this.#PATROL_BOAT_INFO.occupying.push([nx, ny]);
       const node = this.board[ny * this.BOARD_SIZE + nx];
       node.occupy(this.shipYard.patrolBoat);
-      // node.neighbors.forEach((nodeLoc) => {
-      // const [nnx, nny] = nodeLoc;
-      // this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = true;
-      // });
     });
 
     this.#PATROL_BOAT_INFO.isOnBoard = true;
@@ -874,10 +850,6 @@ export default class GameBoard {
 
       const node = this.board[ny * this.BOARD_SIZE + nx];
       node.removeOccupant();
-      // node.neighbors.forEach((nodeLoc) => {
-      // const [nnx, nny] = nodeLoc;
-      // this.board[nny * this.BOARD_SIZE + nnx].isNeighboringOccupied = false;
-      // });
     });
     this.#PATROL_BOAT_INFO.occupying = [];
     this.#PATROL_BOAT_INFO.isOnBoard = false;
@@ -982,17 +954,7 @@ export default class GameBoard {
 
     const node = this.board[y * this.BOARD_SIZE + x];
 
-    if (node.isHit) {
-      return -1;
-    }
-
-    node.hit();
-    if (node.isOccupied) {
-      // node.isOccupied.hit();
-      return 1;
-    }
-
-    return 0;
+    return node.hit();
   }
 
   #allShipOnBoard() {
@@ -1045,12 +1007,33 @@ export default class GameBoard {
     return available;
   }
 
+  #shipNeighboringLoc(shipInfo) {
+    const { occupying } = shipInfo;
+    const neighborLocStore = new Set();
+
+    occupying.forEach((loc) => {
+      const [x, y] = loc;
+      const node = this.board[transform(x, y, this.BOARD_SIZE)];
+      const { neighbors } = node;
+      neighbors.forEach((neighbor) => {
+        if (!neighbor.isOccupied) {
+          neighborLocStore.add(neighbor.address);
+        }
+      });
+    });
+
+    return [...neighborLocStore];
+  }
+
   get carrierPlacementDetails() {
     return {
       shipHead: this.#CARRIER_INFO.shipHead,
       isOnBoard: this.#CARRIER_INFO.isOnBoard,
       occupyingLoc: this.#CARRIER_INFO.occupying,
       orientation: this.#CARRIER_INFO.orientation,
+      name: this.#CARRIER_INFO.name,
+      isSunk: this.carrierSunk,
+      neighborLoc: this.#shipNeighboringLoc(this.#CARRIER_INFO),
     };
   }
 
@@ -1060,6 +1043,9 @@ export default class GameBoard {
       isOnBoard: this.#BATTLESHIP_INFO.isOnBoard,
       occupyingLoc: this.#BATTLESHIP_INFO.occupying,
       orientation: this.#BATTLESHIP_INFO.orientation,
+      name: this.#BATTLESHIP_INFO.name,
+      isSunk: this.battleShipSunk,
+      neighborLoc: this.#shipNeighboringLoc(this.#BATTLESHIP_INFO),
     };
   }
 
@@ -1069,6 +1055,9 @@ export default class GameBoard {
       isOnBoard: this.#DESTROYER_INFO.isOnBoard,
       occupyingLoc: this.#DESTROYER_INFO.occupying,
       orientation: this.#DESTROYER_INFO.orientation,
+      name: this.#DESTROYER_INFO.name,
+      isSunk: this.destroyerSunk,
+      neighborLoc: this.#shipNeighboringLoc(this.#DESTROYER_INFO),
     };
   }
 
@@ -1078,6 +1067,9 @@ export default class GameBoard {
       isOnBoard: this.#SUBMARINE_INFO.isOnBoard,
       occupyingLoc: this.#SUBMARINE_INFO.occupying,
       orientation: this.#SUBMARINE_INFO.orientation,
+      name: this.#SUBMARINE_INFO.name,
+      isSunk: this.submarineSunk,
+      neighborLoc: this.#shipNeighboringLoc(this.#SUBMARINE_INFO),
     };
   }
 
@@ -1087,6 +1079,9 @@ export default class GameBoard {
       isOnBoard: this.#PATROL_BOAT_INFO.isOnBoard,
       occupyingLoc: this.#PATROL_BOAT_INFO.occupying,
       orientation: this.#PATROL_BOAT_INFO.orientation,
+      name: this.#PATROL_BOAT_INFO.name,
+      isSunk: this.patrolBoatSunk,
+      neighborLoc: this.#shipNeighboringLoc(this.#PATROL_BOAT_INFO),
     };
   }
 
@@ -1108,6 +1103,60 @@ export default class GameBoard {
       subMarinePlacement,
       patrolBoatPlacement,
     };
+  }
+
+  get allShipsOnBoard() {
+    return (
+      this.#CARRIER_INFO.isOnBoard &&
+      this.#BATTLESHIP_INFO.isOnBoard &&
+      this.#DESTROYER_INFO.isOnBoard &&
+      this.#SUBMARINE_INFO.isOnBoard &&
+      this.#PATROL_BOAT_INFO.isOnBoard
+    );
+  }
+
+  get copy() {
+    const boardCopy = new GameBoard();
+
+    if (this.#CARRIER_INFO.isOnBoard) {
+      const { shipHead, orientation } = this.#CARRIER_INFO;
+      const [x, y] = shipHead;
+      boardCopy.placeCarrier(x, y, orientation);
+    }
+
+    if (this.#BATTLESHIP_INFO.isOnBoard) {
+      const { shipHead, orientation } = this.#BATTLESHIP_INFO;
+      const [x, y] = shipHead;
+      boardCopy.placeBattleShip(x, y, orientation);
+    }
+
+    if (this.#DESTROYER_INFO.isOnBoard) {
+      const { shipHead, orientation } = this.#DESTROYER_INFO;
+      const [x, y] = shipHead;
+      boardCopy.placeDestroyer(x, y, orientation);
+    }
+
+    if (this.#SUBMARINE_INFO.isOnBoard) {
+      const { shipHead, orientation } = this.#SUBMARINE_INFO;
+      const [x, y] = shipHead;
+      boardCopy.placeSubMarine(x, y, orientation);
+    }
+
+    if (this.#PATROL_BOAT_INFO.isOnBoard) {
+      const { shipHead, orientation } = this.#PATROL_BOAT_INFO;
+      const [x, y] = shipHead;
+      boardCopy.placePatrolBoat(x, y, orientation);
+    }
+
+    const hitNodes = this.#boardHitNodes();
+
+    hitNodes.forEach((node) => {
+      const [x, y] = node.address;
+
+      boardCopy.receiveAttack(x, y);
+    });
+
+    return boardCopy;
   }
 }
 
