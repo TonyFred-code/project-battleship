@@ -3,16 +3,30 @@ import GameBoard from './game-board.js';
 export default class Player {
   #PLAYER_BOARD = new GameBoard();
 
-  constructor(name) {
+  get copy() {
+    const newPlayer = new Player(this.name, this.boardCopy);
+
+    return newPlayer;
+  }
+
+  constructor(name, board = null) {
     if (typeof name !== 'string' || name.trim() === '') {
       throw new Error('Invalid name parameter');
     }
 
     this.name = name;
+
+    if (board !== null && board instanceof GameBoard) {
+      this.#PLAYER_BOARD = board;
+    }
   }
 
   getBoard() {
     return this.#PLAYER_BOARD;
+  }
+
+  get boardCopy() {
+    return this.#PLAYER_BOARD.copy;
   }
 
   get validMoves() {
@@ -74,6 +88,10 @@ export default class Player {
 
   get patrolBoatPlacementDetails() {
     return this.#PLAYER_BOARD.patrolBoatPlacementDetails;
+  }
+
+  get allShipsOnBoard() {
+    return this.#PLAYER_BOARD.allShipsOnBoard;
   }
 
   canBeCarrierShipHead(x, y, orientation) {
