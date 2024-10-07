@@ -10,19 +10,22 @@ export default function createLoadScreen() {
   const genericContainer = createElementWithClass('div', [
     'container',
     'd-flex__col',
+    'gap_2r',
+    'padding_2r',
   ]);
 
   const loadingTitleContainer = createElementWithClass('div', [
     'loading-title',
+    'text-align__center',
     'd-flex__col',
     'gap_10',
   ]);
 
-  const h1 = createElementWithClass('h1');
+  const h1 = createElementWithClass('h1', ['text-transform__capitalize']);
   h1.textContent = 'A Classic Board Game';
 
-  const h2 = createElementWithClass('h2');
-  h2.textContent = 'battleship';
+  const h2 = createElementWithClass('h2', ['text-transform__capitalize']);
+  h2.textContent = 'Sea Battle';
 
   loadingTitleContainer.appendChild(h1);
   loadingTitleContainer.appendChild(h2);
