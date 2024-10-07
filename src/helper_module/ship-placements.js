@@ -1,271 +1,63 @@
-export const CarrierHorizontalPlacements = [
-  '0-0',
-  '1-0',
-  '2-0',
-  '3-0',
-  '4-0',
-  '5-0',
-  '0-1',
-  '1-1',
-  '2-1',
-  '3-1',
-  '4-1',
-  '5-1',
-  '0-2',
-  '1-2',
-  '2-2',
-  '3-2',
-  '4-2',
-  '5-2',
-  '0-3',
-  '1-3',
-  '2-3',
-  '3-3',
-  '4-3',
-  '5-3',
-  '0-4',
-  '1-4',
-  '2-4',
-  '3-4',
-  '4-4',
-  '5-4',
-  '0-5',
-  '1-5',
-  '2-5',
-  '3-5',
-  '4-5',
-  '5-5',
-  '0-6',
-  '1-6',
-  '2-6',
-  '3-6',
-  '4-6',
-  '5-6',
-  '0-7',
-  '1-7',
-  '2-7',
-  '3-7',
-  '4-7',
-  '5-7',
-  '0-8',
-  '1-8',
-  '2-8',
-  '3-8',
-  '4-8',
-  '5-8',
-  '0-9',
-  '1-9',
-  '2-9',
-  '3-9',
-  '4-9',
-  '5-9',
-];
+import { reverseTransform } from './number-transform.js';
+import gameSettings from '../GAME_SETTINGS/game-settings.js';
 
-export const CarrierVerticalPlacements = [
-  '0-0',
-  '1-0',
-  '2-0',
-  '3-0',
-  '4-0',
-  '5-0',
-  '6-0',
-  '7-0',
-  '8-0',
-  '9-0',
-  '0-1',
-  '1-1',
-  '2-1',
-  '3-1',
-  '4-1',
-  '5-1',
-  '6-1',
-  '7-1',
-  '8-1',
-  '9-1',
-  '0-2',
-  '1-2',
-  '2-2',
-  '3-2',
-  '4-2',
-  '5-2',
-  '6-2',
-  '7-2',
-  '8-2',
-  '9-2',
-  '0-3',
-  '1-3',
-  '2-3',
-  '3-3',
-  '4-3',
-  '5-3',
-  '6-3',
-  '7-3',
-  '8-3',
-  '9-3',
-  '0-4',
-  '1-4',
-  '2-4',
-  '3-4',
-  '4-4',
-  '5-4',
-  '6-4',
-  '7-4',
-  '8-4',
-  '9-4',
-  '0-5',
-  '1-5',
-  '2-5',
-  '3-5',
-  '4-5',
-  '5-5',
-  '6-5',
-  '7-5',
-  '8-5',
-  '9-5',
-];
+const { BOARD_SIZE } = gameSettings;
 
-export const BattleShipHorizontalPlacements = [
-  '0-0',
-  '1-0',
-  '2-0',
-  '3-0',
-  '4-0',
-  '5-0',
-  '6-0',
-  '0-1',
-  '1-1',
-  '2-1',
-  '3-1',
-  '4-1',
-  '5-1',
-  '6-1',
-  '0-2',
-  '1-2',
-  '2-2',
-  '3-2',
-  '4-2',
-  '5-2',
-  '6-2',
-  '0-3',
-  '1-3',
-  '2-3',
-  '3-3',
-  '4-3',
-  '5-3',
-  '6-3',
-  '0-4',
-  '1-4',
-  '2-4',
-  '3-4',
-  '4-4',
-  '5-4',
-  '6-4',
-  '0-5',
-  '1-5',
-  '2-5',
-  '3-5',
-  '4-5',
-  '5-5',
-  '6-5',
-  '0-6',
-  '1-6',
-  '2-6',
-  '3-6',
-  '4-6',
-  '5-6',
-  '6-6',
-  '0-7',
-  '1-7',
-  '2-7',
-  '3-7',
-  '4-7',
-  '5-7',
-  '6-7',
-  '0-8',
-  '1-8',
-  '2-8',
-  '3-8',
-  '4-8',
-  '5-8',
-  '6-8',
-  '0-9',
-  '1-9',
-  '2-9',
-  '3-9',
-  '4-9',
-  '5-9',
-  '6-9',
-];
+function isValidCoordinate(x, y) {
+  return x >= 0 && x < BOARD_SIZE && y >= 0 && y < BOARD_SIZE;
+}
 
-export const BattleShipVerticalPlacements = [
-  '0-0',
-  '1-0',
-  '2-0',
-  '3-0',
-  '4-0',
-  '5-0',
-  '6-0',
-  '7-0',
-  '8-0',
-  '9-0',
-  '0-1',
-  '1-1',
-  '2-1',
-  '3-1',
-  '4-1',
-  '5-1',
-  '6-1',
-  '7-1',
-  '8-1',
-  '9-1',
-  '0-2',
-  '1-2',
-  '2-2',
-  '3-2',
-  '4-2',
-  '5-2',
-  '6-2',
-  '7-2',
-  '8-2',
-  '9-2',
-  '0-3',
-  '1-3',
-  '2-3',
-  '3-3',
-  '4-3',
-  '5-3',
-  '6-3',
-  '7-3',
-  '8-3',
-  '9-3',
-  '0-4',
-  '1-4',
-  '2-4',
-  '3-4',
-  '4-4',
-  '5-4',
-  '6-4',
-  '7-4',
-  '8-4',
-  '9-4',
-  '0-5',
-  '1-5',
-  '2-5',
-  '3-5',
-  '4-5',
-  '5-5',
-  '6-5',
-  '7-5',
-  '8-5',
-  '9-5',
-  '0-6',
-  '1-6',
-  '2-6',
-  '3-6',
-  '4-6',
-  '5-6',
-  '6-6',
-  '7-6',
-  '8-6',
-  '9-6',
-];
+function getToBeOccupied(size, x, y, orientation) {
+  const toBeOccupied = [[x, y]];
+
+  if (orientation === 'vertical') {
+    for (let i = 0; i < size - 1; i += 1) {
+      const occupied = y + i + 1;
+      if (isValidCoordinate(x, occupied)) {
+        toBeOccupied.push([x, occupied]);
+      }
+    }
+  } else if (orientation === 'horizontal') {
+    for (let i = 0; i < size - 1; i += 1) {
+      const occupied = x + i + 1;
+      if (isValidCoordinate(occupied, y)) {
+        toBeOccupied.push([occupied, y]);
+      }
+    }
+  }
+
+  return toBeOccupied;
+}
+
+function shipFormattedPlacement(size) {
+  const formattedPlacements = {
+    vertical: [],
+    horizontal: [],
+  };
+  const orientations = ['vertical', 'horizontal'];
+
+  orientations.forEach((orientation) => {
+    for (let i = 0; i < 100; i += 1) {
+      const [x, y] = reverseTransform(i, BOARD_SIZE);
+
+      const toBeOccupiedLength = getToBeOccupied(
+        size,
+        x,
+        y,
+        orientation,
+      ).length;
+
+      if (toBeOccupiedLength === size) {
+        formattedPlacements[orientation].push(`${x}-${y}`);
+      }
+    }
+  });
+
+  return formattedPlacements;
+}
+
+export const CARRIER_SHIP_PLACEMENTS = shipFormattedPlacement(5);
+export const BATTLESHIP_SHIP_PLACEMENTS = shipFormattedPlacement(4);
+export const DESTROYER_SHIP_PLACEMENTS = shipFormattedPlacement(3);
+export const SUB_MARINE_SHIP_PLACEMENTS = shipFormattedPlacement(3);
+export const PATROL_BOAT_SHIP_PLACEMENTS = shipFormattedPlacement(2);
