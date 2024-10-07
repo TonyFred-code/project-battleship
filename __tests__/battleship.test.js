@@ -26,9 +26,9 @@ test('is sunk in 4 hits', () => {
 
 test('denys hits after being sunk', () => {
   const battleship = new BattleShip();
-  expect(battleship.hit()).toBe(true);
-  expect(battleship.hit()).toBe(true);
-  expect(battleship.hit()).toBe(true);
-  expect(battleship.hit()).toBe(true);
-  expect(battleship.hit()).toBe(false);
+  expect(battleship.hit()).toBe(1);
+  expect(battleship.hit()).toBe(1);
+  expect(battleship.hit()).toBe(1);
+  expect(battleship.hit()).toBe(2);
+  expect(battleship.hit()).toBe(-1);
 });
