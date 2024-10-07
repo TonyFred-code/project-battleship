@@ -1,5 +1,6 @@
 import HumanPlayer from './human-player.js';
 import ComputerPlayer from './computer-player.js';
+import HardComputerPlayer from './hard-computer.js';
 
 export default class GameRound {
   #HUMAN_PLAYER = null;
@@ -15,6 +16,8 @@ export default class GameRound {
   #ROUND_WINNER_NAME = '';
 
   #ROUND_WON = false;
+
+  #DIFFICULTY = '';
 
   #isValidHitStatus(hitStatus) {
     return hitStatus === this.#HIT_STATUS_0 || hitStatus === this.#HIT_STATUS_1;
@@ -47,10 +50,28 @@ export default class GameRound {
     return this.#COMPUTER_PLAYER === null || this.#HUMAN_PLAYER === null;
   }
 
+  static isValidRoundDifficulty(difficulty) {
+    return difficulty === 'easy' || difficulty === 'hard';
+  }
+
+  constructor(difficulty = 'easy') {
+    if (GameRound.isValidRoundDifficulty(difficulty)) {
+      this.#DIFFICULTY = difficulty;
+    } else {
+      this.#DIFFICULTY = 'easy';
+    }
+  }
+
   addBotPlayer() {
     if (this.#COMPUTER_PLAYER !== null) return false;
 
-    this.#COMPUTER_PLAYER = new ComputerPlayer();
+    if (this.#DIFFICULTY === 'easy') {
+      this.#COMPUTER_PLAYER = new ComputerPlayer();
+    }
+
+    if (this.#DIFFICULTY === 'hard') {
+      this.#COMPUTER_PLAYER = new HardComputerPlayer();
+    }
 
     if (!this.#canAddPlayer()) {
       this.#activePlayer = this.#COMPUTER_PLAYER;
@@ -80,8 +101,13 @@ export default class GameRound {
 
     const playerName = this.#activePlayer.name;
 
+    const isBot = this.#activePlayer === this.#COMPUTER_PLAYER;
+    const isHuman = this.#activePlayer === this.#HUMAN_PLAYER;
+
     return {
       playerName,
+      isBot,
+      isHuman,
     };
   }
 
@@ -167,7 +193,7 @@ export default class GameRound {
     return this.#COMPUTER_PLAYER.autoPlaceShips();
   }
 
-  botMove(x, y) {
+  #botMove(x, y) {
     if (this.#activePlayer !== this.#COMPUTER_PLAYER) return -1;
 
     const hitStatus = this.#HUMAN_PLAYER.receiveAttack(x, y);
@@ -184,11 +210,13 @@ export default class GameRound {
     return hitStatus;
   }
 
-  botRndPlay() {
-    const validMoves = this.#HUMAN_PLAYER.getValidMoves();
-    const [x, y] = this.#COMPUTER_PLAYER.getAttack(validMoves);
+  get botMove() {
+    const [x, y] = this.#COMPUTER_PLAYER.getAttack(this.#HUMAN_PLAYER);
 
-    return this.botMove(x, y);
+    const hitStatus = this.#botMove(x, y);
+    const move = [x, y];
+
+    return { move, hitStatus };
   }
 
   humanPlayerMove(x, y) {
@@ -253,6 +281,15 @@ export default class GameRound {
 
   get computerPlayerPatrolBoatPlacementDetails() {
     return this.#COMPUTER_PLAYER.patrolBoatPlacementDetails;
+  }
+
+  get canPlayRound() {
+    return (
+      this.#COMPUTER_PLAYER !== null &&
+      this.#HUMAN_PLAYER !== null &&
+      this.#COMPUTER_PLAYER.allShipsOnBoard &&
+      this.#HUMAN_PLAYER.allShipsOnBoard
+    );
   }
 
   canBeHumanPlayerCarrierShipHead(x, y, orientation) {
