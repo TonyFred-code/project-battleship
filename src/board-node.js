@@ -50,11 +50,15 @@ export default class Node {
    * Hits the node, marking it as hit.
    */
   hit() {
+    if (this.isHit) return -1;
+
     this.#isHit = true;
 
-    if (this.isOccupied) {
-      this.#occupant.hit();
-    }
+    if (this.isNeighboringSunk) return 3;
+
+    if (!this.isOccupied) return 0;
+
+    return this.#occupant.hit();
   }
 
   /**
@@ -77,8 +81,20 @@ export default class Node {
     return this.neighbors.some((neighbor) => neighbor.isOccupied);
   }
 
+  get isNeighboringSunk() {
+    return this.neighbors.some((neighbor) => neighbor.occupantShipSunk);
+  }
+
   get isHit() {
-    return this.#isHit === true;
+    return this.#isHit;
+  }
+
+  get occupantShipSunk() {
+    if (this.isOccupied) {
+      return this.#occupant.isSunk();
+    }
+
+    return false;
   }
 
   removeOccupant() {
