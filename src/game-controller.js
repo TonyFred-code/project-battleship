@@ -19,6 +19,10 @@ export default class GameController {
     return this.#GAME_ROUND.addBotPlayer();
   }
 
+  canBeHumanPlayerCarrierShipHead(x, y, orientation) {
+    return this.#GAME_ROUND.canBeHumanPlayerCarrierShipHead(x, y, orientation);
+  }
+
   placeHumanPlayerCarrier(x, y, orientation) {
     if (!this.#GAME_START) return false;
 
@@ -74,15 +78,55 @@ export default class GameController {
   }
 
   humanPlayerShipDetails() {
-    if (!this.#GAME_START) return {};
+    if (this.#GAME_ROUND === null) return {};
 
     return this.#GAME_ROUND.humanPlayerShipDetails();
   }
 
   botPlayerShipDetails() {
-    if (!this.#GAME_START) return {};
+    if (this.#GAME_ROUND === null) return {};
 
-    return this.#GAME_ROUND.botPlayerShipDetails();
+    return this.#GAME_ROUND.botShipDetails();
+  }
+
+  get humanPlayerCarrierPlacementDetails() {
+    return this.#GAME_ROUND.humanPlayerCarrierPlacementDetails;
+  }
+
+  get humanPlayerBattleShipPlacementDetails() {
+    return this.#GAME_ROUND.humanPlayerBattleShipPlacementDetails;
+  }
+
+  get humanPlayerDestroyerPlacementDetails() {
+    return this.#GAME_ROUND.humanPlayerDestroyerPlacementDetails;
+  }
+
+  get humanPlayerSubMarinePlacementDetails() {
+    return this.#GAME_ROUND.humanPlayerSubMarinePlacementDetails;
+  }
+
+  get humanPlayerPatrolBoatPlacementDetails() {
+    return this.#GAME_ROUND.humanPlayerPatrolBoatPlacementDetails;
+  }
+
+  get computerPlayerCarrierPlacementDetails() {
+    return this.#GAME_ROUND.computerPlayerCarrierPlacementDetails;
+  }
+
+  get computerPlayerBattleShipPlacementDetails() {
+    return this.#GAME_ROUND.computerPlayerBattleShipPlacementDetails;
+  }
+
+  get computerPlayerDestroyerPlacementDetails() {
+    return this.#GAME_ROUND.computerPlayerDestroyerPlacementDetails;
+  }
+
+  get computerPlayerSubMarinePlacementDetails() {
+    return this.#GAME_ROUND.computerPlayerSubMarinePlacementDetails;
+  }
+
+  get computerPlayerPatrolBoatPlacementDetails() {
+    return this.#GAME_ROUND.computerPlayerPatrolBoatPlacementDetails;
   }
 
   get gameState() {
@@ -103,7 +147,10 @@ export default class GameController {
     GAME_STATE.roundStart = this.#GAME_START;
 
     GAME_STATE.roundEnd = this.#GAME_END;
+    const canPlayRound =
+      this.#GAME_ROUND !== null && this.#GAME_ROUND.canPlayRound;
 
+    GAME_STATE.canPlayRound = canPlayRound;
     return GAME_STATE;
   }
 
@@ -114,7 +161,7 @@ export default class GameController {
   }
 
   getActivePlayer() {
-    if (!this.#GAME_START) return {};
+    if (this.#GAME_ROUND === null) return {};
 
     return this.#GAME_ROUND.getActivePlayer();
   }
@@ -131,6 +178,20 @@ export default class GameController {
     }
 
     return status;
+  }
+
+  get computerPlayerMove() {
+    if (!this.#GAME_START) return false;
+
+    const { move, status } = this.#GAME_ROUND.botMove;
+
+    const { roundWon } = this.roundState;
+
+    if (roundWon) {
+      this.endRound();
+    }
+
+    return { status, move };
   }
 
   humanPlayerMove(x, y) {
@@ -152,8 +213,13 @@ export default class GameController {
     this.#GAME_START = false;
   }
 
-  startRound() {
-    this.#GAME_ROUND = new GameRound();
+  startRound(difficulty = 'easy') {
+    if (!GameRound.isValidRoundDifficulty(difficulty)) {
+      this.#GAME_ROUND = new GameRound('easy');
+    } else {
+      this.#GAME_ROUND = new GameRound(difficulty);
+    }
+
     this.#GAME_START = true;
     this.#GAME_END = false;
   }

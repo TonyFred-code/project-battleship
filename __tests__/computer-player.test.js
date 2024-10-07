@@ -1,5 +1,9 @@
 import ComputerPlayer from '../src/computer-player.js';
 import Player from '../src/player.js';
+import transform from '../src/helper_module/number-transform.js';
+import GAME_SETTINGS from '../src/GAME_SETTINGS/game-settings.js';
+
+const { BOARD_SIZE } = GAME_SETTINGS;
 
 test('can create computer player', () => {
   expect(ComputerPlayer).toBeDefined();
@@ -27,7 +31,7 @@ test('getAttack gives two element arr as return value', () => {
   const computerPlayer = new ComputerPlayer();
   const opponent = new Player('something');
 
-  const move = computerPlayer.getAttack(opponent.validMoves);
+  const move = computerPlayer.getAttack(opponent);
 
   expect(move).toHaveLength(2);
   expect(Array.isArray(move)).toBeTruthy();
@@ -47,19 +51,14 @@ test('does not hit same place twice', () => {
   expect(player.placeSubMarine(6, 6, 'vertical')).toBe(true);
   expect(player.placePatrolBoat(1, 9)).toBe(true);
 
-  function transform(x, y) {
-    return y * 10 + x;
-  }
-
   const attacks = new Set();
 
   function populate() {
     for (let i = 0; i < 100; i += 1) {
-      const { validMoves } = player;
-      const move = computerPlayer.getAttack(validMoves);
+      const move = computerPlayer.getAttack(player);
       const [x, y] = move;
       player.receiveAttack(x, y);
-      attacks.add(transform(x, y));
+      attacks.add(transform(x, y, BOARD_SIZE));
     }
   }
 

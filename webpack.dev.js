@@ -5,6 +5,6 @@ export default merge(webpackCommon, {
   mode: 'development',
   devtool: 'inline-source-map',
   devServer: {
-    static: './dist',
+    static: './src',
   },
 });

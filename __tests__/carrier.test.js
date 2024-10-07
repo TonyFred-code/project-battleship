@@ -27,10 +27,10 @@ test('is sunk in five hits', () => {
 
 test('denys hits after being sunk', () => {
   const carrier = new Carrier();
-  expect(carrier.hit()).toBe(true);
-  expect(carrier.hit()).toBe(true);
-  expect(carrier.hit()).toBe(true);
-  expect(carrier.hit()).toBe(true);
-  expect(carrier.hit()).toBe(true);
-  expect(carrier.hit()).toBe(false);
+  expect(carrier.hit()).toBe(1);
+  expect(carrier.hit()).toBe(1);
+  expect(carrier.hit()).toBe(1);
+  expect(carrier.hit()).toBe(1);
+  expect(carrier.hit()).toBe(2);
+  expect(carrier.hit()).toBe(-1);
 });

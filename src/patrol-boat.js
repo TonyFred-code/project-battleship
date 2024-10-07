@@ -2,6 +2,6 @@ import Ship from './ship.js';
 
 export default class PatrolBoat extends Ship {
   constructor() {
-    super(2);
+    super(2, 'patrol-boat');
   }
 }

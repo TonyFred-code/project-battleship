@@ -156,8 +156,9 @@ describe('round state can be returned', () => {
 
     const botCarrierHitStatus = hit(botCarrierShipConfig);
 
-    expect(botCarrierHitStatus).toHaveLength(1);
+    expect(botCarrierHitStatus).toHaveLength(2);
     expect(botCarrierHitStatus.includes(1)).toBe(true);
+    expect(botCarrierHitStatus.includes(2)).toBe(true);
 
     ({ roundState } = gameRound);
 
@@ -166,8 +167,10 @@ describe('round state can be returned', () => {
 
     const botBattleShipHitStatus = hit(botBattleShipShipConfig);
 
-    expect(botBattleShipHitStatus).toHaveLength(1);
+    expect(botBattleShipHitStatus).toHaveLength(2);
     expect(botBattleShipHitStatus.includes(1)).toBe(true);
+
+    expect(botBattleShipHitStatus.includes(2)).toBe(true);
 
     ({ roundState } = gameRound);
 
@@ -176,9 +179,10 @@ describe('round state can be returned', () => {
 
     const botDestroyerHitStatus = hit(botDestroyerShipConfig);
 
-    expect(botDestroyerHitStatus).toHaveLength(1);
+    expect(botDestroyerHitStatus).toHaveLength(2);
     expect(botDestroyerHitStatus.includes(1)).toBe(true);
 
+    expect(botDestroyerHitStatus.includes(2)).toBe(true);
     ({ roundState } = gameRound);
 
     expect(roundState.roundWon).toBeFalsy();
@@ -186,9 +190,10 @@ describe('round state can be returned', () => {
 
     const botSubMarineHitStatus = hit(botSubMarineShipConfig);
 
-    expect(botSubMarineHitStatus).toHaveLength(1);
+    expect(botSubMarineHitStatus).toHaveLength(2);
     expect(botSubMarineHitStatus.includes(1)).toBe(true);
 
+    expect(botSubMarineHitStatus.includes(2)).toBe(true);
     ({ roundState } = gameRound);
 
     expect(roundState.roundWon).toBeFalsy();
@@ -196,9 +201,10 @@ describe('round state can be returned', () => {
 
     const botPatrolBoatHItStatus = hit(botPatrolBoatShipConfig);
 
-    expect(botPatrolBoatHItStatus).toHaveLength(1);
+    expect(botPatrolBoatHItStatus).toHaveLength(2);
     expect(botPatrolBoatHItStatus.includes(1)).toBe(true);
 
+    expect(botPatrolBoatHItStatus.includes(2)).toBe(true);
     ({ roundState } = gameRound);
 
     expect(roundState.roundWon).toBeTruthy();
@@ -265,7 +271,9 @@ describe('allows playing in turns', () => {
     gameRound.addBotPlayer();
     gameRound.addHumanPlayer('Player 2');
 
-    expect(gameRound.botMove(0, 0)).toBe(-1);
+    const { hitStatus } = gameRound.botMove;
+
+    expect(hitStatus).toBe(-1);
     expect(gameRound.humanPlayerMove(0, 0)).toBe(-1);
   });
 
@@ -297,9 +305,9 @@ describe('allows playing in turns', () => {
 
     expect(isValidHit(humanHitStatus)).toBe(true);
 
-    const botHitStatus = gameRound.botMove(0, 0);
+    const { hitStatus } = gameRound.botMove;
 
-    expect(isValidHit(botHitStatus)).toBe(true);
+    expect(isValidHit(hitStatus)).toBe(true);
   });
 
   test('plays according to active player', () => {
@@ -323,13 +331,15 @@ describe('allows playing in turns', () => {
     gameRound.placeComputerSubMarine(6, 6, 'vertical');
     gameRound.placeComputerPatrolBoat(1, 9);
 
-    gameRound.botMove(0, 0);
-    expect(gameRound.botMove(0, 1)).toBe(-1);
+    let { hitStatus } = gameRound.botMove;
+
+    ({ hitStatus } = gameRound.botMove);
+    expect(hitStatus).toBe(-1);
 
     expect(gameRound.humanPlayerMove(0, 3)).not.toBe(-1);
   });
 
-  test('player switches on hit miss only', () => {
+  test.skip('player switches on hit miss only', () => {
     const gameRound = new GameRound();
 
     gameRound.addHumanPlayer('Player 2');

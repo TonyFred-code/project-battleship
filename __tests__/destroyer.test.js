@@ -25,8 +25,8 @@ test('is sunk in 3 hits', () => {
 
 test('denys hits after being sunk', () => {
   const destroyer = new Destroyer();
-  expect(destroyer.hit()).toBe(true);
-  expect(destroyer.hit()).toBe(true);
-  expect(destroyer.hit()).toBe(true);
-  expect(destroyer.hit()).toBe(false);
+  expect(destroyer.hit()).toBe(1);
+  expect(destroyer.hit()).toBe(1);
+  expect(destroyer.hit()).toBe(2);
+  expect(destroyer.hit()).toBe(-1);
 });

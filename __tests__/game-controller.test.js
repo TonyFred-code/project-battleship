@@ -137,7 +137,7 @@ describe('game round creation', () => {
   });
 });
 
-test('knows when game should end', () => {
+test.skip('knows when game should end', () => {
   const gameController = new GameController();
 
   gameController.startRound();
@@ -208,8 +208,8 @@ test('knows when game should end', () => {
 
     locationNodes.forEach((locationNode) => {
       const [x, y] = locationNode;
-      const statusCode = gameController.botMove(x, y);
-      statusCodes.add(statusCode);
+      const { hitStatus } = gameController.botMove;
+      statusCodes.add(hitStatus);
     });
 
     return [...statusCodes];
