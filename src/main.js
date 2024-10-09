@@ -6,11 +6,11 @@ import createSettingsPage from './dom_module/settings-page.js';
 import createRoundLossPage from './dom_module/round-loss-modal.js';
 import createRoundWinPage from './dom_module/round-win-modal.js';
 import createSettingsModal from './dom_module/settings-modal.js';
+import createTutorialPage from './dom_module/tutorial-page.js';
 
 import GameController from './game-controller.js';
 
 import './style.css';
-import createTutorialPage from './dom_module/tutorial-page.js';
 
 const GAME_CONTROLLER = new GameController();
 const GAME_PLAY_SETTINGS = {
@@ -363,28 +363,23 @@ function gamePlayScreenEventListeners(gamePlayScreen, gameController_) {
       return;
     }
 
-    let hitStatus = Number(target.dataset.hitStatus);
+    if (Number(target.dataset.hitStatus) >= 0) return;
 
-    if (hitStatus >= 0) return;
-
-    ({ isHuman, isBot } = gameController_.getActivePlayer());
+    // ({ isHuman, isBot } = gameController_.getActivePlayer());
 
     if (isHuman && botMoveStore.length === 0) {
       const { x, y } = target.dataset;
-      const moveHitStatus = gameController_.humanPlayerMove(
-        Number(x),
-        Number(y),
-      );
+      const hitStatus = gameController_.humanPlayerMove(Number(x), Number(y));
 
-      console.log(moveHitStatus);
+      console.log(hitStatus);
 
       const boardItem = botPlayerStructure.boardNodesContainer.querySelector(
         `.board-item[data-x='${x}'][data-y='${y}']`,
       );
 
-      boardItem.dataset.hitStatus = moveHitStatus;
+      boardItem.dataset.hitStatus = hitStatus;
 
-      if (moveHitStatus === 2) {
+      if (hitStatus === 2) {
         processHumanShipSink(gameController_, botPlayerStructure);
         console.log('ship sunk');
       }
@@ -400,26 +395,23 @@ function gamePlayScreenEventListeners(gamePlayScreen, gameController_) {
       });
 
       do {
+        const { move, hitStatus } = gameController_.computerPlayerMove;
+        // const manualMoveX = Number(prompt('Choose x: '));
+        // const manualMoveY = Number(prompt('Choose Y: '));
+
+        // const status = gameController_.botMove(manualMoveX, manualMoveY);
+        // const move = [manualMoveX, manualMoveY];
+        turnMarkerEl.dataset.turnIndicator = 'bot';
+        turnMarkerEl2.dataset.turnIndicator = 'bot';
+
+        console.log('bot thinking');
+        botMoveStore.push({ move, hitStatus });
+
         ({ isBot, isHuman } = gameController_.getActivePlayer());
-
-        if (isBot) {
-          const { move, status } = gameController_.computerPlayerMove;
-          // const manualMoveX = Number(prompt('Choose x: '));
-          // const manualMoveY = Number(prompt('Choose Y: '));
-
-          // const status = gameController_.botMove(manualMoveX, manualMoveY);
-          // const move = [manualMoveX, manualMoveY];
-          turnMarkerEl.dataset.turnIndicator = 'bot';
-          turnMarkerEl2.dataset.turnIndicator = 'bot';
-
-          console.log('bot thinking');
-          botMoveStore.push({ move, status });
-        }
       } while (isBot);
 
       botMoveStore.forEach((store, index) => {
-        ({ hitStatus } = store);
-        const { move } = store;
+        const { move, hitStatus } = store;
         setTimeout(
           () => {
             console.log(move, hitStatus);

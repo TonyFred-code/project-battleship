@@ -169,7 +169,7 @@ export default class GameController {
   botMove(x, y) {
     if (!this.#GAME_START) return false;
 
-    const status = this.#GAME_ROUND.botMove(x, y);
+    const hitStatus = this.#GAME_ROUND.botMove(x, y);
 
     const { roundWon } = this.roundState;
 
@@ -177,13 +177,13 @@ export default class GameController {
       this.endRound();
     }
 
-    return status;
+    return hitStatus;
   }
 
   get computerPlayerMove() {
     if (!this.#GAME_START) return false;
 
-    const { move, status } = this.#GAME_ROUND.botMove;
+    const { move, hitStatus } = this.#GAME_ROUND.botMove;
 
     const { roundWon } = this.roundState;
 
@@ -191,13 +191,13 @@ export default class GameController {
       this.endRound();
     }
 
-    return { status, move };
+    return { hitStatus, move };
   }
 
   humanPlayerMove(x, y) {
     if (!this.#GAME_START) return false;
 
-    const status = this.#GAME_ROUND.humanPlayerMove(x, y);
+    const hitStatus = this.#GAME_ROUND.humanPlayerMove(x, y);
 
     const { roundWon } = this.roundState;
 
@@ -205,7 +205,7 @@ export default class GameController {
       this.endRound();
     }
 
-    return status;
+    return hitStatus;
   }
 
   endRound() {
