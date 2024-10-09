@@ -781,7 +781,7 @@ describe('auto ship placement', () => {
           formattedShipHead,
           DESTROYER_SHIP_PLACEMENTS,
         ),
-      );
+      ).toBe(true);
 
       expect(placeAttribute).toHaveProperty('occupyingLoc');
 
