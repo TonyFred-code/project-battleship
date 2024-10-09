@@ -49,3 +49,48 @@ describe('Node class', () => {
     expect(node.isNeighboringOccupied).toBeTruthy();
   });
 });
+
+describe('hit method', () => {
+  test('should know when occupant is hit', () => {
+    const node = new Node(0, 0);
+    const ship = new Ship(2);
+
+    node.occupy(ship);
+    expect(node.hit()).toBe(1);
+  });
+
+  test('should know when occupant is sunk', () => {
+    const node = new Node(0, 0);
+    const node1 = new Node(0, 1);
+
+    const ship = new Ship(2);
+
+    node.occupy(ship);
+    node1.occupy(ship);
+    expect(node.hit()).toBe(1);
+    expect(node1.hit()).toBe(2);
+  });
+
+  test('should know when node is neighbor to sunk', () => {
+    const node = new Node(0, 0);
+    const node2 = new Node(0, 1);
+    const ship = new Ship(2);
+    const neighbor = new Node(1, 2);
+
+    node.addNeighbor(neighbor);
+    node.addNeighbor(node2);
+
+    node2.addNeighbor(neighbor);
+    node2.addNeighbor(node);
+
+    neighbor.addNeighbor(node);
+    neighbor.addNeighbor(node2);
+
+    node.occupy(ship);
+    node2.occupy(ship);
+    expect(node.hit()).toBe(1);
+    expect(node2.hit()).toBe(2);
+
+    expect(neighbor.hit()).toBe(3);
+  });
+});
