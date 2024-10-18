@@ -12,12 +12,13 @@ export default class Node {
 
   #isHit = false;
 
+  #neighbors = [];
+
   constructor(x, y) {
     if (x < 0 || y < 0) {
       throw new Error('Coordinates must be non-negative integers.');
     }
     this.address = [x, y];
-    this.neighbors = [];
   }
 
   /**
@@ -26,10 +27,18 @@ export default class Node {
    */
   addNeighbor(neighbor) {
     if (neighbor instanceof Node) {
-      this.neighbors.push(neighbor);
+      this.#neighbors.push(neighbor);
       return true;
     }
+
     return false;
+  }
+
+  /**
+   * Returns neighbors attached to node.
+   */
+  get neighbors() {
+    return this.#neighbors;
   }
 
   /**
@@ -51,12 +60,21 @@ export default class Node {
    * Sets the node as occupied.
    */
   occupy(ship) {
+    if (this.isOccupied) return false;
+
     if (ship instanceof Ship) {
       this.#occupant = ship;
       return true;
     }
 
     return false;
+  }
+
+  /**
+   * Returns the current occupant
+   */
+  get occupant() {
+    return this.#occupant;
   }
 
   get isOccupied() {
