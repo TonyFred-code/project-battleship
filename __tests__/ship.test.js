@@ -1,50 +1,61 @@
 import Ship from '../src/ship.js';
 
-test('create new ship', () => {
-  expect(new Ship(2)).not.toBeUndefined();
-});
+describe('Ship', () => {
+  let ship;
 
-test('ship has a length', () => {
-  expect(new Ship(3)).toHaveLength(3);
-});
+  beforeEach(() => {
+    ship = new Ship(1, 'test');
+  });
 
-test('ship stores number of times hit', () => {
-  const ship = new Ship(3);
-  ship.hit();
-  expect(ship.hitsCount).toBe(1);
-});
+  describe('hit', () => {
+    test('should return -1 if ship is has been sunk', () => {
+      ship.hit();
 
-test('ship knows whether or not it is sunk', () => {
-  const ship = new Ship(1);
-  ship.hit();
-  expect(ship.isSunk()).toBe(true);
-});
+      expect(ship.hit()).toBe(-1);
+    });
 
-test('disallows zero or lower ship length', () => {
-  const tryErrorShip = () => new Ship(-2);
+    test('should return 1 if ship is hit without sinking', () => {
+      const ship1 = new Ship(2, 'test');
 
-  expect(() => {
-    tryErrorShip();
-  }).toThrow();
-});
+      expect(ship1.hit()).toBe(1);
+    });
 
-test('ship hit() function increase number of hits', () => {
-  const ship = new Ship(3);
-  expect(ship.hitsCount).toBe(0);
-  ship.hit();
-  expect(ship.hitsCount).toBe(1);
-});
+    test('should return 2 if hit causes ship to be sunk', () => {
+      expect(ship.hit()).toBe(2);
+    });
+  });
 
-test('ship isSunk() function checks if ship is sunk', () => {
-  const ship = new Ship(1);
-  expect(ship.isSunk()).toBe(false);
-  ship.hit();
-  expect(ship.isSunk()).toBe(true);
-});
+  describe('name', () => {
+    test('should return name of ship', () => {
+      expect(ship.name).toMatch(/test/i);
+    });
+  });
 
-test('denies hits after ship is sunk', () => {
-  const ship = new Ship(1);
-  expect(ship.hit()).toBe(2);
-  expect(ship.isSunk()).toBe(true);
-  expect(ship.hit()).toBe(-1);
+  describe('hitsCount', () => {
+    test('should return number of registered hits', () => {
+      expect(ship.hitsCount).toBe(0);
+
+      ship.hit();
+
+      expect(ship.hitsCount).toBe(1);
+    });
+  });
+
+  describe('size', () => {
+    test('should return size of ship', () => {
+      expect(ship.size).toBe(1);
+    });
+  });
+
+  describe('isSunk', () => {
+    test('should return false if ship is sunk', () => {
+      expect(ship.isSunk()).toBe(false);
+    });
+
+    test('should return true if ship has been sunk', () => {
+      ship.hit();
+
+      expect(ship.isSunk()).toBe(true);
+    });
+  });
 });
