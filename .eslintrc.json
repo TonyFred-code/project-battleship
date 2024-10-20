@@ -11,18 +11,8 @@
     "ecmaVersion": "latest"
   },
   "rules": {
-    "no-console": "off",
-    "import/extensions": [
-      "error",
-      "always",
-      { "js": "always", "mjs": "always" }
-    ],
-    "prettier/prettier": [
-      "error",
-      {
-        "singleQuote": true
-      }
-    ]
+    "eslint-plugin-import/prefer-default-export": "off",
+    "prettier/prettier": ["error"]
   },
   "ignorePatterns": ["dist/"],
   "overrides": [
