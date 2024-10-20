@@ -3,7 +3,7 @@
     "browser": true,
     "commonjs": true,
     "es2021": true,
-    "jest": true
+    "jest/globals": true
   },
   "extends": ["airbnb-base", "prettier"],
   "plugins": ["prettier", "jest"],
@@ -22,11 +22,21 @@
       {
         "singleQuote": true
       }
-    ],
-    "jest/no-disabled-tests": "warn",
-    "jest/no-focused-tests": "error",
-    "jest/no-identical-title": "error",
-    "jest/prefer-to-have-length": "off",
-    "jest/valid-expect": "error"
-  }
+    ]
+  },
+  "ignorePatterns": ["dist/"],
+  "overrides": [
+    {
+      "files": ["__tests__/**"],
+      "plugins": ["jest"],
+      "extends": ["plugin:jest/recommended"],
+      "rules": {
+        "jest/no-disabled-tests": "warn",
+        "jest/no-focused-tests": "error",
+        "jest/no-identical-title": "error",
+        "jest/prefer-to-have-length": "off",
+        "jest/valid-expect": "error"
+      }
+    }
+  ]
 }
