@@ -7,6 +7,43 @@ describe('Ship', () => {
     ship = new Ship(2, 'test');
   });
 
+  describe('isValidLength', () => {
+    test('should return false if given non-numeric length', () => {
+      expect(Ship.isValidLength('s')).toBe(false);
+    });
+
+    test('should return false if given negative number', () => {
+      expect(Ship.isValidLength(-1)).toBe(false);
+    });
+
+    test('should return false if given a value less than 1', () => {
+      expect(Ship.isValidLength(0)).toBe(false);
+    });
+
+    test('should return true if given a number greater than 1', () => {
+      expect(Ship.isValidLength(2)).toBe(true);
+    });
+  });
+
+  describe('isValidOrientation', () => {
+    test('should return true if given invalid orientation', () => {
+      expect(Ship.isValidOrientation('invalid')).toBe(false);
+    });
+
+    test('should return false if given non string orientation', () => {
+      expect(Ship.isValidOrientation({})).toBe(false);
+    });
+
+    test('should return false if given empty string as orientation', () => {
+      expect(Ship.isValidOrientation('')).toBe(false);
+    });
+
+    test('should return true if given valid orientation', () => {
+      expect(Ship.isValidOrientation('horizontal')).toBe(true);
+      expect(Ship.isValidOrientation('vertical')).toBe(true);
+    });
+  });
+
   describe('hit', () => {
     test('should return -1 if ship has been sunk', () => {
       ship.hit();
@@ -127,6 +164,50 @@ describe('Ship', () => {
       ship.removeAssignedPlaceOrigin();
 
       expect(ship.assignedPlaceOrigin).toEqual({ x: null, y: null });
+    });
+  });
+
+  describe('assignOrientation', () => {
+    test('should throw error if given invalid orientation', () => {
+      expect(() => {
+        ship.assignOrientation('INVALID');
+      }).toThrow(/invalid/i);
+    });
+
+    test('should throw error if given empty string or non-string orientation', () => {
+      expect(() => {
+        ship.assignOrientation(0);
+      }).toThrow(/invalid/i);
+
+      expect(() => {
+        ship.assignOrientation('');
+      }).toThrow(/invalid/i);
+    });
+
+    test('should assign orientation if given valid orientation', () => {
+      ship.assignOrientation('horizontal');
+
+      expect(ship.assignedOrientation).toMatch(/horizontal/i);
+
+      ship.assignOrientation('vertical');
+
+      expect(ship.assignedOrientation).toMatch(/vertical/i);
+    });
+  });
+
+  describe('assignedOrientation', () => {
+    test('should return assigned orientation', () => {
+      ship.assignOrientation('horizontal');
+
+      expect(ship.assignedOrientation).toMatch(/horizontal/i);
+
+      ship.assignOrientation('vertical');
+
+      expect(ship.assignedOrientation).toMatch(/vertical/i);
+    });
+
+    test('should return empty string if orientation has not been assigned', () => {
+      expect(ship.assignedOrientation).toBe('');
     });
   });
 });
