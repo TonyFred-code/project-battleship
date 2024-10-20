@@ -1,11 +1,11 @@
 export default class Ship {
-  #isSunk = false;
-
   #size;
 
   #hitsCount = 0;
 
   #name = '';
+
+  #orientation = '';
 
   #placeHead = {
     x: null,
@@ -14,6 +14,15 @@ export default class Ship {
 
   static isValidLength(length) {
     return length > 0;
+  }
+
+  static isValidOrientation(orientation) {
+    const regExp = /^(horizontal|vertical)$/i;
+    return (
+      typeof orientation === 'string' &&
+      orientation.trim() !== '' &&
+      regExp.test(orientation)
+    );
   }
 
   constructor(length, name) {
@@ -36,7 +45,6 @@ export default class Ship {
 
     this.#hitsCount += 1;
     if (this.isSunk()) {
-      this.#isSunk = true;
       return 2;
     }
 
@@ -102,5 +110,24 @@ export default class Ship {
       x,
       y,
     };
+  }
+
+  /**
+   * Assigns orientation to ship (HORIZONTAL/VERTICAL)
+   * @param {string} orientation - The orientation ship is to take
+   * @throws {Error} will throw an exception if orientation is invalid
+   */
+  assignOrientation(orientation) {
+    if (!Ship.isValidOrientation(orientation)) {
+      throw new Error(
+        'Invalid Orientation: Expects valid string with value (HORIZONTAL/VERTICAL)',
+      );
+    }
+
+    this.#orientation = orientation.toUpperCase();
+  }
+
+  get assignedOrientation() {
+    return this.#orientation;
   }
 }
