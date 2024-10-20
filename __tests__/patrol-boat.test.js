@@ -8,6 +8,6 @@ describe('PatrolBoat class', () => {
   });
   test('should create a patrol boat with correct size and name', () => {
     expect(patrolBoat.size).toBe(2);
-    expect(patrolBoat.name).toBe('patrol-boat');
+    expect(patrolBoat.name).toBe('patrol_boat');
   });
 });
