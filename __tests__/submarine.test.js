@@ -1,10 +1,10 @@
-import SubMarine from '../src/submarine.js';
+import Submarine from '../src/submarine.js';
 
-describe('SubMarine class', () => {
+describe('Submarine class', () => {
   let submarine;
 
   beforeEach(() => {
-    submarine = new SubMarine();
+    submarine = new Submarine();
   });
 
   test('should create a submarine class with correct size and name', () => {
