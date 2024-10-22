@@ -12,7 +12,10 @@
   },
   "rules": {
     "eslint-plugin-import/prefer-default-export": "off",
-    "prettier/prettier": ["error"]
+    "prettier/prettier": ["error"],
+    "eslint-plugin-import/extensions": {
+      "js": "always"
+    }
   },
   "ignorePatterns": ["dist/"],
   "overrides": [
