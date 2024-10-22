@@ -98,6 +98,35 @@ describe('Ship', () => {
     });
   });
 
+  describe('shipInfo', () => {
+    test('should return specifications regarding ship', () => {
+      const { shipInfo } = ship;
+
+      expect(shipInfo).toHaveProperty('hasPlaceOrigin', false);
+      expect(shipInfo).toHaveProperty('orientation', '');
+      expect(shipInfo).toHaveProperty('size', 2);
+      expect(shipInfo).toHaveProperty('name');
+
+      const { name } = shipInfo;
+
+      expect(name).toMatch(/test/i);
+    });
+
+    test('should reflect changes to carrier', () => {
+      ship.assignOrientation('horizontal');
+      ship.assignPlaceOrigin(0, 0);
+
+      const { shipInfo } = ship;
+
+      expect(shipInfo).toHaveProperty('hasPlaceOrigin', true);
+      expect(shipInfo).toHaveProperty('orientation');
+
+      const { orientation } = shipInfo;
+
+      expect(orientation).toMatch(/horizontal/i);
+    });
+  });
+
   describe('assignPlaceOrigin', () => {
     test('should throw error if x coordinate is negative', () => {
       expect(() => {
@@ -207,6 +236,21 @@ describe('Ship', () => {
     });
 
     test('should return empty string if orientation has not been assigned', () => {
+      expect(ship.assignedOrientation).toBe('');
+    });
+  });
+
+  describe('removeAssignedOrientation', () => {
+    test('should remove assigned orientation', () => {
+      ship.assignOrientation('horizontal');
+      ship.removeAssignedOrientation();
+
+      expect(ship.assignedOrientation).toBe('');
+    });
+
+    test('should work fine if ship has no orientation', () => {
+      ship.removeAssignedOrientation();
+
       expect(ship.assignedOrientation).toBe('');
     });
   });
