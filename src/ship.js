@@ -63,6 +63,19 @@ export default class Ship {
     return this.#size;
   }
 
+  get shipInfo() {
+    const hasPlaceOrigin = this.#HasPlaceOrigin();
+    const orientation = this.assignedOrientation;
+    const { size, name } = this;
+
+    return {
+      hasPlaceOrigin,
+      orientation,
+      size,
+      name,
+    };
+  }
+
   isSunk() {
     return this.#hitsCount === this.#size;
   }
@@ -125,6 +138,10 @@ export default class Ship {
     }
 
     this.#orientation = orientation.toUpperCase();
+  }
+
+  removeAssignedOrientation() {
+    this.#orientation = '';
   }
 
   get assignedOrientation() {
