@@ -1642,6 +1642,66 @@ describe('GameBoard class', () => {
       expect(orientation).toMatch(/vertical/i);
     });
   });
+
+  describe('autoPlaceAllShips', () => {
+    test('should auto place all ships on the board using the actual getRndElement', () => {
+      // Use the real getRndElement function for this test
+      const actualGetRndElement = jest.requireActual(
+        '../src/helper_module/rnd-array-element.js',
+      ).default;
+
+      // Temporarily use the actual implementation for this test
+      getRndElement.mockImplementation(actualGetRndElement);
+
+      gameBoard.autoPlaceAllShips();
+
+      expect(
+        gameBoard.carrierInfo.isOnBoard &&
+          gameBoard.battleShipInfo.isOnBoard &&
+          gameBoard.destroyerInfo.isOnBoard &&
+          gameBoard.submarineInfo.isOnBoard &&
+          gameBoard.patrolBoatInfo.isOnBoard,
+      ).toBe(true);
+    });
+  });
+
+  describe('receiveAttack', () => {
+    beforeEach(() => {
+      // Use the real getRndElement function for this test
+      const actualGetRndElement = jest.requireActual(
+        '../src/helper_module/rnd-array-element.js',
+      ).default;
+
+      // Temporarily use the actual implementation for this test
+      getRndElement.mockImplementation(actualGetRndElement);
+    });
+
+    test('should return -1 when coordinates are invalid', () => {
+      gameBoard.autoPlaceAllShips();
+
+      expect(gameBoard.receiveAttack(-1, 5)).toBe(-1);
+      expect(gameBoard.receiveAttack(10, 10)).toBe(-1); // Assume 10 is out of bounds
+    });
+
+    test('should return -1 when not all ships are placed', () => {
+      expect(gameBoard.receiveAttack(3, 4)).toBe(-1);
+    });
+
+    test('should not allow multiple hits on the same node', () => {
+      gameBoard.autoPlaceAllShips();
+
+      gameBoard.receiveAttack(3, 4);
+      expect(gameBoard.receiveAttack(3, 4)).toBe(-1); // Second hit on same node
+    });
+
+    test('should handle edge coordinates correctly', () => {
+      const [maxX, maxY] = GameBoard.BOARD_X_Y;
+      gameBoard.autoPlaceAllShips();
+      // Test for corner coordinates
+      gameBoard.receiveAttack(0, 0);
+      expect(gameBoard.receiveAttack(maxX - 1, maxY - 1)).toBeGreaterThan(-1); // Bottom-right corner
+    });
+  });
 });
 
 // test('can create board', () => {
