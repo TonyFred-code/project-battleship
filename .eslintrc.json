@@ -6,16 +6,23 @@
     "jest/globals": true
   },
   "extends": ["airbnb-base", "prettier"],
-  "plugins": ["prettier", "jest"],
+  "plugins": ["prettier", "jest", "import"],
   "parserOptions": {
     "ecmaVersion": "latest"
   },
   "rules": {
     "eslint-plugin-import/prefer-default-export": "off",
     "prettier/prettier": ["error"],
-    "eslint-plugin-import/extensions": {
-      "js": "always"
-    }
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "always",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+    ]
   },
   "ignorePatterns": ["dist/"],
   "overrides": [
@@ -28,7 +35,8 @@
         "jest/no-focused-tests": "error",
         "jest/no-identical-title": "error",
         "jest/prefer-to-have-length": "off",
-        "jest/valid-expect": "error"
+        "jest/valid-expect": "error",
+        "jest/consistent-test-it": ["error", { "fn": "test" }]
       }
     }
   ]
