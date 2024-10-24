@@ -12,7 +12,8 @@
     "babel": "babel src -d dist",
     "test": "jest",
     "watch-tests": "jest --watch --onlyChanged __tests__",
-    "format": "prettier . --write"
+    "format": "prettier . --write",
+    "lint": "eslint . --fix"
   },
   "keywords": [],
   "author": "Tony Fred",
