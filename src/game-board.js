@@ -154,6 +154,12 @@ export default class GameBoard {
     return toBeOccupied;
   }
 
+  #getNode(x, y) {
+    const [BOARD_X] = GameBoard.BOARD_X_Y;
+
+    return this.#NODES[transform(x, y, BOARD_X)];
+  }
+
   #getCanReceiveShipNodes(SHIP, orientation) {
     if (!Ship.isValidOrientation(orientation)) return [];
 
@@ -290,6 +296,16 @@ export default class GameBoard {
     };
   }
 
+  #allShipsOnBoard() {
+    return (
+      this.carrierInfo.isOnBoard &&
+      this.battleShipInfo.isOnBoard &&
+      this.destroyerInfo.isOnBoard &&
+      this.submarineInfo.isOnBoard &&
+      this.patrolBoatInfo.isOnBoard
+    );
+  }
+
   get boardNodes() {
     return [...this.#NODES];
   }
@@ -394,6 +410,16 @@ export default class GameBoard {
     this.autoPlacePatrolBoat();
 
     this.autoPlaceSubmarine();
+  }
+
+  receiveAttack(x, y) {
+    if (!this.#allShipsOnBoard() || !GameBoard.isValidBoardCoordinate(x, y)) {
+      return -1;
+    }
+
+    const node = this.#getNode(x, y);
+
+    return node.hit();
   }
 }
 // export default class GameBoard {
