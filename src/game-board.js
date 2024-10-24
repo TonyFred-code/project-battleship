@@ -25,11 +25,9 @@ export default class GameBoard {
    * Allows access to an array of Nodes
    */
 
-  #BOARD_SIZE;
+  static BOARD_SIZE = BOARD_AREA;
 
-  #BOARD_X_SIZE;
-
-  #BOARD_Y_SIZE;
+  static BOARD_X_Y = [BOARD_X_SIZE, BOARD_Y_SIZE];
 
   #NODES = [];
 
@@ -44,14 +42,11 @@ export default class GameBoard {
   #PATROL_BOAT = null;
 
   constructor() {
-    this.#BOARD_SIZE = BOARD_AREA;
-    this.#BOARD_X_SIZE = BOARD_X_SIZE;
-    this.#BOARD_Y_SIZE = BOARD_Y_SIZE;
-    this.#InitializeNodes();
-    this.#InitializeShips();
+    this.#initializeNodes();
+    this.#initializeShips();
   }
 
-  #InitializeShips() {
+  #initializeShips() {
     this.#CARRIER = new Carrier();
     this.#BATTLESHIP = new BattleShip();
     this.#DESTROYER = new Destroyer();
@@ -63,10 +58,11 @@ export default class GameBoard {
    * Initializes array of node
    * node is a Node Class
    */
-  #InitializeNodes() {
-    for (let i = 0; i < this.#BOARD_SIZE; i += 1) {
-      const [x, y] = reverseTransform(i, this.#BOARD_X_SIZE);
-      const index = transform(x, y, this.#BOARD_X_SIZE);
+  #initializeNodes() {
+    for (let i = 0; i < GameBoard.BOARD_SIZE; i += 1) {
+      const [BOARD_X] = GameBoard.BOARD_X_Y;
+      const [x, y] = reverseTransform(i, BOARD_X);
+      const index = transform(x, y, BOARD_X);
       const node = new Node(x, y);
 
       this.#NODES[index] = node;
@@ -94,7 +90,7 @@ export default class GameBoard {
 
     neighbors.forEach((neighbor) => {
       const [nx, ny] = neighbor;
-      if (this.#isValidBoardCoordinate(nx, ny)) {
+      if (GameBoard.isValidBoardCoordinate(nx, ny)) {
         const index = transform(nx, ny);
         const nodeNeighbor = this.#NODES[index];
         node.addNeighbor(nodeNeighbor);
@@ -102,18 +98,34 @@ export default class GameBoard {
     });
   }
 
-  #isValidBoardCoordinate(x, y) {
-    if (!isPositiveNumber(x, true) || !isPositiveNumber(y, true)) return false;
+  static formatShipInfo(SHIP) {
+    if (!(SHIP instanceof Ship)) return null;
 
-    if (x >= this.#BOARD_X_SIZE || y >= this.#BOARD_Y_SIZE) return false;
+    const { hasPlaceOrigin, orientation, size, name } = SHIP.shipInfo;
 
-    return true;
+    const { x, y } = SHIP.assignedPlaceOrigin;
+
+    return {
+      isOnBoard: hasPlaceOrigin,
+      orientation,
+      placeHead: [x, y],
+      size,
+      name,
+    };
   }
 
-  #getToBeOccupied(size, x, y, orientation) {
+  static isValidBoardCoordinate(x, y) {
+    if (!isPositiveNumber(x, true) || !isPositiveNumber(y, true)) return false;
+
+    const [boardXSize, boardYSize] = GameBoard.BOARD_X_Y;
+
+    return x < boardXSize && y < boardYSize;
+  }
+
+  static getToBeOccupied(size, x, y, orientation) {
     if (
       !Ship.isValidOrientation(orientation) ||
-      !this.#isValidBoardCoordinate(x, y)
+      !GameBoard.isValidBoardCoordinate(x, y)
     ) {
       return [];
     }
@@ -126,14 +138,14 @@ export default class GameBoard {
     if (verticalOrientationRegExp.test(orientation)) {
       for (let i = 0; i < size - 1; i += 1) {
         const occupied = y + i + 1;
-        if (this.#isValidBoardCoordinate(x, occupied)) {
+        if (GameBoard.isValidBoardCoordinate(x, occupied)) {
           toBeOccupied.push([x, occupied]);
         }
       }
     } else if (horizontalOrientationRegExp.test(orientation)) {
       for (let i = 0; i < size - 1; i += 1) {
         const occupied = x + i + 1;
-        if (this.#isValidBoardCoordinate(occupied, y)) {
+        if (GameBoard.isValidBoardCoordinate(occupied, y)) {
           toBeOccupied.push([occupied, y]);
         }
       }
@@ -149,13 +161,13 @@ export default class GameBoard {
       (node) => !node.isHit && !node.isOccupied && !node.isNeighboringOccupied,
     );
 
-    const { size } = this.#getShipInfo(SHIP);
+    const { size } = GameBoard.formatShipInfo(SHIP);
     const canPlace = [];
 
     availableNodes.forEach((node) => {
       const [x, y] = node.address;
 
-      const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
+      const toBeOccupied = GameBoard.getToBeOccupied(size, x, y, orientation);
 
       if (
         toBeOccupied.length === size &&
@@ -168,11 +180,13 @@ export default class GameBoard {
     return canPlace;
   }
 
-  #getCanReceiveCarrierNodes(orientation) {
-    return this.#getCanReceiveShipNodes(this.#CARRIER, orientation);
-  }
+  #availableForShip(SHIP) {
+    const horizontalPlacements = this.#getCanReceiveShipNodes(
+      SHIP,
+      'horizontal',
+    );
+    const verticalPlacements = this.#getCanReceiveShipNodes(SHIP, 'vertical');
 
-  #formatCanReceiveShip(verticalPlacements, horizontalPlacements) {
     const available = [];
 
     horizontalPlacements.forEach((loc) => {
@@ -192,31 +206,6 @@ export default class GameBoard {
     return available;
   }
 
-  #availableForCarrier() {
-    const horizontalPlaceAvailable =
-      this.#getCanReceiveCarrierNodes('horizontal');
-    const verticalPlaceAvailable = this.#getCanReceiveCarrierNodes('vertical');
-
-    return this.#formatCanReceiveShip(
-      verticalPlaceAvailable,
-      horizontalPlaceAvailable,
-    );
-  }
-
-  #getShipInfo(SHIP) {
-    const { hasPlaceOrigin, orientation, size, name } = SHIP.shipInfo;
-
-    const { x, y } = SHIP.assignedPlaceOrigin;
-
-    return {
-      isOnBoard: hasPlaceOrigin,
-      orientation,
-      placeHead: [x, y],
-      size,
-      name,
-    };
-  }
-
   #canReceiveShip(SHIP, nodeLocations) {
     const { size } = SHIP.shipInfo;
 
@@ -225,7 +214,9 @@ export default class GameBoard {
     return nodeLocations.every((nodeLocation) => {
       const [x, y] = nodeLocation;
 
-      const node = this.#NODES[transform(x, y, this.#BOARD_X_SIZE)];
+      const [BOARD_X] = GameBoard.BOARD_X_Y;
+
+      const node = this.#NODES[transform(x, y, BOARD_X)];
 
       return !node.isHit && !node.isNeighboringOccupied && !node.isOccupied;
     });
@@ -234,23 +225,24 @@ export default class GameBoard {
   #placeShip(x, y, orientation, SHIP) {
     if (
       !Ship.isValidOrientation(orientation) ||
-      !this.#isValidBoardCoordinate(x, y)
+      !GameBoard.isValidBoardCoordinate(x, y)
     ) {
       return false;
     }
 
-    const { size, isOnBoard } = this.#getShipInfo(SHIP);
+    const { size, isOnBoard } = GameBoard.formatShipInfo(SHIP);
 
     if (isOnBoard) return false;
 
-    const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
+    const toBeOccupied = GameBoard.getToBeOccupied(size, x, y, orientation);
 
     if (!this.#canReceiveShip(SHIP, toBeOccupied)) return false;
 
     toBeOccupied.forEach((nodeLocation) => {
       const [nx, ny] = nodeLocation;
+      const [BOARD_X] = GameBoard.BOARD_X_Y;
 
-      const node = this.#NODES[transform(nx, ny, this.#BOARD_X_SIZE)];
+      const node = this.#NODES[transform(nx, ny, BOARD_X)];
 
       node.occupy(SHIP);
     });
@@ -262,16 +254,16 @@ export default class GameBoard {
   }
 
   #removeShip(SHIP) {
-    const { size, orientation, placeHead } = this.#getShipInfo(SHIP);
+    const { size, orientation, placeHead } = GameBoard.formatShipInfo(SHIP);
     const [x, y] = placeHead;
 
-    const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
+    const toBeOccupied = GameBoard.getToBeOccupied(size, x, y, orientation);
 
     toBeOccupied.forEach((nodeLocation) => {
       const [nx, ny] = nodeLocation;
+      const [BOARD_X] = GameBoard.BOARD_X_Y;
 
-      const node = this.#NODES[transform(nx, ny, this.#BOARD_X_SIZE)];
-
+      const node = this.#NODES[transform(nx, ny, BOARD_X)];
       node.removeOccupant();
     });
 
@@ -279,12 +271,31 @@ export default class GameBoard {
     SHIP.removeAssignedOrientation();
   }
 
+  #autoPlaceShip(SHIP) {
+    if (GameBoard.formatShipInfo(SHIP).isOnBoard) {
+      this.#removeShip(SHIP);
+    }
+
+    const availableNodes = this.#availableForShip(SHIP);
+
+    const { element } = getRndElement(availableNodes);
+
+    const { loc, orientation } = element;
+    const [x, y] = loc;
+
+    return {
+      orientation,
+      x,
+      y,
+    };
+  }
+
   get boardNodes() {
     return [...this.#NODES];
   }
 
   get carrierInfo() {
-    return this.#getShipInfo(this.#CARRIER);
+    return GameBoard.formatShipInfo(this.#CARRIER);
   }
 
   placeCarrier(x, y, orientation) {
@@ -296,17 +307,13 @@ export default class GameBoard {
   }
 
   autoPlaceCarrier() {
-    const availableNodes = this.#availableForCarrier();
+    const { x, y, orientation } = this.#autoPlaceShip(this.#CARRIER);
 
-    const { element } = getRndElement(availableNodes);
-
-    const { loc, orientation } = element;
-    const [x, y] = loc;
     return this.placeCarrier(x, y, orientation);
   }
 
   get battleShipInfo() {
-    return this.#getShipInfo(this.#BATTLESHIP);
+    return GameBoard.formatShipInfo(this.#BATTLESHIP);
   }
 
   placeBattleShip(x, y, orientation) {
@@ -317,8 +324,14 @@ export default class GameBoard {
     this.#removeShip(this.#BATTLESHIP);
   }
 
+  autoPlaceBattleShip() {
+    const { x, y, orientation } = this.#autoPlaceShip(this.#BATTLESHIP);
+
+    return this.placeBattleShip(x, y, orientation);
+  }
+
   get destroyerInfo() {
-    return this.#getShipInfo(this.#DESTROYER);
+    return GameBoard.formatShipInfo(this.#DESTROYER);
   }
 
   placeDestroyer(x, y, orientation) {
@@ -329,8 +342,14 @@ export default class GameBoard {
     this.#removeShip(this.#DESTROYER);
   }
 
+  autoPlaceDestroyer() {
+    const { x, y, orientation } = this.#autoPlaceShip(this.#DESTROYER);
+
+    return this.placeDestroyer(x, y, orientation);
+  }
+
   get submarineInfo() {
-    return this.#getShipInfo(this.#SUBMARINE);
+    return GameBoard.formatShipInfo(this.#SUBMARINE);
   }
 
   placeSubmarine(x, y, orientation) {
@@ -341,8 +360,14 @@ export default class GameBoard {
     this.#removeShip(this.#SUBMARINE);
   }
 
+  autoPlaceSubmarine() {
+    const { x, y, orientation } = this.#autoPlaceShip(this.#SUBMARINE);
+
+    return this.placeSubmarine(x, y, orientation);
+  }
+
   get patrolBoatInfo() {
-    return this.#getShipInfo(this.#PATROL_BOAT);
+    return GameBoard.formatShipInfo(this.#PATROL_BOAT);
   }
 
   placePatrolBoat(x, y, orientation) {
@@ -351,6 +376,24 @@ export default class GameBoard {
 
   removePatrolBoat() {
     this.#removeShip(this.#PATROL_BOAT);
+  }
+
+  autoPlacePatrolBoat() {
+    const { x, y, orientation } = this.#autoPlaceShip(this.#PATROL_BOAT);
+
+    return this.placePatrolBoat(x, y, orientation);
+  }
+
+  autoPlaceAllShips() {
+    this.autoPlaceCarrier();
+
+    this.autoPlaceBattleShip();
+
+    this.autoPlaceDestroyer();
+
+    this.autoPlacePatrolBoat();
+
+    this.autoPlaceSubmarine();
   }
 }
 // export default class GameBoard {
@@ -667,7 +710,7 @@ export default class GameBoard {
 //     if (!this.#isValidOrientation(orientation)) return false;
 //     const { size } = this.#CARRIER_INFO;
 
-//     const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
+//     const toBeOccupied = GameBoard.getToBeOccupied(size, x, y, orientation);
 
 //     if (toBeOccupied.length < size) return false;
 
@@ -681,7 +724,7 @@ export default class GameBoard {
 
 //     const { size } = this.#CARRIER_INFO;
 
-//     const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
+//     const toBeOccupied = GameBoard.getToBeOccupied(size, x, y, orientation);
 
 //     if (toBeOccupied.length < size) return false;
 
@@ -737,7 +780,7 @@ export default class GameBoard {
 // availableNodes.forEach((node) => {
 //   const [x, y] = node.address;
 
-//   const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
+//   const toBeOccupied = GameBoard.getToBeOccupied(size, x, y, orientation);
 
 //   if (
 //     toBeOccupied.length === size &&
@@ -804,7 +847,7 @@ export default class GameBoard {
 
 //     const { size } = this.#BATTLESHIP_INFO;
 
-//     const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
+//     const toBeOccupied = GameBoard.getToBeOccupied(size, x, y, orientation);
 
 //     if (toBeOccupied.length < size) return false;
 
@@ -857,7 +900,7 @@ export default class GameBoard {
 //     availableNodes.forEach((node) => {
 //       const [x, y] = node.address;
 
-//       const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
+//       const toBeOccupied = GameBoard.getToBeOccupied(size, x, y, orientation);
 
 //       if (
 //         toBeOccupied.length === size &&
@@ -924,7 +967,7 @@ export default class GameBoard {
 
 //     const { size } = this.#DESTROYER_INFO;
 
-//     const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
+//     const toBeOccupied = GameBoard.getToBeOccupied(size, x, y, orientation);
 
 //     if (toBeOccupied.length < size) return false;
 
@@ -979,7 +1022,7 @@ export default class GameBoard {
 //     availableNodes.forEach((node) => {
 //       const [x, y] = node.address;
 
-//       const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
+//       const toBeOccupied = GameBoard.getToBeOccupied(size, x, y, orientation);
 
 //       if (
 //         toBeOccupied.length === size &&
@@ -1042,7 +1085,7 @@ export default class GameBoard {
 
 //     const { size } = this.#DESTROYER_INFO;
 
-//     const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
+//     const toBeOccupied = GameBoard.getToBeOccupied(size, x, y, orientation);
 
 //     if (toBeOccupied.length < size) return false;
 
@@ -1096,7 +1139,7 @@ export default class GameBoard {
 //     availableNodes.forEach((node) => {
 //       const [x, y] = node.address;
 
-//       const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
+//       const toBeOccupied = GameBoard.getToBeOccupied(size, x, y, orientation);
 
 //       if (
 //         toBeOccupied.length === size &&
@@ -1159,7 +1202,7 @@ export default class GameBoard {
 
 //     const { size } = this.#PATROL_BOAT_INFO;
 
-//     const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
+//     const toBeOccupied = GameBoard.getToBeOccupied(size, x, y, orientation);
 
 //     if (toBeOccupied.length < size) return false;
 
@@ -1212,7 +1255,7 @@ export default class GameBoard {
 //     availableNodes.forEach((node) => {
 //       const [x, y] = node.address;
 
-//       const toBeOccupied = this.#getToBeOccupied(size, x, y, orientation);
+//       const toBeOccupied = GameBoard.getToBeOccupied(size, x, y, orientation);
 
 //       if (
 //         toBeOccupied.length === size &&
