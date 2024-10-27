@@ -106,6 +106,7 @@ describe('Ship', () => {
       expect(shipInfo).toHaveProperty('orientation', '');
       expect(shipInfo).toHaveProperty('size', 2);
       expect(shipInfo).toHaveProperty('name');
+      expect(shipInfo).toHaveProperty('sunk', false);
 
       const { name } = shipInfo;
 
@@ -115,11 +116,14 @@ describe('Ship', () => {
     test('should reflect changes to carrier', () => {
       ship.assignOrientation('horizontal');
       ship.assignPlaceOrigin(0, 0);
+      ship.hit();
+      ship.hit();
 
       const { shipInfo } = ship;
 
       expect(shipInfo).toHaveProperty('hasPlaceOrigin', true);
       expect(shipInfo).toHaveProperty('orientation');
+      expect(shipInfo).toHaveProperty('sunk', true);
 
       const { orientation } = shipInfo;
 

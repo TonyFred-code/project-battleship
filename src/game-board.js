@@ -157,7 +157,7 @@ export default class GameBoard {
   static formatShipInfo(SHIP) {
     if (!(SHIP instanceof Ship)) return null;
 
-    const { hasPlaceOrigin, orientation, size, name } = SHIP.shipInfo;
+    const { sunk, hasPlaceOrigin, orientation, size, name } = SHIP.shipInfo;
 
     const { x, y } = SHIP.assignedPlaceOrigin;
 
@@ -167,6 +167,7 @@ export default class GameBoard {
       placeHead: [x, y],
       size,
       name,
+      isSunk: sunk,
     };
   }
 

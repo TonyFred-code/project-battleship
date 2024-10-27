@@ -415,6 +415,7 @@ describe('GameBoard class', () => {
       expect(carrierInfo).toHaveProperty('placeHead', [null, null]);
       expect(carrierInfo).toHaveProperty('size', 5);
       expect(carrierInfo).toHaveProperty('name');
+      expect(carrierInfo).toHaveProperty('isSunk', false);
 
       const { name } = carrierInfo;
 
@@ -695,6 +696,7 @@ describe('GameBoard class', () => {
       const { battleShipInfo } = gameBoard;
 
       expect(battleShipInfo).toHaveProperty('isOnBoard', false);
+      expect(battleShipInfo).toHaveProperty('isSunk', false);
       expect(battleShipInfo).toHaveProperty('orientation', '');
       expect(battleShipInfo).toHaveProperty('placeHead', [null, null]);
       expect(battleShipInfo).toHaveProperty('size', 4);
@@ -979,6 +981,7 @@ describe('GameBoard class', () => {
       expect(destroyerInfo).toHaveProperty('placeHead', [null, null]);
       expect(destroyerInfo).toHaveProperty('size', 3);
       expect(destroyerInfo).toHaveProperty('name');
+      expect(destroyerInfo).toHaveProperty('isSunk', false);
 
       const { name } = destroyerInfo;
 
@@ -1259,6 +1262,7 @@ describe('GameBoard class', () => {
       expect(patrolBoatInfo).toHaveProperty('placeHead', [null, null]);
       expect(patrolBoatInfo).toHaveProperty('size', 2);
       expect(patrolBoatInfo).toHaveProperty('name');
+      expect(patrolBoatInfo).toHaveProperty('isSunk', false);
 
       const { name } = patrolBoatInfo;
 
@@ -1539,6 +1543,7 @@ describe('GameBoard class', () => {
       expect(submarineInfo).toHaveProperty('placeHead', [null, null]);
       expect(submarineInfo).toHaveProperty('size', 3);
       expect(submarineInfo).toHaveProperty('name');
+      expect(submarineInfo).toHaveProperty('isSunk', false);
 
       const { name } = submarineInfo;
 

@@ -67,12 +67,14 @@ export default class Ship {
     const hasPlaceOrigin = this.#HasPlaceOrigin();
     const orientation = this.assignedOrientation;
     const { size, name } = this;
+    const sunk = this.isSunk();
 
     return {
       hasPlaceOrigin,
       orientation,
       size,
       name,
+      sunk,
     };
   }
 
