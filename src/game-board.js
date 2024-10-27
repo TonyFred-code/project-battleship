@@ -98,6 +98,62 @@ export default class GameBoard {
     });
   }
 
+  static createCopy(BOARD) {
+    if (!(BOARD instanceof GameBoard)) {
+      throw new Error('Invalid argument: expected an instance of GameBoard');
+    }
+
+    const copy = new GameBoard();
+
+    // Replicate ship placements based on original board state
+    const {
+      carrierInfo,
+      battleShipInfo,
+      destroyerInfo,
+      submarineInfo,
+      patrolBoatInfo,
+    } = BOARD;
+
+    if (carrierInfo.isOnBoard) {
+      const { placeHead, orientation } = carrierInfo;
+      const [x, y] = placeHead;
+      copy.placeCarrier(x, y, orientation);
+    }
+
+    if (battleShipInfo.isOnBoard) {
+      const { placeHead, orientation } = battleShipInfo;
+      const [x, y] = placeHead;
+      copy.placeBattleShip(x, y, orientation);
+    }
+
+    if (destroyerInfo.isOnBoard) {
+      const { placeHead, orientation } = destroyerInfo;
+      const [x, y] = placeHead;
+      copy.placeDestroyer(x, y, orientation);
+    }
+
+    if (submarineInfo.isOnBoard) {
+      const { placeHead, orientation } = submarineInfo;
+      const [x, y] = placeHead;
+      copy.placeSubmarine(x, y, orientation);
+    }
+
+    if (patrolBoatInfo.isOnBoard) {
+      const { placeHead, orientation } = patrolBoatInfo;
+      const [x, y] = placeHead;
+      copy.placePatrolBoat(x, y, orientation);
+    }
+
+    // Replicate attack states if all ships are on the board
+    if (BOARD.allShipsOnBoard) {
+      BOARD.hitCoordinates.forEach(([x, y]) => {
+        copy.receiveAttack(x, y);
+      });
+    }
+
+    return copy;
+  }
+
   static formatShipInfo(SHIP) {
     if (!(SHIP instanceof Ship)) return null;
 
@@ -153,6 +209,11 @@ export default class GameBoard {
 
     return toBeOccupied;
   }
+
+  // todo: complete method and write test suite
+  // static replicate(BOARD) {
+  //   if (!(BOARD instance of``))
+  // }
 
   #getNode(x, y) {
     const [BOARD_X] = GameBoard.BOARD_X_Y;
@@ -420,6 +481,32 @@ export default class GameBoard {
     const node = this.#getNode(x, y);
 
     return node.hit();
+  }
+
+  get unHitCoordinates() {
+    return this.#NODES
+      .filter((available) => !available.isHit)
+      .map((unHit) => {
+        const { address } = unHit;
+        const [x, y] = address;
+
+        return [x, y];
+      });
+  }
+
+  get hitCoordinates() {
+    return this.#NODES
+      .filter((available) => available.isHit)
+      .map((unHit) => {
+        const { address } = unHit;
+        const [x, y] = address;
+
+        return [x, y];
+      });
+  }
+
+  get allShipsOnBoard() {
+    return this.#allShipsOnBoard();
   }
 }
 // export default class GameBoard {
