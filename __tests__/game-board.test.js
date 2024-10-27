@@ -1702,6 +1702,134 @@ describe('GameBoard class', () => {
       expect(gameBoard.receiveAttack(maxX - 1, maxY - 1)).toBeGreaterThan(-1); // Bottom-right corner
     });
   });
+
+  describe('unHitCoordinates', () => {
+    test('should return array of coordinates of unhit nodes', () => {
+      const { unHitCoordinates } = gameBoard;
+
+      expect(unHitCoordinates.length).toBe(100);
+    });
+
+    test('should reflect hits to the game board', () => {
+      gameBoard.autoPlaceAllShips();
+
+      gameBoard.receiveAttack(0, 1);
+
+      const { unHitCoordinates } = gameBoard;
+
+      expect(unHitCoordinates.length).toBe(99);
+
+      // Additional check to ensure (0, 1) is no longer in unHitCoordinates
+      expect(unHitCoordinates).not.toContainEqual([0, 1]);
+    });
+  });
+
+  describe('hitCoordinates', () => {
+    test('should return array of hit nodes coordinates', () => {
+      const { hitCoordinates } = gameBoard;
+
+      expect(hitCoordinates.length).toBe(0);
+    });
+
+    test('should return reflect hits to the game board', () => {
+      gameBoard.autoPlaceAllShips();
+
+      gameBoard.receiveAttack(0, 1);
+
+      const { hitCoordinates } = gameBoard;
+
+      expect(hitCoordinates.length).toBe(1);
+      expect(hitCoordinates).toContainEqual([0, 1]);
+    });
+  });
+
+  describe('allShipsOnBoard', () => {
+    test('should return false when no ships are placed on the board', () => {
+      expect(gameBoard.allShipsOnBoard).toBe(false); // Initially, no ships are placed
+    });
+
+    test('should return false if some ships are placed but not all', () => {
+      // Manually place a subset of ships
+      gameBoard.placeCarrier(0, 0, 'horizontal');
+      gameBoard.placeBattleShip(1, 1, 'horizontal');
+
+      expect(gameBoard.allShipsOnBoard).toBe(false); // Not all ships are placed
+    });
+
+    test('should return true when all ships are placed on the board', () => {
+      gameBoard.autoPlaceAllShips(); // Place all ships on the board
+
+      expect(gameBoard.allShipsOnBoard).toBe(true); // Should return true when all ships are placed
+    });
+
+    test('should return false if any ship is removed from the board', () => {
+      gameBoard.autoPlaceAllShips(); // Place all ships initially
+
+      gameBoard.removeCarrier(); // Remove a ship from the board
+
+      expect(gameBoard.allShipsOnBoard).toBe(false); // allShipsOnBoard should be false if any ship is removed
+    });
+  });
+
+  describe('GameBoard.createCopy', () => {
+    let originalBoard;
+    beforeEach(() => {
+      originalBoard = new GameBoard();
+    });
+
+    test('should throw an error if passed an invalid argument', () => {
+      expect(() => GameBoard.createCopy(null)).toThrow(
+        'Invalid argument: expected an instance of GameBoard',
+      );
+      expect(() => GameBoard.createCopy({})).toThrow(
+        'Invalid argument: expected an instance of GameBoard',
+      );
+    });
+
+    test('should return a new empty board if original board is empty', () => {
+      const copy = GameBoard.createCopy(originalBoard);
+
+      expect(copy).toBeInstanceOf(GameBoard);
+      expect(copy.allShipsOnBoard).toBe(false);
+      expect(copy.unHitCoordinates.length).toBe(100);
+    });
+
+    test('should copy ship placements without hits', () => {
+      originalBoard.placeCarrier(0, 0, 'horizontal');
+      originalBoard.placeBattleShip(0, 3, 'vertical');
+      const copy = GameBoard.createCopy(originalBoard);
+
+      expect(copy).toBeInstanceOf(GameBoard);
+      expect(copy.carrierInfo.isOnBoard).toBe(true);
+      expect(copy.carrierInfo.placeHead).toEqual([0, 0]);
+      expect(copy.carrierInfo.orientation).toMatch(/horizontal/i);
+      expect(copy.battleShipInfo.isOnBoard).toBe(true);
+      expect(copy.battleShipInfo.placeHead).toEqual([0, 3]);
+      expect(copy.battleShipInfo.orientation).toMatch(/vertical/i);
+    });
+
+    test('should copy hit coordinates', () => {
+      originalBoard.autoPlaceAllShips();
+      originalBoard.receiveAttack(0, 0);
+      originalBoard.receiveAttack(1, 0);
+
+      const copy = GameBoard.createCopy(originalBoard);
+
+      // Verify hit coordinates
+      expect(copy.unHitCoordinates.length).toBe(98); // 2 cells attacked on a 10x10 board
+      expect(copy.hitCoordinates).toContainEqual([0, 0]);
+      expect(copy.hitCoordinates).toContainEqual([1, 0]);
+    });
+
+    test('should ensure original board and copy are independent', () => {
+      originalBoard.placeCarrier(0, 0, 'horizontal');
+      const copy = GameBoard.createCopy(originalBoard);
+
+      copy.placeBattleShip(2, 2, 'vertical');
+      expect(originalBoard.battleShipInfo.isOnBoard).toBe(false); // Ensures original board isn't affected by copy actions
+      expect(copy.battleShipInfo.isOnBoard).toBe(true);
+    });
+  });
 });
 
 // test('can create board', () => {
