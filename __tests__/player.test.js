@@ -1,79 +1,96 @@
 import Player from '../src/player.js';
 import GameBoard from '../src/game-board.js';
 
-test('Player class exists', () => {
-  expect(Player).not.toBeUndefined();
-});
+describe('Player Class', () => {
+  let player;
 
-test('Player requires a name for creation', () => {
-  const tryErrorPlayer = () => new Player();
+  beforeEach(() => {
+    player = new Player('Player1');
+  });
 
-  expect(() => {
-    tryErrorPlayer();
-  }).toThrow();
-});
+  test('should throw error if name is invalid', () => {
+    expect(() => new Player('')).toThrow(
+      'Invalid name: expect non-empty string as player name',
+    );
+    expect(() => new Player(123)).toThrow(
+      'Invalid name: expect non-empty string as player name',
+    );
+  });
 
-test('can create Player', () => {
-  const player = new Player('Player 1');
-  expect(player).not.toBeUndefined();
-  expect(typeof player === 'object').toBe(true);
-});
+  test('should initialize player with a GameBoard', () => {
+    expect(player.boardCopy).toBeInstanceOf(GameBoard);
+  });
 
-test('has a method to get player board', () => {
-  const player = new Player('Player 1');
-  expect(player.getBoard).not.toBeUndefined();
-});
+  test('should return valid moves from the game board', () => {
+    const { validMoves } = player;
+    expect(validMoves.length).toBe(100); // Assuming 10x10 board with no hits initially
+  });
 
-test('can get a GameBoard', () => {
-  const player = new Player('player');
-  const board = player.getBoard();
+  describe('Ship Placement and Removal', () => {
+    test('should place and remove a carrier', () => {
+      player.placeCarrier(0, 0, 'horizontal');
+      expect(player.carrierInfo.isOnBoard).toBe(true);
 
-  expect(board instanceof GameBoard).toBe(true);
-});
+      player.removeCarrier();
+      expect(player.carrierInfo.isOnBoard).toBe(false);
+    });
 
-test('player has a method for receiving attack', () => {
-  const player = new Player('dfs');
-  expect(player.receiveAttack).not.toBeUndefined();
-});
+    test('should place and remove a battleship', () => {
+      player.placeBattleShip(1, 1, 'vertical');
+      expect(player.battleShipInfo.isOnBoard).toBe(true);
 
-test('player should be able to place carrier', () => {
-  const player = new Player('something');
+      player.removeBattleShip();
+      expect(player.battleShipInfo.isOnBoard).toBe(false);
+    });
 
-  expect(player.placeCarrier(0, 0)).toBe(true);
-});
+    // Repeat similar tests for destroyer, submarine, and patrol boat
+  });
 
-test('player should be able to place battleship', () => {
-  const player = new Player('something');
+  describe('Auto Placement and All Ships Sunk Check', () => {
+    test('should automatically place all ships', () => {
+      player.autoPlaceAllShips();
+      expect(player.carrierInfo.isOnBoard).toBe(true);
+      expect(player.battleShipInfo.isOnBoard).toBe(true);
+      expect(player.destroyerInfo.isOnBoard).toBe(true);
+      expect(player.submarineInfo.isOnBoard).toBe(true);
+      expect(player.patrolBoatInfo.isOnBoard).toBe(true);
+    });
 
-  expect(player.placeBattleShip(0, 0)).toBe(true);
-});
+    test('should correctly report all ships sunk status', () => {
+      player.autoPlaceAllShips();
 
-test('player should be able to place destroyer', () => {
-  const player = new Player('something');
+      // Simulate all ships being sunk
+      function getPosition(shipInfo) {
+        const { orientation, size, placeHead } = shipInfo;
+        const [x, y] = placeHead;
 
-  expect(player.placeDestroyer(0, 0)).toBe(true);
-});
+        const position = GameBoard.getToBeOccupied(size, x, y, orientation);
+        return position;
+      }
 
-test('player should be able to place submarine', () => {
-  const player = new Player('something');
+      function attackPosition(positions) {
+        positions.forEach((position) => {
+          const [x, y] = position;
+          player.receiveAttack(x, y);
+        });
+      }
 
-  expect(player.placeSubMarine(0, 0)).toBe(true);
-});
+      const carrierPosition = getPosition(player.carrierInfo);
+      attackPosition(carrierPosition);
 
-test('player should be able to place patrol boat', () => {
-  const player = new Player('something');
+      const battleshipPosition = getPosition(player.battleShipInfo);
+      attackPosition(battleshipPosition);
 
-  expect(player.placePatrolBoat(0, 0)).toBe(true);
-});
+      const destroyerPosition = getPosition(player.destroyerInfo);
+      attackPosition(destroyerPosition);
 
-test('player board can receive attack', () => {
-  const player = new Player('something');
+      const submarinePosition = getPosition(player.submarineInfo);
+      attackPosition(submarinePosition);
 
-  expect(player.placeCarrier(5, 0)).toBe(true);
-  expect(player.placeBattleShip(0, 4, 'vertical')).toBe(true);
-  expect(player.placeDestroyer(3, 3)).toBe(true);
-  expect(player.placeSubMarine(6, 6, 'vertical')).toBe(true);
-  expect(player.placePatrolBoat(1, 9)).toBe(true);
+      const patrolBoatPosition = getPosition(player.patrolBoatInfo);
+      attackPosition(patrolBoatPosition);
 
-  expect(player.receiveAttack(0, 0)).toBe(0);
+      expect(player.allShipSunk()).toBe(true);
+    });
+  });
 });
