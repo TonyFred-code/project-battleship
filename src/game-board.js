@@ -211,10 +211,9 @@ export default class GameBoard {
     return toBeOccupied;
   }
 
-  // todo: complete method and write test suite
-  // static replicate(BOARD) {
-  //   if (!(BOARD instance of``))
-  // }
+  #hasTakenHit() {
+    return this.#NODES.some((node) => node.isHit);
+  }
 
   #getNode(x, y) {
     const [BOARD_X] = GameBoard.BOARD_X_Y;
@@ -322,6 +321,8 @@ export default class GameBoard {
   }
 
   #removeShip(SHIP) {
+    if (this.#hasTakenHit()) return;
+
     const { size, orientation, placeHead } = GameBoard.formatShipInfo(SHIP);
     const [x, y] = placeHead;
 
