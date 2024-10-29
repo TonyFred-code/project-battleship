@@ -425,11 +425,11 @@ img {
   border-radius: 3px;
 }
 
-.ship[data-orientation='horizontal'] {
+.ship[data-orientation='HORIZONTAL'] {
   flex-direction: row;
 }
 
-.ship[data-orientation='vertical'] {
+.ship[data-orientation='VERTICAL'] {
   flex-direction: column;
 }
 
