@@ -2,10 +2,8 @@ import createLoadScreen from './dom_module/loading-screen.js';
 import createHomePage from './dom_module/home-page.js';
 import createPlaySetupPage from './dom_module/play-setup.js';
 import createGamePlayPage from './dom_module/game-play.js';
-import createSettingsPage from './dom_module/settings-page.js';
 import createRoundLossPage from './dom_module/round-loss-modal.js';
 import createRoundWinPage from './dom_module/round-win-modal.js';
-import createSettingsModal from './dom_module/settings-modal.js';
 import createTutorialPage from './dom_module/tutorial-page.js';
 
 import GameController from './game-controller.js';
@@ -13,18 +11,11 @@ import GameController from './game-controller.js';
 import './style.css';
 
 const GAME_CONTROLLER = new GameController();
-const GAME_PLAY_SETTINGS = {
-  volume: true,
-  sfx: true,
-  botDifficulty: 'easy', // or hard
-};
 
 const LOAD_SCREEN = createLoadScreen();
 const HOME_PAGE_SCREEN = createHomePage();
-const SETTINGS_PAGE_SCREEN = createSettingsPage();
 const ROUND_LOSS_MODAL = createRoundLossPage();
 const ROUND_WIN_MODAL = createRoundWinPage();
-const SETTINGS_MODAL = createSettingsModal();
 const TUTORIAL_PAGE_SCREEN = createTutorialPage();
 let PLAY_SETUP_SCREEN;
 let GAME_PLAY_SCREEN;
@@ -54,17 +45,6 @@ TUTORIAL_PAGE_SCREEN.homeBtn.addEventListener('click', () => {
   changeScreen(HOME_PAGE_SCREEN.homePageContainer);
 });
 
-SETTINGS_MODAL.settingsForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-
-  const { volume, sfx } = SETTINGS_MODAL.settingsForm.elements;
-  GAME_PLAY_SETTINGS.volume = volume.checked;
-
-  GAME_PLAY_SETTINGS.sfx = sfx.checked;
-
-  closeModal(SETTINGS_MODAL.settingsModal);
-});
-
 ROUND_LOSS_MODAL.homeBtn.addEventListener('click', () => {
   closeModal(ROUND_LOSS_MODAL.roundLossDialog);
 
@@ -75,52 +55,6 @@ ROUND_WIN_MODAL.homeBtn.addEventListener('click', () => {
   closeModal(ROUND_WIN_MODAL.roundWinDialog);
 
   changeScreen(LOAD_SCREEN.loadingScreenContainer);
-});
-
-function displayGamePlaySettings(settingsForm, gamePlaySettings) {
-  const botDifficulty = settingsForm.elements['bot-difficulty'];
-
-  botDifficulty.value = gamePlaySettings.botDifficulty;
-
-  const { volume, sfx } = settingsForm.elements;
-  volume.checked = gamePlaySettings.volume;
-
-  sfx.checked = gamePlaySettings.sfx;
-
-  console.log(settingsForm.elements);
-}
-
-function displayModalGameSettings(settingsForm, gamePlaySettings) {
-  const { volume, sfx } = settingsForm.elements;
-  volume.checked = gamePlaySettings.volume;
-
-  sfx.checked = gamePlaySettings.sfx;
-
-  console.log(settingsForm.elements);
-}
-
-SETTINGS_PAGE_SCREEN.settingsForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-
-  const botDifficulty =
-    SETTINGS_PAGE_SCREEN.settingsForm.elements['bot-difficulty'];
-
-  GAME_PLAY_SETTINGS.botDifficulty = botDifficulty.value;
-
-  const { volume, sfx } = SETTINGS_PAGE_SCREEN.settingsForm.elements;
-  GAME_PLAY_SETTINGS.volume = volume.checked;
-
-  GAME_PLAY_SETTINGS.sfx = sfx.checked;
-
-  changeScreen(LOAD_SCREEN.loadingScreenContainer);
-
-  LOAD_SCREEN.line.addEventListener('animationend', () => {
-    LOAD_SCREEN.loadingScreenContainer.classList.add('loading-complete');
-    changeScreen(HOME_PAGE_SCREEN.homePageContainer, 500);
-    setTimeout(() => {
-      LOAD_SCREEN.loadingScreenContainer.classList.remove('loading-complete');
-    }, 350);
-  });
 });
 
 function runBoardItem(e) {
@@ -322,7 +256,6 @@ function gamePlayScreenEventListeners(gamePlayScreen, gameController_) {
     humanPlayerStructure,
     botPlayerStructure,
     homeIconContainer,
-    settingsIconContainer,
   } = gamePlayScreen;
 
   let { isHuman, isBot } = gameController_.getActivePlayer();
@@ -450,12 +383,6 @@ function gamePlayScreenEventListeners(gamePlayScreen, gameController_) {
   homeIconContainer.addEventListener('click', () => {
     changeScreen(LOAD_SCREEN.loadingScreenContainer);
   });
-
-  settingsIconContainer.addEventListener('click', () => {
-    displayModalGameSettings(SETTINGS_MODAL.settingsForm, GAME_PLAY_SETTINGS);
-
-    openModal(SETTINGS_MODAL.settingsModal);
-  });
 }
 
 function playSetupEventListeners(PlaySetupScreen) {
@@ -496,10 +423,16 @@ function playSetupEventListeners(PlaySetupScreen) {
 
   autoPositionBtn.addEventListener('click', () => {
     GAME_CONTROLLER.autoPlaceHumanPlayerShips();
+    const {
+      carrierInfo,
+      battleShipInfo,
+      destroyerInfo,
+      submarineInfo,
+      patrolBoatInfo,
+    } = GAME_CONTROLLER.humanPlayerShipDetails();
 
     {
-      const { isOnBoard, shipHead, orientation } =
-        GAME_CONTROLLER.humanPlayerCarrierPlacementDetails;
+      const { isOnBoard, shipHead, orientation } = carrierInfo;
 
       console.log(isOnBoard);
       const [x, y] = shipHead;
@@ -520,8 +453,7 @@ function playSetupEventListeners(PlaySetupScreen) {
     }
 
     {
-      const { isOnBoard, shipHead, orientation } =
-        GAME_CONTROLLER.humanPlayerBattleShipPlacementDetails;
+      const { isOnBoard, shipHead, orientation } = battleShipInfo;
 
       console.log(isOnBoard);
       const [x, y] = shipHead;
@@ -542,8 +474,7 @@ function playSetupEventListeners(PlaySetupScreen) {
     }
 
     {
-      const { isOnBoard, shipHead, orientation } =
-        GAME_CONTROLLER.humanPlayerDestroyerPlacementDetails;
+      const { isOnBoard, shipHead, orientation } = destroyerInfo;
 
       console.log(isOnBoard);
       const [x, y] = shipHead;
@@ -564,8 +495,7 @@ function playSetupEventListeners(PlaySetupScreen) {
     }
 
     {
-      const { isOnBoard, shipHead, orientation } =
-        GAME_CONTROLLER.humanPlayerSubMarinePlacementDetails;
+      const { isOnBoard, shipHead, orientation } = submarineInfo;
 
       console.log(isOnBoard);
       const [x, y] = shipHead;
@@ -586,8 +516,7 @@ function playSetupEventListeners(PlaySetupScreen) {
     }
 
     {
-      const { isOnBoard, shipHead, orientation } =
-        GAME_CONTROLLER.humanPlayerPatrolBoatPlacementDetails;
+      const { isOnBoard, shipHead, orientation } = patrolBoatInfo;
 
       console.log(isOnBoard);
       const [x, y] = shipHead;
@@ -745,21 +674,8 @@ HOME_PAGE_SCREEN.playBtn.addEventListener('click', () => {
   PLAY_SETUP_SCREEN = createPlaySetupPage();
   changeScreen(PLAY_SETUP_SCREEN.gameSetupContainer);
 
-  const { botDifficulty } = GAME_PLAY_SETTINGS;
-
-  GAME_CONTROLLER.startRound(botDifficulty);
-  GAME_CONTROLLER.createBotPlayer();
-  GAME_CONTROLLER.createHumanPlayer('custom');
+  GAME_CONTROLLER.startRound();
   playSetupEventListeners(PLAY_SETUP_SCREEN);
-});
-
-HOME_PAGE_SCREEN.settingsBtn.addEventListener('click', () => {
-  displayGamePlaySettings(
-    SETTINGS_PAGE_SCREEN.settingsForm,
-    GAME_PLAY_SETTINGS,
-  );
-
-  changeScreen(SETTINGS_PAGE_SCREEN.settingsPageContainer);
 });
 
 HOME_PAGE_SCREEN.tutorialBtn.addEventListener('click', () => {
