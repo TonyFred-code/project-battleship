@@ -388,10 +388,10 @@ describe('GameBoard class', () => {
       expect(resultOrientation).toMatch(/^(horizontal|vertical)$/i);
     });
 
-    test('should disallow placing carrier when carrier is placed without removing it first', () => {
+    test('should allow placing carrier when carrier is placed without removing it first', () => {
       gameBoard.placeCarrier(0, 0, 'horizontal');
 
-      expect(gameBoard.placeCarrier(0, 1, 'horizontal')).toBe(false);
+      expect(gameBoard.placeCarrier(0, 1, 'horizontal')).toBe(true);
     });
 
     test('should allow placing carrier after removing carrier from board', () => {
@@ -694,10 +694,10 @@ describe('GameBoard class', () => {
       expect(resultOrientation).toMatch(/^(horizontal|vertical)$/i);
     });
 
-    test('should disallow placing battleship when battleship is placed without removing it first', () => {
+    test('should allow placing battleship when battleship is placed without removing it first', () => {
       gameBoard.placeBattleShip(0, 0, 'horizontal');
 
-      expect(gameBoard.placeBattleShip(0, 1, 'horizontal')).toBe(false);
+      expect(gameBoard.placeBattleShip(0, 1, 'horizontal')).toBe(true);
     });
 
     test('should allow placing carrier after removing carrier from board', () => {
@@ -996,10 +996,10 @@ describe('GameBoard class', () => {
       expect(resultOrientation).toMatch(/^(horizontal|vertical)$/i);
     });
 
-    test('should disallow placing destroyer when destroyer is placed without removing it first', () => {
+    test('should allow placing destroyer when destroyer is placed without removing it first', () => {
       gameBoard.placeDestroyer(0, 0, 'horizontal');
 
-      expect(gameBoard.placeDestroyer(0, 1, 'horizontal')).toBe(false);
+      expect(gameBoard.placeDestroyer(0, 1, 'horizontal')).toBe(true);
     });
 
     test('should allow placing destroyer after removing destroyer from board', () => {
@@ -1296,13 +1296,13 @@ describe('GameBoard class', () => {
       expect(resultOrientation).toMatch(/^(horizontal|vertical)$/i);
     });
 
-    test('should disallow placing patrol boat when patrol boat is placed without removing it first', () => {
+    test('should allow placing patrol boat when patrol boat is placed without removing it first', () => {
       gameBoard.placePatrolBoat(0, 0, 'horizontal');
 
-      expect(gameBoard.placePatrolBoat(0, 1, 'horizontal')).toBe(false);
+      expect(gameBoard.placePatrolBoat(0, 1, 'horizontal')).toBe(true);
     });
 
-    test('should allow placing carrier after removing carrier from board', () => {
+    test('should allow placing patrol boat after removing patrol boat from board', () => {
       gameBoard.placePatrolBoat(0, 0, 'horizontal');
       gameBoard.removePatrolBoat();
 
@@ -1598,10 +1598,10 @@ describe('GameBoard class', () => {
       expect(resultOrientation).toMatch(/^(horizontal|vertical)$/i);
     });
 
-    test('should disallow placing submarine when submarine is placed without removing it first', () => {
+    test('should allow placing submarine when submarine is placed without removing it first', () => {
       gameBoard.placeSubmarine(0, 0, 'horizontal');
 
-      expect(gameBoard.placeSubmarine(0, 1, 'horizontal')).toBe(false);
+      expect(gameBoard.placeSubmarine(0, 1, 'horizontal')).toBe(true);
     });
 
     test('should allow placing submarine after removing submarine from board', () => {
