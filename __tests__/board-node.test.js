@@ -67,6 +67,7 @@ describe('Node class', () => {
       const neighbor = new Node(1, 1);
       neighbor.occupy(ship);
       node.addNeighbor(neighbor);
+      neighbor.addNeighbor(node);
       neighbor.hit();
 
       expect(node.hit()).toBe(3);
@@ -144,9 +145,12 @@ describe('Node class', () => {
 
     test('should return true if a neighbor is occupied', () => {
       const neighbor = new Node(1, 1);
+      const nextNeighbor = new Node(3, 3);
       const ship = new Ship(1, 'test');
       neighbor.occupy(ship);
       node.addNeighbor(neighbor);
+      neighbor.addNeighbor(node);
+      node.addNeighbor(nextNeighbor);
 
       expect(node.isNeighboringOccupied).toBe(true);
     });
@@ -176,10 +180,11 @@ describe('Node class', () => {
     test('should return true if node has a neighbor with sunk occupant', () => {
       const neighbor = new Node(1, 1);
       const ship = new Ship(1, 'test');
+      neighbor.addNeighbor(node);
+      node.addNeighbor(neighbor);
+
       neighbor.occupy(ship);
       neighbor.hit();
-
-      node.addNeighbor(neighbor);
 
       expect(node.isNeighboringSunk).toBe(true);
     });
