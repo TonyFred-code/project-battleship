@@ -45,7 +45,8 @@ export default class HardComputerPlayer extends ComputerPlayer {
     if (
       super.allShipSunk() ||
       !(enemy instanceof Player) ||
-      enemy.validMoves.length === 0
+      enemy.validMoves.length === 0 ||
+      enemy.allShipSunk()
     )
       return [];
 
