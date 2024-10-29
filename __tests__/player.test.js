@@ -43,7 +43,29 @@ describe('Player Class', () => {
       expect(player.battleShipInfo.isOnBoard).toBe(false);
     });
 
-    // Repeat similar tests for destroyer, submarine, and patrol boat
+    test('should place and remove a destroyer', () => {
+      player.placeDestroyer(1, 1, 'vertical');
+      expect(player.destroyerInfo.isOnBoard).toBe(true);
+
+      player.removeDestroyer();
+      expect(player.destroyerInfo.isOnBoard).toBe(false);
+    });
+
+    test('should place and remove a submarine', () => {
+      player.placeSubmarine(1, 1, 'vertical');
+      expect(player.submarineInfo.isOnBoard).toBe(true);
+
+      player.removeSubmarine();
+      expect(player.submarineInfo.isOnBoard).toBe(false);
+    });
+
+    test('should place and remove a patrol boat', () => {
+      player.placePatrolBoat(1, 1, 'vertical');
+      expect(player.patrolBoatInfo.isOnBoard).toBe(true);
+
+      player.removePatrolBoat();
+      expect(player.patrolBoatInfo.isOnBoard).toBe(false);
+    });
   });
 
   describe('Auto Placement and All Ships Sunk Check', () => {
