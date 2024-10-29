@@ -290,6 +290,21 @@ export default class GameBoard {
     });
   }
 
+  #replaceShip(SHIP, newOrientation, nx, ny) {
+    const originalInfo = GameBoard.formatShipInfo(SHIP);
+
+    this.#removeShip(SHIP);
+
+    const placed = this.#placeShip(nx, ny, newOrientation, SHIP);
+
+    if (placed) return true;
+
+    const { placeHead, orientation } = originalInfo;
+    const [x, y] = placeHead;
+
+    return this.#placeShip(x, y, orientation, SHIP);
+  }
+
   #placeShip(x, y, orientation, SHIP) {
     if (
       !Ship.isValidOrientation(orientation) ||
@@ -300,7 +315,7 @@ export default class GameBoard {
 
     const { size, isOnBoard } = GameBoard.formatShipInfo(SHIP);
 
-    if (isOnBoard) return false;
+    if (isOnBoard) return this.#replaceShip(SHIP, orientation, x, y);
 
     const toBeOccupied = GameBoard.getToBeOccupied(size, x, y, orientation);
 
