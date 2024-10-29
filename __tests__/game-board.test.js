@@ -154,6 +154,28 @@ describe('GameBoard class', () => {
     });
   });
 
+  describe('canReceiveShipNodeLoc', () => {
+    test('should return correct array length if no ship placed', () => {
+      const { canReceiveShipNodeLoc } = gameBoard;
+
+      expect(canReceiveShipNodeLoc.length).toBe(100);
+    });
+
+    test('should return correct array length when carrier is placed', () => {
+      gameBoard.placeCarrier(0, 0, 'horizontal');
+      const { canReceiveShipNodeLoc } = gameBoard;
+
+      expect(canReceiveShipNodeLoc.length).toBe(100 - 12);
+    });
+
+    test('should return correct array length when carrier is placed - 2', () => {
+      gameBoard.placeCarrier(1, 1, 'horizontal');
+      const { canReceiveShipNodeLoc } = gameBoard;
+
+      expect(canReceiveShipNodeLoc.length).toBe(100 - 21);
+    });
+  });
+
   describe('GameBoard.getToBeOccupied', () => {
     test('should return correct node coordinates for vertical orientation', () => {
       const size = 3;
