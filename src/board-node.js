@@ -82,11 +82,23 @@ export default class Node {
   }
 
   get isNeighboringOccupied() {
-    return this.neighbors.some((neighbor) => neighbor.isOccupied);
+    if (this.#neighbors.length === 0) return false;
+
+    const noOccupiedNeighbor = this.#neighbors.every(
+      (neighbor) => !neighbor.isOccupied,
+    );
+
+    return !noOccupiedNeighbor;
   }
 
   get isNeighboringSunk() {
-    return this.neighbors.some((neighbor) => neighbor.occupantShipSunk);
+    if (this.#neighbors.length === 0) return false;
+
+    const notNeighboringSunk = this.#neighbors.every(
+      (neighbor) => !neighbor.occupantShipSunk,
+    );
+
+    return !notNeighboringSunk;
   }
 
   get isHit() {
