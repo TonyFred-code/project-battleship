@@ -74,7 +74,13 @@ export default class GameController {
   get roundState() {
     if (this.#GAME_ROUND === null) return {};
 
-    return this.#GAME_ROUND.roundState;
+    const state = this.#GAME_ROUND.roundState;
+    const { canPlayRound } = this.#GAME_ROUND;
+
+    return {
+      ...state,
+      canPlayRound,
+    };
   }
 
   getActivePlayer() {
