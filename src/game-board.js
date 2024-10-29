@@ -91,7 +91,8 @@ export default class GameBoard {
     neighbors.forEach((neighbor) => {
       const [nx, ny] = neighbor;
       if (GameBoard.isValidBoardCoordinate(nx, ny)) {
-        const index = transform(nx, ny);
+        const [BOARD_X] = GameBoard.BOARD_X_Y;
+        const index = transform(nx, ny, BOARD_X);
         const nodeNeighbor = this.#NODES[index];
         node.addNeighbor(nodeNeighbor);
       }
@@ -367,6 +368,26 @@ export default class GameBoard {
       this.submarineInfo.isOnBoard &&
       this.patrolBoatInfo.isOnBoard
     );
+  }
+
+  get canReceiveShipNodeLoc() {
+    return this.#NODES
+      .filter((node) => {
+        const { isOccupied, isNeighboringOccupied, isHit } = node;
+
+        if (isOccupied) return false;
+
+        if (isNeighboringOccupied) return false;
+
+        if (isHit) return false;
+
+        return true;
+      })
+      .map((node) => {
+        const { address } = node;
+
+        return address;
+      });
   }
 
   get boardNodes() {
