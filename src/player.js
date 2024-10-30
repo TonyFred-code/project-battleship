@@ -126,4 +126,8 @@ export default class Player {
       this.#PLAYER_BOARD.patrolBoatInfo.isSunk
     );
   }
+
+  get allShipsOnBoard() {
+    return this.#PLAYER_BOARD.allShipsOnBoard;
+  }
 }
