@@ -503,10 +503,6 @@ describe('GameBoard class', () => {
       expect(orientation).toMatch(/horizontal/i);
     });
 
-    // todo Mock a scenario where no valid nodes are available
-    // todo: extend auto place carrier test cases
-    // - ensure proper logic is being implemented;
-
     test('should auto place carrier with vertical orientation if selected', () => {
       const mockElement = {
         element: { loc: [3, 3], orientation: 'vertical' },
