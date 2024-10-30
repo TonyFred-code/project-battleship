@@ -38,7 +38,7 @@ describe('ComputerPlayer', () => {
 
     test('should return a valid coordinate from enemy valid moves', () => {
       const mockCoordinate = [3, 4];
-      const mockElement = { element: { address: mockCoordinate } };
+      const mockElement = { element: mockCoordinate };
       getRndElement.mockReturnValue(mockElement);
 
       const attack = computer.getAttack(enemy);
@@ -54,7 +54,7 @@ describe('ComputerPlayer', () => {
         [3, 3],
       ];
       jest.spyOn(enemy, 'validMoves', 'get').mockReturnValue(mockCoordinates);
-      const mockElement = { element: { address: [1, 1] } };
+      const mockElement = { element: [1, 1] };
       getRndElement.mockReturnValue(mockElement);
 
       const result = computer.getAttack(enemy);
