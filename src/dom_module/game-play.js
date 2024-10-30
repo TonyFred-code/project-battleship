@@ -4,7 +4,7 @@ import GAME_SETTINGS from '../GAME_SETTINGS/game-settings.js';
 
 import ACCOUNT_ICON_SRC from '../images/account.svg';
 import ROBOT_ICON_SRC from '../images/robot.svg';
-import SETTINGS_ICON_SRC from '../images/cog.svg';
+// import SETTINGS_ICON_SRC from '../images/cog.svg';
 import HOME_ICON_SRC from '../images/home.svg';
 
 const { BOARD_SPECS } = GAME_SETTINGS;
@@ -236,17 +236,17 @@ export default function createGamePlayPage() {
     'btn-group-container',
   ]);
 
-  const settingsIconContainer = createElementWithClass('button', [
-    'btn',
-    'settings-btn',
-    'icon_container',
-    'cursor_pointer',
-  ]);
+  // const settingsIconContainer = createElementWithClass('button', [
+  //   'btn',
+  //   'settings-btn',
+  //   'icon_container',
+  //   'cursor_pointer',
+  // ]);
 
-  const settingsIconImg = createElementWithClass('img', ['img']);
+  // const settingsIconImg = createElementWithClass('img', ['img']);
 
-  settingsIconImg.src = SETTINGS_ICON_SRC;
-  settingsIconImg.alt = '';
+  // settingsIconImg.src = SETTINGS_ICON_SRC;
+  // settingsIconImg.alt = '';
 
   const homeIconContainer = createElementWithClass('button', [
     'btn',
@@ -329,9 +329,9 @@ export default function createGamePlayPage() {
   horizontalDividerContainer2.appendChild(horizontalDivider4);
 
   homeIconContainer.appendChild(homeIconImg);
-  settingsIconContainer.appendChild(settingsIconImg);
+  // settingsIconContainer.appendChild(settingsIconImg);
 
-  gameControlsContainer.appendChild(settingsIconContainer);
+  // gameControlsContainer.appendChild(settingsIconContainer);
   gameControlsContainer.appendChild(homeIconContainer);
 
   verticalDividerContainer2.appendChild(verticalDivider3);
@@ -418,6 +418,5 @@ export default function createGamePlayPage() {
     botPlayerStructure,
     humanPlayerStructure,
     homeIconContainer,
-    settingsIconContainer,
   };
 }
