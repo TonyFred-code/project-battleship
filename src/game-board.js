@@ -212,6 +212,59 @@ export default class GameBoard {
     return toBeOccupied;
   }
 
+  static getNeighboringLoc(size, x, y, orientation) {
+    const BASE = GAME_SETTINGS.BOARD_SPECS.BOARD_X_SIZE;
+
+    const temp = GameBoard.getToBeOccupied(size, x, y, orientation).map(
+      (loc) => {
+        const [a, b] = loc;
+        const index = transform(a, b, BASE);
+
+        return index;
+      },
+    );
+
+    if (temp.length < size) return [];
+
+    const toBeOccupiedNeighbors = new Set();
+
+    temp.forEach((index) => {
+      const address = reverseTransform(index, BASE);
+      const [nx, ny] = address;
+
+      const neighbors = [
+        [nx, ny - 1],
+        [nx + 1, ny - 1],
+        [nx + 1, ny],
+        [nx + 1, ny + 1],
+        [nx, ny + 1],
+        [nx - 1, ny + 1],
+        [nx - 1, ny],
+        [nx - 1, ny - 1],
+      ];
+
+      neighbors.forEach((neighbor) => {
+        const [a, b] = neighbor;
+
+        if (GameBoard.isValidBoardCoordinate(a, b)) {
+          const i = transform(a, b, BASE);
+
+          if (!temp.includes(i)) {
+            toBeOccupiedNeighbors.add(i);
+          }
+        }
+      });
+    });
+
+    const arr = [...toBeOccupiedNeighbors];
+
+    return arr.map((index) => {
+      const address = reverseTransform(index, BASE);
+
+      return address;
+    });
+  }
+
   #hasTakenHit() {
     return this.#NODES.some((node) => node.isHit);
   }
