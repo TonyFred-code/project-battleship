@@ -228,9 +228,6 @@ img {
   text-align: center;
 }
 
-.loader-container {
-}
-
 .loading-bar {
   height: auto;
   width: 100%;
@@ -302,13 +299,8 @@ img {
   height: 100%;
 }
 
-.home-page h1 {
-  /* text-transform: uppercase; */
-}
-
 .home-page .btn {
   cursor: pointer;
-  /* text-transform: uppercase; */
 }
 
 .home-page__btn-group {
@@ -386,9 +378,6 @@ img {
   background-color: rgba(225, 0, 0, 0.5);
 }
 
-.label-item {
-}
-
 .row-label {
   grid-area: row-label;
   display: grid;
@@ -401,9 +390,6 @@ img {
   display: grid;
   grid-template-rows: repeat(10, var(--base-node-size));
   font-size: 1.4rem;
-}
-
-.ship-yard-btn-group-container {
 }
 
 .home-btn-container {
@@ -431,10 +417,6 @@ img {
 
 .ship[data-orientation='VERTICAL'] {
   flex-direction: column;
-}
-
-.game-setup .btn-group {
-  /* gap: 5px; */
 }
 
 .btn-group .btn {
@@ -610,7 +592,6 @@ img {
 
 /* GAME PLAY PAGE ENDS */
 
-/*  */
 .settings-page {
   min-height: 100%;
 }
@@ -656,15 +637,10 @@ img {
 .vibrate-controls-container[data-vibrate='no'] .btn.vibrate-icon {
   display: none;
 }
-/*  */
-
-/*  */
 
 .dialog-header {
   font-size: 2.2rem;
 }
-
-/*  */
 
 @media (min-width: 768px) {
   .settings-form .horizontal-divider-container .horizontal-divider {
