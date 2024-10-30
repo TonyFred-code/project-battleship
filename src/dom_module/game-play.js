@@ -27,19 +27,19 @@ const shipsDetails = [
     name: 'destroyer',
   },
   {
-    classNames: ['ship', 'z_index_2', 'd-flex', 'patrol-boat', 'gap_2'],
+    classNames: ['ship', 'z_index_2', 'd-flex', 'patrol_boat', 'gap_2'],
     shipSize: 2,
     orientation: 'horizontal',
     sunk: false,
-    name: 'patrol-boat',
+    name: 'patrol_boat',
   },
 
   {
-    classNames: ['ship', 'z_index_2', 'd-flex', 'sub-marine', 'gap_2'],
+    classNames: ['ship', 'z_index_2', 'd-flex', 'submarine', 'gap_2'],
     shipSize: 3,
     orientation: 'horizontal',
     sunk: false,
-    name: 'sub-marine',
+    name: 'submarine',
   },
 
   {
