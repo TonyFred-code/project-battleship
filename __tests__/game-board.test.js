@@ -176,7 +176,7 @@ describe('GameBoard class', () => {
     });
   });
 
-  describe('GameBoard.getToBeOccupied', () => {
+  describe('getToBeOccupied', () => {
     test('should return correct node coordinates for vertical orientation', () => {
       const size = 3;
       const x = 2;
@@ -259,6 +259,10 @@ describe('GameBoard class', () => {
         [9, 2],
       ]);
     });
+  });
+
+  describe('getNeighboringLoc', () => {
+    // todo: write test for this method
   });
 
   // CARRIER TEST SUITES
