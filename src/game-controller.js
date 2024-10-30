@@ -3,77 +3,75 @@ import GameRound from './game-round.js';
 export default class GameController {
   #GAME_ROUND = null;
 
-  #GAME_START = false;
+  #ROUND_START = false;
+
+  constructor() {
+    this.#GAME_ROUND = new GameRound();
+  }
 
   placeHumanPlayerCarrier(x, y, orientation) {
-    if (!this.#GAME_START) return false;
+    if (!this.#ROUND_START) return false;
 
     return this.#GAME_ROUND.placeHumanPlayerCarrier(x, y, orientation);
   }
 
   placeHumanPlayerBattleShip(x, y, orientation) {
-    if (!this.#GAME_START) return false;
+    if (!this.#ROUND_START) return false;
 
     return this.#GAME_ROUND.placeHumanPlayerBattleShip(x, y, orientation);
   }
 
   placeHumanPlayerDestroyer(x, y, orientation) {
-    if (!this.#GAME_START) return false;
+    if (!this.#ROUND_START) return false;
 
     return this.#GAME_ROUND.placeHumanPlayerDestroyer(x, y, orientation);
   }
 
   placeHumanPlayerSubMarine(x, y, orientation) {
-    if (!this.#GAME_START) return false;
+    if (!this.#ROUND_START) return false;
 
     return this.#GAME_ROUND.placeHumanPlayerSubMarine(x, y, orientation);
   }
 
   placeHumanPlayerPatrolBoat(x, y, orientation) {
-    if (!this.#GAME_START) return false;
+    if (!this.#ROUND_START) return false;
 
     return this.#GAME_ROUND.placeHumanPlayerPatrolBoat(x, y, orientation);
   }
 
   autoPlaceHumanPlayerShips() {
-    if (!this.#GAME_START) return;
+    if (!this.#ROUND_START) return;
 
     this.#GAME_ROUND.autoPlaceHumanShips();
   }
 
   autoPlaceBotShips() {
-    if (!this.#GAME_START) return;
+    if (!this.#ROUND_START) return;
 
     this.#GAME_ROUND.autoPlaceBotShips();
   }
 
   get humanPlayerDetails() {
-    if (!this.#GAME_START) return false;
+    if (!this.#ROUND_START) return false;
 
     return this.#GAME_ROUND.humanPlayerDetails();
   }
 
   get botPlayerDetails() {
-    if (!this.#GAME_START) return false;
+    if (!this.#ROUND_START) return false;
 
     return this.#GAME_ROUND.botPlayerDetails();
   }
 
   humanPlayerShipDetails() {
-    if (this.#GAME_ROUND === null) return {};
-
     return this.#GAME_ROUND.humanPlayerShipDetails();
   }
 
   botPlayerShipDetails() {
-    if (this.#GAME_ROUND === null) return {};
-
     return this.#GAME_ROUND.botShipDetails();
   }
 
   get roundState() {
-    if (this.#GAME_ROUND === null) return {};
-
     const state = this.#GAME_ROUND.roundState;
     const { canPlayRound } = this.#GAME_ROUND;
 
@@ -84,48 +82,43 @@ export default class GameController {
   }
 
   getActivePlayer() {
-    if (this.#GAME_ROUND === null) return {};
+    if (!this.#ROUND_START) return {};
 
     return this.#GAME_ROUND.getActivePlayer();
   }
 
   computerPlayerMove() {
-    if (!this.#GAME_START) return false;
-
-    const { move, hitStatus } = this.#GAME_ROUND.botMove;
+    if (!this.#ROUND_START) return false;
 
     const { roundWon } = this.roundState;
 
-    if (roundWon) {
-      this.endRound();
-    }
+    if (roundWon) return {};
+
+    const { move, hitStatus } = this.#GAME_ROUND.botMove();
 
     return { hitStatus, move };
   }
 
   humanPlayerMove(x, y) {
-    if (!this.#GAME_START) return false;
-
-    const hitStatus = this.#GAME_ROUND.humanPlayerMove(x, y);
+    if (!this.#ROUND_START) return false;
 
     const { roundWon } = this.roundState;
 
-    if (roundWon) {
-      this.endRound();
-    }
+    if (roundWon) return {};
+
+    const hitStatus = this.#GAME_ROUND.humanPlayerMove(x, y);
 
     return hitStatus;
   }
 
   endRound() {
-    this.#GAME_START = false;
-    this.#GAME_ROUND = null;
+    this.#ROUND_START = false;
   }
 
   startRound() {
     this.#GAME_ROUND = new GameRound();
     this.#GAME_ROUND.addBotPlayer();
     this.#GAME_ROUND.addHumanPlayer();
-    this.#GAME_START = true;
+    this.#ROUND_START = true;
   }
 }
