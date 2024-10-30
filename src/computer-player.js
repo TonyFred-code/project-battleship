@@ -22,8 +22,7 @@ export default class ComputerPlayer extends Player {
     }
 
     const { element } = getRndElement(validMoves);
-    const { address } = element;
 
-    return address; // Return the chosen attack coordinates
+    return element; // Return the chosen attack coordinates
   }
 }
