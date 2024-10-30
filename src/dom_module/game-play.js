@@ -7,7 +7,8 @@ import ROBOT_ICON_SRC from '../images/robot.svg';
 import SETTINGS_ICON_SRC from '../images/cog.svg';
 import HOME_ICON_SRC from '../images/home.svg';
 
-const { BOARD_SIZE } = GAME_SETTINGS;
+const { BOARD_SPECS } = GAME_SETTINGS;
+const { BOARD_X_SIZE } = BOARD_SPECS;
 
 const shipsDetails = [
   {
@@ -56,9 +57,9 @@ function buildPlayerStructure({
   colLabelContainer,
   boardNodeClassNames,
 }) {
-  for (let i = 0; i < BOARD_SIZE * BOARD_SIZE; i += 1) {
+  for (let i = 0; i < BOARD_X_SIZE * BOARD_X_SIZE; i += 1) {
     const boardNode = createElementWithClass('button', boardNodeClassNames);
-    const [x, y] = reverseTransform(i, BOARD_SIZE);
+    const [x, y] = reverseTransform(i, BOARD_X_SIZE);
     boardNode.dataset.x = x;
     boardNode.dataset.y = y;
     boardNode.dataset.hasShip = false;
@@ -69,7 +70,7 @@ function buildPlayerStructure({
     boardNodesContainer.appendChild(boardNode);
   }
 
-  for (let i = 0; i < BOARD_SIZE; i += 1) {
+  for (let i = 0; i < BOARD_X_SIZE; i += 1) {
     const colLabelItem = document.createElement('div');
     const rowLabelItem = document.createElement('div');
 
