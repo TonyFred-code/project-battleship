@@ -328,7 +328,7 @@ function gamePlayScreenEventListeners(gamePlayScreen, gameController_) {
   const botPlayerShipDetails = gameController_.botPlayerShipDetails();
 
   placeShipOnPlayerBoard(humanPlayerStructure, humanPlayerShipDetails);
-  placeShipOnPlayerBoard(botPlayerStructure, botPlayerShipDetails); // add mask for production
+  placeShipOnPlayerBoard(botPlayerStructure, botPlayerShipDetails, true);
 
   botPlayerStructure.playerBoard.addEventListener('click', (e) => {
     const { target } = e;
