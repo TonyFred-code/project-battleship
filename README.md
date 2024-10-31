@@ -64,6 +64,7 @@ This project is licensed under the [MIT LICENSE](./LICENSE).
 2. Polish ```HardComputer``` ```getAttack```  method
 3. Add background sound and sound effects
 4. Add settings page
+5. Add game statics and achievements
 
 ## Acknowledgments
 
