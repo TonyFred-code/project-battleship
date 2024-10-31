@@ -38,6 +38,10 @@ button:focus {
   outline: none;
 }
 
+ul {
+  list-style: none;
+}
+
 .z_index_1 {
   z-index: 1;
 }
@@ -640,6 +644,10 @@ img {
 
 .dialog-header {
   font-size: 2.2rem;
+}
+
+.tutorial-container {
+  max-width: 600px;
 }
 
 @media (min-width: 768px) {
