@@ -3,30 +3,41 @@
     "browser": true,
     "commonjs": true,
     "es2021": true,
-    "jest": true
+    "jest/globals": true
   },
   "extends": ["airbnb-base", "prettier"],
-  "plugins": ["prettier", "jest"],
+  "plugins": ["prettier", "jest", "import"],
   "parserOptions": {
     "ecmaVersion": "latest"
   },
   "rules": {
-    "no-console": "off",
+    "eslint-plugin-import/prefer-default-export": "off",
+    "prettier/prettier": ["error"],
     "import/extensions": [
       "error",
-      "always",
-      { "js": "always", "mjs": "always" }
-    ],
-    "prettier/prettier": [
-      "error",
+      "ignorePackages",
       {
-        "singleQuote": true
+        "js": "always",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
       }
-    ],
-    "jest/no-disabled-tests": "warn",
-    "jest/no-focused-tests": "error",
-    "jest/no-identical-title": "error",
-    "jest/prefer-to-have-length": "warn",
-    "jest/valid-expect": "error"
-  }
+    ]
+  },
+  "ignorePatterns": ["dist/"],
+  "overrides": [
+    {
+      "files": ["__tests__/**"],
+      "plugins": ["jest"],
+      "extends": ["plugin:jest/recommended"],
+      "rules": {
+        "jest/no-disabled-tests": "warn",
+        "jest/no-focused-tests": "error",
+        "jest/no-identical-title": "error",
+        "jest/prefer-to-have-length": "off",
+        "jest/valid-expect": "error",
+        "jest/consistent-test-it": ["error", { "fn": "test" }]
+      }
+    }
+  ]
 }

@@ -38,17 +38,17 @@ export default function createHomePage() {
   ]);
   playBtn.textContent = 'play';
 
-  const settingsBtn = createElementWithClass('button', [
-    'btn',
-    'settings__btn',
-    'cursor_pointer',
-    'text-transform__capitalize',
-  ]);
+  // const settingsBtn = createElementWithClass('button', [
+  //   'btn',
+  //   'settings__btn',
+  //   'cursor_pointer',
+  //   'text-transform__capitalize',
+  // ]);
 
-  settingsBtn.textContent = 'settings';
+  // settingsBtn.textContent = 'settings';
 
   homePageBtnGroup.appendChild(playBtn);
-  homePageBtnGroup.appendChild(settingsBtn);
+  // homePageBtnGroup.appendChild(settingsBtn);
 
   const tutorialBtnContainer = createElementWithClass('div', [
     'tutorial-btn-container',
@@ -73,5 +73,5 @@ export default function createHomePage() {
 
   homePageContainer.appendChild(genericContainer);
 
-  return { homePageContainer, playBtn, settingsBtn, tutorialBtn };
+  return { homePageContainer, playBtn, tutorialBtn };
 }

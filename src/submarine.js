@@ -1,7 +1,7 @@
 import Ship from './ship.js';
 
-export default class SubMarine extends Ship {
+export default class Submarine extends Ship {
   constructor() {
-    super(3, 'sub-marine');
+    super(3, 'submarine');
   }
 }

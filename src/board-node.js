@@ -1,17 +1,3 @@
-// export default class Node {
-//   constructor(x, y) {
-//     this.address = [x, y];
-//     this.neighbors = [];
-//     this.isHit = false;
-//     this.isOccupied = false;
-//     this.isNeighboringOccupied = false;
-//   }
-
-//   get neighboringOccupied() {
-//     return this.neighbors.every((neighbor) => !neighbor.isOccupied);
-//   }
-// }
-
 import Ship from './ship.js';
 
 export default class Node {
@@ -26,12 +12,13 @@ export default class Node {
 
   #isHit = false;
 
+  #neighbors = [];
+
   constructor(x, y) {
     if (x < 0 || y < 0) {
       throw new Error('Coordinates must be non-negative integers.');
     }
     this.address = [x, y];
-    this.neighbors = [];
   }
 
   /**
@@ -40,10 +27,18 @@ export default class Node {
    */
   addNeighbor(neighbor) {
     if (neighbor instanceof Node) {
-      this.neighbors.push(neighbor);
+      this.#neighbors.push(neighbor);
       return true;
     }
+
     return false;
+  }
+
+  /**
+   * Returns neighbors attached to node.
+   */
+  get neighbors() {
+    return this.#neighbors;
   }
 
   /**
@@ -65,6 +60,8 @@ export default class Node {
    * Sets the node as occupied.
    */
   occupy(ship) {
+    if (this.isOccupied) return false;
+
     if (ship instanceof Ship) {
       this.#occupant = ship;
       return true;
@@ -73,16 +70,35 @@ export default class Node {
     return false;
   }
 
+  /**
+   * Returns the current occupant
+   */
+  get occupant() {
+    return this.#occupant;
+  }
+
   get isOccupied() {
     return this.#occupant !== null;
   }
 
   get isNeighboringOccupied() {
-    return this.neighbors.some((neighbor) => neighbor.isOccupied);
+    if (this.#neighbors.length === 0) return false;
+
+    const noOccupiedNeighbor = this.#neighbors.every(
+      (neighbor) => !neighbor.isOccupied,
+    );
+
+    return !noOccupiedNeighbor;
   }
 
   get isNeighboringSunk() {
-    return this.neighbors.some((neighbor) => neighbor.occupantShipSunk);
+    if (this.#neighbors.length === 0) return false;
+
+    const notNeighboringSunk = this.#neighbors.every(
+      (neighbor) => !neighbor.occupantShipSunk,
+    );
+
+    return !notNeighboringSunk;
   }
 
   get isHit() {

@@ -1,93 +1,67 @@
 import ComputerPlayer from './computer-player.js';
 import Player from './player.js';
-
 import gameSettings from './GAME_SETTINGS/game-settings.js';
 import getRndElement from './helper_module/rnd-array-element.js';
+import GameBoard from './game-board.js';
+import transform, {
+  reverseTransform,
+} from './helper_module/number-transform.js';
 
 export default class HardComputerPlayer extends ComputerPlayer {
-  #attacksStore = [];
+  #attacksStore = new Set(); // Use Set for efficient deduplication and filtering
 
   static getPossibleNextMove(x, y) {
-    const neighbors = [
+    return [
       [x, y - 1],
-      [x, y + 1],
-      [x - 1, y],
+      [x + 1, y - 1],
       [x + 1, y],
-    ];
-
-    const possibleNextMove = [];
-
-    neighbors.forEach((neighbor) => {
-      const [nx, ny] = neighbor;
-      if (gameSettings.isValidGameBoardCoordinate(nx, ny)) {
-        possibleNextMove.push(neighbor);
-      }
-    });
-
-    return possibleNextMove;
+      [x + 1, y + 1],
+      [x, y + 1],
+      [x - 1, y + 1],
+      [x - 1, y],
+      [x - 1, y - 1],
+    ].filter(([nx, ny]) => GameBoard.isValidBoardCoordinate(nx, ny));
   }
 
   #storeMove(x, y, enemy) {
-    const enemyCopy = enemy.copy;
-    const move = [x, y];
+    const { boardCopy } = enemy;
+    const hitStatus = boardCopy.receiveAttack(x, y);
 
-    const hitStatus = enemyCopy.receiveAttack(x, y);
+    if (hitStatus !== 1) return;
 
-    const possibleNeighbors = HardComputerPlayer.getPossibleNextMove(x, y);
-    const { validMoves } = enemyCopy;
-    const formattedUpdatedValidMoves = validMoves.map((validMove) => {
-      const [mx, my] = validMove;
-      return `${mx}-${my}`;
-    });
+    const { BOARD_X_SIZE } = gameSettings.BOARD_SPECS;
+    const possibleNeighbors = HardComputerPlayer.getPossibleNextMove(x, y)
+      .map(([cx, cy]) => transform(cx, cy, BOARD_X_SIZE))
+      .filter((neighbor) =>
+        boardCopy.unHitCoordinates.some(
+          ([nx, ny]) => transform(nx, ny, BOARD_X_SIZE) === neighbor,
+        ),
+      );
 
-    const validNeighbors = possibleNeighbors.filter((neighbor) => {
-      const [nx, ny] = neighbor;
-      const formattedNeighbor = `${nx}-${ny}`;
-
-      return formattedUpdatedValidMoves.includes(formattedNeighbor);
-    });
-
-    if (hitStatus === 1) {
-      this.#attacksStore.push({
-        move,
-        neighbors: validNeighbors,
-      });
-    }
+    possibleNeighbors.forEach((move) => this.#attacksStore.add(move));
   }
 
   getAttack(enemy) {
-    if (super.allShipSunk()) return [];
+    if (
+      super.allShipSunk() ||
+      !(enemy instanceof Player) ||
+      enemy.validMoves.length === 0 ||
+      enemy.allShipSunk()
+    )
+      return [];
 
-    if (!(enemy instanceof Player)) return [];
-
-    const { validMoves } = enemy;
-
-    if (validMoves.length === 0) return [];
-
-    if (!(enemy instanceof Player)) return [];
-
-    if (this.#attacksStore.length === 0) {
+    if (this.#attacksStore.size === 0) {
       const move = super.getAttack(enemy);
-
-      const [x, y] = move;
-
-      this.#storeMove(x, y, enemy);
-
+      if (move.length === 2) this.#storeMove(move[0], move[1], enemy);
       return move;
     }
 
-    const lastMove = this.#attacksStore.pop();
-    const { neighbors } = lastMove;
+    const { BOARD_X_SIZE } = gameSettings.BOARD_SPECS;
+    const { element } = getRndElement([...this.#attacksStore]);
+    this.#attacksStore.delete(element); // Remove move from store to prevent reuse
 
-    if (neighbors.length === 0) {
-      return this.getAttack(validMoves, enemy);
-    }
-
-    const nextMove = getRndElement(neighbors);
-
-    const [x, y] = nextMove;
-    this.#storeMove(x, y, enemy);
-
-    return nextMove;
+    const move = reverseTransform(element, BOARD_X_SIZE);
+    this.#storeMove(move[0], move[1], enemy);
+    return move;
   }
 }

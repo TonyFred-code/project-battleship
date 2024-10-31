@@ -11,7 +11,9 @@
     "build": "npm run babel && webpack --config webpack.prod.js",
     "babel": "babel src -d dist",
     "test": "jest",
-    "watch-tests": "jest --watch ./__tests__/*.test.js"
+    "watch-tests": "jest --watch --onlyChanged __tests__",
+    "format": "prettier . --write",
+    "lint": "eslint . --fix"
   },
   "keywords": [],
   "author": "Tony Fred",
@@ -32,6 +34,7 @@
     "html-webpack-plugin": "^5.5.4",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
+    "prettier": "^3.3.3",
     "style-loader": "^3.3.3",
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4",

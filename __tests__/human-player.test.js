@@ -1,12 +1,30 @@
 import HumanPlayer from '../src/human-player.js';
-import Player from '../src/player.js';
 
-test('can create computer player', () => {
-  expect(HumanPlayer).toBeDefined();
-});
+describe('HumanPlayer', () => {
+  let human;
 
-test('computer player is extension of Player', () => {
-  const humanPlayer = new HumanPlayer('Player');
+  beforeEach(() => {
+    human = new HumanPlayer();
+  });
 
-  expect(humanPlayer).toBeInstanceOf(Player);
+  describe('constructor', () => {
+    test('should initialize HumanPlayer with name "Human"', () => {
+      expect(human.name).toBe('Human');
+    });
+  });
+
+  describe('inheritance', () => {
+    test('should inherit methods from Player class', () => {
+      expect(typeof human.placeCarrier).toBe('function');
+      expect(typeof human.removeCarrier).toBe('function');
+      expect(typeof human.autoPlaceCarrier).toBe('function');
+      expect(typeof human.receiveAttack).toBe('function');
+      expect(typeof human.allShipSunk).toBe('function');
+    });
+
+    test('should initialize with a GameBoard instance', () => {
+      expect(human.boardCopy).toBeDefined();
+      expect(human.validMoves).toBeDefined();
+    });
+  });
 });

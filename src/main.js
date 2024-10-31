@@ -2,29 +2,21 @@ import createLoadScreen from './dom_module/loading-screen.js';
 import createHomePage from './dom_module/home-page.js';
 import createPlaySetupPage from './dom_module/play-setup.js';
 import createGamePlayPage from './dom_module/game-play.js';
-import createSettingsPage from './dom_module/settings-page.js';
 import createRoundLossPage from './dom_module/round-loss-modal.js';
 import createRoundWinPage from './dom_module/round-win-modal.js';
-import createSettingsModal from './dom_module/settings-modal.js';
+import createTutorialPage from './dom_module/tutorial-page.js';
 
 import GameController from './game-controller.js';
 
 import './style.css';
-import createTutorialPage from './dom_module/tutorial-page.js';
+import GameBoard from './game-board.js';
 
 const GAME_CONTROLLER = new GameController();
-const GAME_PLAY_SETTINGS = {
-  volume: true,
-  sfx: true,
-  botDifficulty: 'easy', // or hard
-};
 
 const LOAD_SCREEN = createLoadScreen();
 const HOME_PAGE_SCREEN = createHomePage();
-const SETTINGS_PAGE_SCREEN = createSettingsPage();
 const ROUND_LOSS_MODAL = createRoundLossPage();
 const ROUND_WIN_MODAL = createRoundWinPage();
-const SETTINGS_MODAL = createSettingsModal();
 const TUTORIAL_PAGE_SCREEN = createTutorialPage();
 let PLAY_SETUP_SCREEN;
 let GAME_PLAY_SCREEN;
@@ -54,17 +46,6 @@ TUTORIAL_PAGE_SCREEN.homeBtn.addEventListener('click', () => {
   changeScreen(HOME_PAGE_SCREEN.homePageContainer);
 });
 
-SETTINGS_MODAL.settingsForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-
-  const { volume, sfx } = SETTINGS_MODAL.settingsForm.elements;
-  GAME_PLAY_SETTINGS.volume = volume.checked;
-
-  GAME_PLAY_SETTINGS.sfx = sfx.checked;
-
-  closeModal(SETTINGS_MODAL.settingsModal);
-});
-
 ROUND_LOSS_MODAL.homeBtn.addEventListener('click', () => {
   closeModal(ROUND_LOSS_MODAL.roundLossDialog);
 
@@ -77,51 +58,94 @@ ROUND_WIN_MODAL.homeBtn.addEventListener('click', () => {
   changeScreen(LOAD_SCREEN.loadingScreenContainer);
 });
 
-function displayGamePlaySettings(settingsForm, gamePlaySettings) {
-  const botDifficulty = settingsForm.elements['bot-difficulty'];
+function attachShipToBoard(shipInfo) {
+  const { isOnBoard, placeHead, size, orientation } = shipInfo;
 
-  botDifficulty.value = gamePlaySettings.botDifficulty;
+  if (!isOnBoard) return [];
 
-  const { volume, sfx } = settingsForm.elements;
-  volume.checked = gamePlaySettings.volume;
+  const [x, y] = placeHead;
+  const occupyingLoc = GameBoard.getToBeOccupied(size, x, y, orientation);
 
-  sfx.checked = gamePlaySettings.sfx;
+  const [start] = occupyingLoc.slice(0, 1);
+  const [end] = occupyingLoc.slice(-1);
 
-  console.log(settingsForm.elements);
+  return [start, end];
 }
 
-function displayModalGameSettings(settingsForm, gamePlaySettings) {
-  const { volume, sfx } = settingsForm.elements;
-  volume.checked = gamePlaySettings.volume;
+function processShipPlacing(x, y, orientation, name, shipSize) {
+  const oldInfo = {
+    x,
+    y,
+    orientation,
+  };
+  let attached = [];
+  let newInfo = {};
 
-  sfx.checked = gamePlaySettings.sfx;
+  switch (shipSize) {
+    case '5':
+      GAME_CONTROLLER.placeHumanPlayerCarrier(
+        Number(x),
+        Number(y),
+        orientation,
+      );
 
-  console.log(settingsForm.elements);
+      newInfo = GAME_CONTROLLER.humanPlayerShipDetails().carrierInfo;
+      attached = attachShipToBoard(newInfo);
+      break;
+
+    case '4':
+      GAME_CONTROLLER.placeHumanPlayerBattleShip(
+        Number(x),
+        Number(y),
+        orientation,
+      );
+
+      newInfo = GAME_CONTROLLER.humanPlayerShipDetails().battleShipInfo;
+
+      attached = attachShipToBoard(newInfo);
+      break;
+
+    case '3':
+      if (name === 'destroyer') {
+        GAME_CONTROLLER.placeHumanPlayerDestroyer(
+          Number(x),
+          Number(y),
+          orientation,
+        );
+
+        newInfo = GAME_CONTROLLER.humanPlayerShipDetails().destroyerInfo;
+        attached = attachShipToBoard(newInfo);
+      } else if (name === 'submarine') {
+        GAME_CONTROLLER.placeHumanPlayerSubMarine(
+          Number(x),
+          Number(y),
+          orientation,
+        );
+        newInfo = GAME_CONTROLLER.humanPlayerShipDetails().submarineInfo;
+
+        attached = attachShipToBoard(newInfo);
+      }
+
+      break;
+
+    case '2':
+      GAME_CONTROLLER.placeHumanPlayerPatrolBoat(
+        Number(x),
+        Number(y),
+        orientation,
+      );
+
+      newInfo = GAME_CONTROLLER.humanPlayerShipDetails().patrolBoatInfo;
+      attached = attachShipToBoard(newInfo);
+
+      break;
+
+    default:
+      break;
+  }
+
+  return { attached, newInfo, oldInfo };
 }
-
-SETTINGS_PAGE_SCREEN.settingsForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-
-  const botDifficulty =
-    SETTINGS_PAGE_SCREEN.settingsForm.elements['bot-difficulty'];
-
-  GAME_PLAY_SETTINGS.botDifficulty = botDifficulty.value;
-
-  const { volume, sfx } = SETTINGS_PAGE_SCREEN.settingsForm.elements;
-  GAME_PLAY_SETTINGS.volume = volume.checked;
-
-  GAME_PLAY_SETTINGS.sfx = sfx.checked;
-
-  changeScreen(LOAD_SCREEN.loadingScreenContainer);
-
-  LOAD_SCREEN.line.addEventListener('animationend', () => {
-    LOAD_SCREEN.loadingScreenContainer.classList.add('loading-complete');
-    changeScreen(HOME_PAGE_SCREEN.homePageContainer, 500);
-    setTimeout(() => {
-      LOAD_SCREEN.loadingScreenContainer.classList.remove('loading-complete');
-    }, 350);
-  });
-});
 
 function runBoardItem(e) {
   const activeShip = document.querySelector('.ship.active');
@@ -129,95 +153,44 @@ function runBoardItem(e) {
   if (!activeShip) return;
 
   const { shipSize, orientation, name } = activeShip.dataset;
-  let placementDetails;
   const current = e.currentTarget;
   const { x, y } = current.dataset;
 
-  console.log({ x, y });
-  console.log(current);
-  console.log(activeShip);
-  console.log(shipSize);
+  const { attached, newInfo } = processShipPlacing(
+    Number(x),
+    Number(y),
+    orientation,
+    name,
+    shipSize,
+    activeShip,
+  );
 
-  let placed = false;
-
-  switch (shipSize) {
-    case '5':
-      placed = GAME_CONTROLLER.placeHumanPlayerCarrier(
-        Number(x),
-        Number(y),
-        orientation,
-      );
-      placementDetails = GAME_CONTROLLER.humanPlayerCarrierPlacementDetails;
-      break;
-
-    case '4':
-      placed = GAME_CONTROLLER.placeHumanPlayerBattleShip(
-        Number(x),
-        Number(y),
-        orientation,
-      );
-      placementDetails = GAME_CONTROLLER.humanPlayerBattleShipPlacementDetails;
-      break;
-
-    case '3':
-      if (name === 'destroyer') {
-        placed = GAME_CONTROLLER.placeHumanPlayerDestroyer(
-          Number(x),
-          Number(y),
-          orientation,
-        );
-
-        placementDetails = GAME_CONTROLLER.humanPlayerDestroyerPlacementDetails;
-      } else if (name === 'submarine') {
-        placed = GAME_CONTROLLER.placeHumanPlayerSubMarine(
-          Number(x),
-          Number(y),
-          orientation,
-        );
-        placementDetails = GAME_CONTROLLER.humanPlayerSubMarinePlacementDetails;
-      }
-
-      break;
-
-    case '2':
-      placed = GAME_CONTROLLER.placeHumanPlayerPatrolBoat(
-        Number(x),
-        Number(y),
-        orientation,
-      );
-
-      placementDetails = GAME_CONTROLLER.humanPlayerPatrolBoatPlacementDetails;
-      break;
-
-    default:
-      break;
-  }
-
-  if (placed && placementDetails) {
-    PLAY_SETUP_SCREEN.boardNodesContainer.appendChild(activeShip);
-    const { occupyingLoc } = placementDetails;
-
-    const [start] = occupyingLoc.slice(0, 1);
-    const [end] = occupyingLoc.slice(-1);
-
-    const [sx, sy] = start;
-    const [ex, ey] = end;
-    activeShip.style.gridArea = `X${sx}-Y${sy} / X${sx}-Y${sy} / X${ex}-Y${ey} / X${ex}-Y${ey}`;
-
-    console.log('placed');
-  } else {
-    console.log('not placed');
-
+  if (
+    attached.length === 0 ||
+    newInfo.orientation.toUpperCase() !== orientation.toUpperCase() ||
+    newInfo.placeHead[0] !== Number(x) ||
+    newInfo.placeHead[1] !== Number(y)
+  ) {
     activeShip.classList.add('fail-place');
 
     setTimeout(() => {
       activeShip.classList.remove('fail-place');
     }, 800);
+
+    return;
   }
+
+  PLAY_SETUP_SCREEN.boardNodesContainer.appendChild(activeShip);
+
+  const [start, end] = attached;
+  const [sx, sy] = start;
+  const [ex, ey] = end;
+
+  activeShip.style.gridArea = `X${sx}-Y${sy} / X${sx}-Y${sy} / X${ex}-Y${ey} / X${ex}-Y${ey}`;
 }
 
-const botShipSunk = [];
-const humanShipSunk = [];
+let humanShipSunk = [];
+let botShipSunk = [];
 
 function processHumanShipSink(GAME__CONTROLLER, BOT_PLAYER_EL_STRUCTURE) {
   const botPlayerShipDetails = GAME__CONTROLLER.botPlayerShipDetails();
@@ -225,12 +198,16 @@ function processHumanShipSink(GAME__CONTROLLER, BOT_PLAYER_EL_STRUCTURE) {
   const botShipsDetails = Object.values(botPlayerShipDetails);
 
   botShipsDetails.forEach((shipDetails) => {
-    const { isSunk, name, neighborLoc } = shipDetails;
+    const { isSunk, name, size, placeHead, orientation } = shipDetails;
+    const neighborLoc = GameBoard.getNeighboringLoc(
+      size,
+      placeHead[0],
+      placeHead[1],
+      orientation,
+    );
 
     if (isSunk && !botShipSunk.includes(name)) {
       botShipSunk.push(name);
-
-      console.log(name);
 
       const shipEl = BOT_PLAYER_EL_STRUCTURE.botShipYard.querySelector(
         `.ship.${name}`,
@@ -244,8 +221,6 @@ function processHumanShipSink(GAME__CONTROLLER, BOT_PLAYER_EL_STRUCTURE) {
             `.bot-player-board .board-item[data-x='${x}'][data-y='${y}']`,
           );
 
-        console.log(boardItem);
-
         boardItem.dataset.hitStatus = 3;
       });
     }
@@ -253,9 +228,9 @@ function processHumanShipSink(GAME__CONTROLLER, BOT_PLAYER_EL_STRUCTURE) {
   const { roundWon } = GAME__CONTROLLER.roundState;
 
   if (roundWon) {
-    // processRoundWin();
-    openModal(ROUND_WIN_MODAL.roundWinDialog);
-    console.log('human won');
+    setTimeout(() => {
+      openModal(ROUND_WIN_MODAL.roundWinDialog);
+    }, 300);
   }
 }
 
@@ -265,7 +240,13 @@ function processBotShipSink(GAME__CONTROLLER, HUMAN_EL_STRUCTURE) {
   const humanShipDetails = Object.values(humanPlayerShipDetails);
 
   humanShipDetails.forEach((shipDetails) => {
-    const { name, neighborLoc, isSunk } = shipDetails;
+    const { isSunk, name, size, placeHead, orientation } = shipDetails;
+    const neighborLoc = GameBoard.getNeighboringLoc(
+      size,
+      placeHead[0],
+      placeHead[1],
+      orientation,
+    );
 
     if (isSunk && !humanShipSunk.includes(name)) {
       humanShipSunk.push(name);
@@ -283,10 +264,9 @@ function processBotShipSink(GAME__CONTROLLER, HUMAN_EL_STRUCTURE) {
   const { roundWon } = GAME__CONTROLLER.roundState;
 
   if (roundWon) {
-    // processRoundWin();
-
-    openModal(ROUND_LOSS_MODAL.roundLossDialog);
-    console.log('bot won');
+    setTimeout(() => {
+      openModal(ROUND_LOSS_MODAL.roundLossDialog);
+    }, 300);
   }
 }
 
@@ -301,7 +281,13 @@ function placeShipOnPlayerBoard(
 
   shipKeys.forEach((key) => {
     const shipPlacement = placementShipsDetails[key];
-    const { occupyingLoc } = shipPlacement;
+    const { placeHead, orientation, size } = shipPlacement;
+    const occupyingLoc = GameBoard.getToBeOccupied(
+      size,
+      placeHead[0],
+      placeHead[1],
+      orientation,
+    );
 
     occupyingLoc.forEach((loc) => {
       const [x, y] = loc;
@@ -322,7 +308,6 @@ function gamePlayScreenEventListeners(gamePlayScreen, gameController_) {
     humanPlayerStructure,
     botPlayerStructure,
     homeIconContainer,
-    settingsIconContainer,
   } = gamePlayScreen;
 
   let { isHuman, isBot } = gameController_.getActivePlayer();
@@ -342,13 +327,8 @@ function gamePlayScreenEventListeners(gamePlayScreen, gameController_) {
   const humanPlayerShipDetails = gameController_.humanPlayerShipDetails();
   const botPlayerShipDetails = gameController_.botPlayerShipDetails();
 
-  console.log(humanPlayerShipDetails);
-  console.log(botPlayerShipDetails);
-
   placeShipOnPlayerBoard(humanPlayerStructure, humanPlayerShipDetails);
-  placeShipOnPlayerBoard(botPlayerStructure, botPlayerShipDetails, true);
-
-  console.log(gameController_);
+  placeShipOnPlayerBoard(botPlayerStructure, botPlayerShipDetails); // add mask for production
 
   botPlayerStructure.playerBoard.addEventListener('click', (e) => {
     const { target } = e;
@@ -358,35 +338,22 @@ function gamePlayScreenEventListeners(gamePlayScreen, gameController_) {
     const { roundWon } = gameController_.roundState;
 
     if (roundWon) {
-      // processRoundWin();
-      console.log('round win');
       return;
     }
 
-    let hitStatus = Number(target.dataset.hitStatus);
-
-    if (hitStatus >= 0) return;
-
-    ({ isHuman, isBot } = gameController_.getActivePlayer());
+    if (Number(target.dataset.hitStatus) >= 0) return;
 
     if (isHuman && botMoveStore.length === 0) {
       const { x, y } = target.dataset;
-      const moveHitStatus = gameController_.humanPlayerMove(
-        Number(x),
-        Number(y),
-      );
-
-      console.log(moveHitStatus);
-
+      const hitStatus = gameController_.humanPlayerMove(Number(x), Number(y));
       const boardItem = botPlayerStructure.boardNodesContainer.querySelector(
         `.board-item[data-x='${x}'][data-y='${y}']`,
       );
 
-      boardItem.dataset.hitStatus = moveHitStatus;
+      boardItem.dataset.hitStatus = hitStatus;
 
-      if (moveHitStatus === 2) {
+      if (hitStatus === 2) {
         processHumanShipSink(gameController_, botPlayerStructure);
-        console.log('ship sunk');
       }
     }
 
@@ -400,30 +367,24 @@ function gamePlayScreenEventListeners(gamePlayScreen, gameController_) {
       });
 
       do {
+        const { move, hitStatus } = gameController_.computerPlayerMove();
+        // const manualMoveX = Number(prompt('Choose x: '));
+        // const manualMoveY = Number(prompt('Choose Y: '));
+
+        // const status = gameController_.botMove(manualMoveX, manualMoveY);
+        // const move = [manualMoveX, manualMoveY];
+        turnMarkerEl.dataset.turnIndicator = 'bot';
+        turnMarkerEl2.dataset.turnIndicator = 'bot';
+
+        botMoveStore.push({ move, hitStatus });
+
         ({ isBot, isHuman } = gameController_.getActivePlayer());
-
-        if (isBot) {
-          const { move, status } = gameController_.computerPlayerMove;
-          // const manualMoveX = Number(prompt('Choose x: '));
-          // const manualMoveY = Number(prompt('Choose Y: '));
-
-          // const status = gameController_.botMove(manualMoveX, manualMoveY);
-          // const move = [manualMoveX, manualMoveY];
-          turnMarkerEl.dataset.turnIndicator = 'bot';
-          turnMarkerEl2.dataset.turnIndicator = 'bot';
-
-          console.log('bot thinking');
-          botMoveStore.push({ move, status });
-        }
       } while (isBot);
 
       botMoveStore.forEach((store, index) => {
-        ({ hitStatus } = store);
-        const { move } = store;
+        const { move, hitStatus } = store;
         setTimeout(
           () => {
-            console.log(move, hitStatus);
-
             const [x, y] = move;
             const boardItem =
               humanPlayerStructure.boardNodesContainer.querySelector(
@@ -431,11 +392,8 @@ function gamePlayScreenEventListeners(gamePlayScreen, gameController_) {
               );
 
             boardItem.dataset.hitStatus = hitStatus;
-            console.log(boardItem);
-            console.log(botMoveStore);
             if (hitStatus === 2) {
               processBotShipSink(gameController_, humanPlayerStructure);
-              console.log('ship sunk');
             }
 
             botMoveStore.shift();
@@ -457,12 +415,6 @@ function gamePlayScreenEventListeners(gamePlayScreen, gameController_) {
 
   homeIconContainer.addEventListener('click', () => {
     changeScreen(LOAD_SCREEN.loadingScreenContainer);
-  });
-
-  settingsIconContainer.addEventListener('click', () => {
-    displayModalGameSettings(SETTINGS_MODAL.settingsForm, GAME_PLAY_SETTINGS);
-
-    openModal(SETTINGS_MODAL.settingsModal);
   });
 }
 
@@ -504,13 +456,18 @@ function playSetupEventListeners(PlaySetupScreen) {
 
   autoPositionBtn.addEventListener('click', () => {
     GAME_CONTROLLER.autoPlaceHumanPlayerShips();
+    const {
+      carrierInfo,
+      battleShipInfo,
+      destroyerInfo,
+      submarineInfo,
+      patrolBoatInfo,
+    } = GAME_CONTROLLER.humanPlayerShipDetails();
 
     {
-      const { isOnBoard, shipHead, orientation } =
-        GAME_CONTROLLER.humanPlayerCarrierPlacementDetails;
+      const { isOnBoard, placeHead, orientation } = carrierInfo;
 
-      console.log(isOnBoard);
-      const [x, y] = shipHead;
+      const [x, y] = placeHead;
 
       const boardItem = document.querySelector(
         `[data-x='${x}'][data-y='${y}']`,
@@ -528,11 +485,9 @@ function playSetupEventListeners(PlaySetupScreen) {
     }
 
     {
-      const { isOnBoard, shipHead, orientation } =
-        GAME_CONTROLLER.humanPlayerBattleShipPlacementDetails;
+      const { isOnBoard, placeHead, orientation } = battleShipInfo;
 
-      console.log(isOnBoard);
-      const [x, y] = shipHead;
+      const [x, y] = placeHead;
 
       const boardItem = document.querySelector(
         `[data-x='${x}'][data-y='${y}']`,
@@ -550,11 +505,9 @@ function playSetupEventListeners(PlaySetupScreen) {
     }
 
     {
-      const { isOnBoard, shipHead, orientation } =
-        GAME_CONTROLLER.humanPlayerDestroyerPlacementDetails;
+      const { isOnBoard, placeHead, orientation } = destroyerInfo;
 
-      console.log(isOnBoard);
-      const [x, y] = shipHead;
+      const [x, y] = placeHead;
 
       const boardItem = document.querySelector(
         `[data-x='${x}'][data-y='${y}']`,
@@ -572,11 +525,9 @@ function playSetupEventListeners(PlaySetupScreen) {
     }
 
     {
-      const { isOnBoard, shipHead, orientation } =
-        GAME_CONTROLLER.humanPlayerSubMarinePlacementDetails;
+      const { isOnBoard, placeHead, orientation } = submarineInfo;
 
-      console.log(isOnBoard);
-      const [x, y] = shipHead;
+      const [x, y] = placeHead;
 
       const boardItem = document.querySelector(
         `[data-x='${x}'][data-y='${y}']`,
@@ -594,11 +545,9 @@ function playSetupEventListeners(PlaySetupScreen) {
     }
 
     {
-      const { isOnBoard, shipHead, orientation } =
-        GAME_CONTROLLER.humanPlayerPatrolBoatPlacementDetails;
+      const { isOnBoard, placeHead, orientation } = patrolBoatInfo;
 
-      console.log(isOnBoard);
-      const [x, y] = shipHead;
+      const [x, y] = placeHead;
 
       const boardItem = document.querySelector(
         `[data-x='${x}'][data-y='${y}']`,
@@ -618,8 +567,6 @@ function playSetupEventListeners(PlaySetupScreen) {
 
   boardNodesArray.forEach((boardNode) => {
     boardNode.addEventListener('click', runBoardItem);
-    // boardNode.addEventListener('mouseenter', runShipPlaceCheck);
-    // boardNode.addEventListener('mouseout', removeShipPlaceCheck);
   });
 
   rotateBtn.addEventListener('click', () => {
@@ -627,79 +574,82 @@ function playSetupEventListeners(PlaySetupScreen) {
 
     const activeShip = document.querySelector('.ship.active');
 
-    if (!activeShip) {
-      console.log('nut');
-      return;
-    }
+    if (!activeShip) return;
 
     const { shipSize, name } = activeShip.dataset;
-
-    let placed = false;
-    let shipHead;
+    let placeDetails = [];
+    let placeHead;
     let x;
     let y;
 
     switch (shipSize) {
       case '5':
-        ({ shipHead } =
-          GAME_CONTROLLER.humanPlayerShipDetails().carrierPlacement);
+        ({ placeHead } = GAME_CONTROLLER.humanPlayerShipDetails().carrierInfo);
+        [x, y] = placeHead;
 
-        [x, y] = shipHead;
-
-        placed = GAME_CONTROLLER.placeHumanPlayerCarrier(
+        placeDetails = processShipPlacing(
           Number(x),
           Number(y),
           rotate,
+          name,
+          shipSize,
         );
         break;
+
       case '4':
-        ({ shipHead } =
-          GAME_CONTROLLER.humanPlayerShipDetails().battleShipPlacement);
+        ({ placeHead } =
+          GAME_CONTROLLER.humanPlayerShipDetails().battleShipInfo);
+        [x, y] = placeHead;
 
-        [x, y] = shipHead;
-
-        placed = GAME_CONTROLLER.placeHumanPlayerBattleShip(
+        placeDetails = processShipPlacing(
           Number(x),
           Number(y),
           rotate,
+          name,
+          shipSize,
         );
         break;
+
       case '3':
-        console.log(name);
+        if (/^(destroyer)$/i.test(name)) {
+          ({ placeHead } =
+            GAME_CONTROLLER.humanPlayerShipDetails().destroyerInfo);
+          [x, y] = placeHead;
 
-        if (name === 'destroyer') {
-          ({ shipHead } =
-            GAME_CONTROLLER.humanPlayerShipDetails().destroyerPlacement);
-
-          [x, y] = shipHead;
-          placed = GAME_CONTROLLER.placeHumanPlayerDestroyer(
+          placeDetails = processShipPlacing(
             Number(x),
             Number(y),
             rotate,
+            name,
+            shipSize,
           );
-        } else if (name === 'submarine') {
-          ({ shipHead } =
-            GAME_CONTROLLER.humanPlayerShipDetails().subMarinePlacement);
+        } else if (/^(submarine)$/i.test(name)) {
+          ({ placeHead } =
+            GAME_CONTROLLER.humanPlayerShipDetails().submarineInfo);
+          [x, y] = placeHead;
 
-          [x, y] = shipHead;
-          console.log(x, y, rotate);
-          placed = GAME_CONTROLLER.placeHumanPlayerSubMarine(
+          placeDetails = processShipPlacing(
             Number(x),
             Number(y),
             rotate,
+            name,
+            shipSize,
           );
         }
+
         break;
+
       case '2':
-        ({ shipHead } =
-          GAME_CONTROLLER.humanPlayerShipDetails().patrolBoatPlacement);
+        ({ placeHead } =
+          GAME_CONTROLLER.humanPlayerShipDetails().patrolBoatInfo);
+        [x, y] = placeHead;
 
-        [x, y] = shipHead;
-
-        placed = GAME_CONTROLLER.placeHumanPlayerPatrolBoat(
+        placeDetails = processShipPlacing(
           Number(x),
           Number(y),
           rotate,
+          name,
+          shipSize,
         );
         break;
 
@@ -707,41 +657,38 @@ function playSetupEventListeners(PlaySetupScreen) {
         break;
     }
 
-    console.log(placed);
+    const { attached, newInfo } = placeDetails;
 
-    if (placed) {
-      activeShip.dataset.orientation = rotate;
-
-      const boardItem = document.querySelector(
-        `[data-x='${x}'][data-y='${y}']`,
-      );
-
-      console.log(boardItem);
-
-      boardItem.click();
-
-      if (rotate === 'horizontal') {
-        rotateBtn.dataset.rotate = 'vertical';
-      } else {
-        rotateBtn.dataset.rotate = 'horizontal';
-      }
-    } else {
-      console.log('not placed');
-
+    if (newInfo.orientation.toUpperCase() !== rotate.toUpperCase()) {
       activeShip.classList.add('fail-place');
 
       setTimeout(() => {
         activeShip.classList.remove('fail-place');
       }, 800);
+
+      return;
     }
+
+    activeShip.dataset.orientation = rotate.toUpperCase();
+
+    if (/^(horizontal)$/i.test(rotate)) {
+      rotateBtn.dataset.rotate = 'VERTICAL';
+    } else {
+      rotateBtn.dataset.rotate = 'HORIZONTAL';
+    }
+
+    const [start, end] = attached;
+    const [sx, sy] = start;
+    const [ex, ey] = end;
+
+    activeShip.style.gridArea = `X${sx}-Y${sy} / X${sx}-Y${sy} / X${ex}-Y${ey} / X${ex}-Y${ey}`;
   });
 
   startGameBtn.addEventListener('click', () => {
     GAME_CONTROLLER.autoPlaceBotShips();
+    const { roundState } = GAME_CONTROLLER;
 
-    const { gameState } = GAME_CONTROLLER;
-
-    if (!gameState.canPlayRound) return;
+    if (!roundState.canPlayRound) return;
 
     GAME_PLAY_SCREEN = createGamePlayPage();
     gamePlayScreenEventListeners(GAME_PLAY_SCREEN, GAME_CONTROLLER);
@@ -753,21 +700,10 @@ HOME_PAGE_SCREEN.playBtn.addEventListener('click', () => {
   PLAY_SETUP_SCREEN = createPlaySetupPage();
   changeScreen(PLAY_SETUP_SCREEN.gameSetupContainer);
 
-  const { botDifficulty } = GAME_PLAY_SETTINGS;
-
-  GAME_CONTROLLER.startRound(botDifficulty);
-  GAME_CONTROLLER.createBotPlayer();
-  GAME_CONTROLLER.createHumanPlayer('custom');
+  GAME_CONTROLLER.startRound();
+  botShipSunk = [];
+  humanShipSunk = [];
   playSetupEventListeners(PLAY_SETUP_SCREEN);
-});
-
-HOME_PAGE_SCREEN.settingsBtn.addEventListener('click', () => {
-  displayGamePlaySettings(
-    SETTINGS_PAGE_SCREEN.settingsForm,
-    GAME_PLAY_SETTINGS,
-  );
-
-  changeScreen(SETTINGS_PAGE_SCREEN.settingsPageContainer);
 });
 
 HOME_PAGE_SCREEN.tutorialBtn.addEventListener('click', () => {

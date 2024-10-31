@@ -1,100 +1,133 @@
 import GameBoard from './game-board.js';
 
 export default class Player {
-  #PLAYER_BOARD = new GameBoard();
+  #PLAYER_BOARD;
 
-  get copy() {
-    const newPlayer = new Player(this.name, this.boardCopy);
+  #NAME;
 
-    return newPlayer;
-  }
-
-  constructor(name, board = null) {
+  constructor(name) {
     if (typeof name !== 'string' || name.trim() === '') {
-      throw new Error('Invalid name parameter');
+      throw new Error('Invalid name: expect non-empty string as player name');
     }
 
-    this.name = name;
+    this.#NAME = name;
 
-    if (board !== null && board instanceof GameBoard) {
-      this.#PLAYER_BOARD = board;
-    }
+    this.#PLAYER_BOARD = new GameBoard();
   }
 
-  getBoard() {
-    return this.#PLAYER_BOARD;
+  get name() {
+    return this.#NAME;
   }
 
   get boardCopy() {
-    return this.#PLAYER_BOARD.copy;
+    return GameBoard.createCopy(this.#PLAYER_BOARD);
   }
 
   get validMoves() {
-    return this.#PLAYER_BOARD.validMoves;
+    return this.#PLAYER_BOARD.unHitCoordinates;
   }
 
   placeCarrier(x, y, orientation = 'horizontal') {
     return this.#PLAYER_BOARD.placeCarrier(x, y, orientation);
   }
 
+  removeCarrier() {
+    this.#PLAYER_BOARD.removeCarrier();
+  }
+
+  get carrierInfo() {
+    return this.#PLAYER_BOARD.carrierInfo;
+  }
+
+  autoPlaceCarrier() {
+    return this.#PLAYER_BOARD.autoPlaceCarrier();
+  }
+
   placeBattleShip(x, y, orientation = 'horizontal') {
     return this.#PLAYER_BOARD.placeBattleShip(x, y, orientation);
+  }
+
+  removeBattleShip() {
+    this.#PLAYER_BOARD.removeBattleShip();
+  }
+
+  get battleShipInfo() {
+    return this.#PLAYER_BOARD.battleShipInfo;
+  }
+
+  autoPlaceBattleShip() {
+    return this.#PLAYER_BOARD.autoPlaceBattleShip();
   }
 
   placeDestroyer(x, y, orientation = 'horizontal') {
     return this.#PLAYER_BOARD.placeDestroyer(x, y, orientation);
   }
 
-  placeSubMarine(x, y, orientation = 'horizontal') {
-    return this.#PLAYER_BOARD.placeSubMarine(x, y, orientation);
+  removeDestroyer() {
+    this.#PLAYER_BOARD.removeDestroyer();
+  }
+
+  get destroyerInfo() {
+    return this.#PLAYER_BOARD.destroyerInfo;
+  }
+
+  autoPlaceDestroyer() {
+    return this.#PLAYER_BOARD.autoPlaceDestroyer();
+  }
+
+  placeSubmarine(x, y, orientation = 'horizontal') {
+    return this.#PLAYER_BOARD.placeSubmarine(x, y, orientation);
+  }
+
+  removeSubmarine() {
+    return this.#PLAYER_BOARD.removeSubmarine();
+  }
+
+  get submarineInfo() {
+    return this.#PLAYER_BOARD.submarineInfo;
+  }
+
+  autoPlaceSubmarine() {
+    return this.#PLAYER_BOARD.autoPlaceSubmarine();
   }
 
   placePatrolBoat(x, y, orientation = 'horizontal') {
     return this.#PLAYER_BOARD.placePatrolBoat(x, y, orientation);
   }
 
+  removePatrolBoat() {
+    this.#PLAYER_BOARD.removePatrolBoat();
+  }
+
+  get patrolBoatInfo() {
+    return this.#PLAYER_BOARD.patrolBoatInfo;
+  }
+
+  autoPlacePatrolBoat() {
+    return this.#PLAYER_BOARD.autoPlacePatrolBoat();
+  }
+
   receiveAttack(x, y) {
-    const status = this.#PLAYER_BOARD.receiveAttack(x, y);
-    return status;
+    return this.#PLAYER_BOARD.receiveAttack(x, y);
+  }
+
+  autoPlaceAllShips() {
+    this.#PLAYER_BOARD.autoPlaceAllShips();
   }
 
   allShipSunk() {
-    return this.#PLAYER_BOARD.isAllShipSunk;
-  }
+    if (!this.#PLAYER_BOARD.allShipsOnBoard) return false;
 
-  autoPlaceShips() {
-    return this.#PLAYER_BOARD.allShipsPlacement();
-  }
-
-  shipPlacements() {
-    return this.#PLAYER_BOARD.shipPlacements;
-  }
-
-  get carrierPlacementDetails() {
-    return this.#PLAYER_BOARD.carrierPlacementDetails;
-  }
-
-  get battleShipPlacementDetails() {
-    return this.#PLAYER_BOARD.battleShipPlacementDetails;
-  }
-
-  get destroyerPlacementDetails() {
-    return this.#PLAYER_BOARD.destroyerPlacementDetails;
-  }
-
-  get subMarinePlacementDetails() {
-    return this.#PLAYER_BOARD.subMarinePlacementDetails;
-  }
-
-  get patrolBoatPlacementDetails() {
-    return this.#PLAYER_BOARD.patrolBoatPlacementDetails;
+    return (
+      this.#PLAYER_BOARD.carrierInfo.isSunk &&
+      this.#PLAYER_BOARD.battleShipInfo.isSunk &&
+      this.#PLAYER_BOARD.destroyerInfo.isSunk &&
+      this.#PLAYER_BOARD.submarineInfo.isSunk &&
+      this.#PLAYER_BOARD.patrolBoatInfo.isSunk
+    );
   }
 
   get allShipsOnBoard() {
     return this.#PLAYER_BOARD.allShipsOnBoard;
-  }
-
-  canBeCarrierShipHead(x, y, orientation) {
-    return this.#PLAYER_BOARD.canBeCarrierShipHead(x, y, orientation);
   }
 }

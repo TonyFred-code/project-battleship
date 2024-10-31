@@ -7,18 +7,22 @@ export default class ComputerPlayer extends Player {
   }
 
   getAttack(enemy) {
-    if (!(enemy instanceof Player)) return [];
+    if (!(enemy instanceof Player)) {
+      throw new Error('Invalid enemy: expected instance of Player');
+    }
+
+    if (this.allShipSunk()) {
+      return null; // Returning null when all ships are sunk
+    }
 
     const { validMoves } = enemy;
 
-    if (super.allShipSunk()) return [];
-
-    if (validMoves.length === 0) return [];
+    if (validMoves.length === 0) {
+      return null; // Returning null when there are no valid moves left
+    }
 
     const { element } = getRndElement(validMoves);
 
-    const { address } = element;
-
-    return address;
+    return element; // Return the chosen attack coordinates
   }
 }

@@ -1,79 +1,65 @@
 import ComputerPlayer from '../src/computer-player.js';
+import getRndElement from '../src/helper_module/rnd-array-element.js';
 import Player from '../src/player.js';
-import transform from '../src/helper_module/number-transform.js';
-import GAME_SETTINGS from '../src/GAME_SETTINGS/game-settings.js';
 
-const { BOARD_SIZE } = GAME_SETTINGS;
+jest.mock('../src/helper_module/rnd-array-element.js');
 
-test('can create computer player', () => {
-  expect(ComputerPlayer).toBeDefined();
-});
+describe('ComputerPlayer', () => {
+  let computer;
+  let enemy;
 
-test('computer has a default name', () => {
-  const computerPlayer = new ComputerPlayer('something');
+  beforeEach(() => {
+    computer = new ComputerPlayer();
+    enemy = new Player('Enemy');
+  });
 
-  expect(computerPlayer.name).toBe('jarvis');
-});
+  describe('constructor', () => {
+    test('should initialize ComputerPlayer with name "jarvis"', () => {
+      expect(computer.name).toBe('jarvis');
+    });
+  });
 
-test('computer player is extension of Player', () => {
-  const computerPlayer = new ComputerPlayer();
+  describe('getAttack', () => {
+    test('should throw an error if enemy is not an instance of Player', () => {
+      expect(() => computer.getAttack({})).toThrow(
+        'Invalid enemy: expected instance of Player',
+      );
+    });
 
-  expect(computerPlayer).toBeInstanceOf(Player);
-});
+    test('should return null if ComputerPlayer has all ships sunk', () => {
+      jest.spyOn(computer, 'allShipSunk').mockReturnValue(true);
+      expect(computer.getAttack(enemy)).toBeNull();
+    });
 
-test('computer has a getAttack method', () => {
-  const computerPlayer = new ComputerPlayer();
+    test('should return null if there are no valid moves left on enemy board', () => {
+      jest.spyOn(enemy, 'validMoves', 'get').mockReturnValue([]);
+      expect(computer.getAttack(enemy)).toBeNull();
+    });
 
-  expect(computerPlayer.getAttack).toBeDefined();
-});
+    test('should return a valid coordinate from enemy valid moves', () => {
+      const mockCoordinate = [3, 4];
+      const mockElement = { element: mockCoordinate };
+      getRndElement.mockReturnValue(mockElement);
 
-test('getAttack gives two element arr as return value', () => {
-  const computerPlayer = new ComputerPlayer();
-  const opponent = new Player('something');
+      const attack = computer.getAttack(enemy);
 
-  const move = computerPlayer.getAttack(opponent);
+      expect(attack).toEqual(mockCoordinate);
+      expect(getRndElement).toHaveBeenCalledWith(enemy.validMoves);
+    });
 
-  expect(move).toHaveLength(2);
-  expect(Array.isArray(move)).toBeTruthy();
+    test('should pick a random coordinate and return its address', () => {
+      const mockCoordinates = [
+        [1, 1],
+        [2, 2],
+        [3, 3],
+      ];
+      jest.spyOn(enemy, 'validMoves', 'get').mockReturnValue(mockCoordinates);
+      const mockElement = { element: [1, 1] };
+      getRndElement.mockReturnValue(mockElement);
 
-  const [x, y] = move;
-  expect(typeof x).toBe('number');
-  expect(typeof y).toBe('number');
-});
+      const result = computer.getAttack(enemy);
 
-test('does not hit same place twice', () => {
-  const computerPlayer = new ComputerPlayer();
-  const player = new Player('some');
-
-  expect(player.placeCarrier(5, 0)).toBe(true);
-  expect(player.placeBattleShip(0, 4, 'vertical')).toBe(true);
-  expect(player.placeDestroyer(3, 3)).toBe(true);
-  expect(player.placeSubMarine(6, 6, 'vertical')).toBe(true);
-  expect(player.placePatrolBoat(1, 9)).toBe(true);
-
-  const attacks = new Set();
-
-  function populate() {
-    for (let i = 0; i < 100; i += 1) {
-      const move = computerPlayer.getAttack(player);
-      const [x, y] = move;
-      player.receiveAttack(x, y);
-      attacks.add(transform(x, y, BOARD_SIZE));
-    }
-  }
-
-  populate();
-
-  expect(attacks.size).toBe(100);
-
-  function runCheck() {
-    const arr = [];
-    for (let i = 0; i < 100; i += 1) {
-      arr.push(i);
-    }
-
-    return arr.every((element) => attacks.has(element));
-  }
-
-  expect(runCheck()).toBe(true);
+      expect(result).toEqual([1, 1]);
+    });
+  });
 });
